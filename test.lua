@@ -1,6 +1,6 @@
 local Notification = require(game:GetService("ReplicatedStorage").Notification)
-Notification.new("<Color=Cyan>Cơm nước gì chưa người đẹp<Color=/>"):Display()
-wait(0.5)
+Notification.new("<Color=Cyan>Mọi vấn đề liên hệ 0765520260<Color=/>"):Display()
+wait(0.25)
 repeat
     wait()
 until game.Players.LocalPlayer
@@ -137,7 +137,7 @@ Converted["_Frame1"].Size = UDim2.new(0, 202, 0, 1)
 Converted["_Frame1"].Parent = Converted["_Frame"]
 
 Converted["_TextLabel2"].Font = Enum.Font.FredokaOne
-Converted["_TextLabel2"].Text = "duckcoderlod"
+Converted["_TextLabel2"].Text = "https://zalo.me/g/kmhete440"
 Converted["_TextLabel2"].TextColor3 = Color3.fromRGB(247.00001567602158, 247.00001567602158, 6.0000005923211575)
 Converted["_TextLabel2"].TextSize = 15
 Converted["_TextLabel2"].Active = true
