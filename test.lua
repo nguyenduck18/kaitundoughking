@@ -1,10 +1,10 @@
 local Notification = require(game:GetService("ReplicatedStorage").Notification)
 Notification.new("<Color=Cyan>Mọi vấn đề liên hệ 0765520260<Color=/>"):Display()
-wait(0.25)
+wait(0.5)
 repeat
     wait()
 until game.Players.LocalPlayer
-wait(0.5)
+wait(1)
 local Converted = {
 	["_ScreenGui"] = Instance.new("ScreenGui");
 	["_Frame"] = Instance.new("Frame");
