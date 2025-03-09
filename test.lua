@@ -4,7 +4,7 @@ wait(0.5)
 repeat
     wait()
 until game.Players.LocalPlayer
-wait(1.5)
+wait(3)
 local Converted = {
 	["_ScreenGui"] = Instance.new("ScreenGui");
 	["_Frame"] = Instance.new("Frame");
