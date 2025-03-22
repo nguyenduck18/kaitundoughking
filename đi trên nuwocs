@@ -1,0 +1,30 @@
+-- Function to create an invisible platform under the character for walking on water
+local function CreateWaterPlatform()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    -- Tạo một phần (Part) vô hình
+    local platform = Instance.new("Part")
+    platform.Size = Vector3.new(50, 1, 50)  -- Kích thước của mặt phẳng
+    platform.Anchored = true  -- Cố định phần không cho di chuyển
+    platform.CanCollide = true  -- Có thể va chạm để nhân vật đi lên
+    platform.Transparency = 1  -- Đặt độ trong suốt để nó vô hình
+    platform.Parent = workspace  -- Đặt phần này vào không gian làm việc
+
+    -- Liên tục di chuyển sàn theo nhân vật
+    spawn(function()
+        while true do
+            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+            if humanoidRootPart then
+                local position = humanoidRootPart.Position
+                if position.Y < 10 then  -- Kiểm tra nếu nhân vật gần mặt nước
+                    platform.Position = Vector3.new(position.X, 4.9, position.Z)  -- Giữ sàn ngay dưới chân nhân vật
+                end
+            end
+            wait(0.1)
+        end
+    end)
+end
+
+-- Gọi hàm tạo nền khi script bắt đầu
+CreateWaterPlatform()
