@@ -1,3 +1,52 @@
+-- Đặt giá trị mặc định cho biến Attack
+getgenv().FixAttack = true
+-- Hàm Click
+function Click(delayTime)
+    while task.wait(delayTime) do
+        if getgenv().FixAttack then  -- Chỉ chạy nếu Attack là true
+            print("Clicking...")  -- Hoặc thay bằng hành động click thực sự
+        else
+            print("Attack is off, stopping clicks...")
+            break  -- Thoát khỏi vòng lặp nếu Attack là false
+        end
+    end
+end
+-- Tải script từ URL và thực thi
+local url = "https://raw.githubusercontent.com/diemquy/Autochatmizuhara/refs/heads/main/fasthuy%20.txt"
+local success, scriptContent = pcall(function()
+    return game:HttpGet(url)
+end)
+
+if success then
+    local runScript = loadstring(scriptContent)
+    if runScript then
+        runScript()  -- Thực thi script
+        print("Script executed successfully!")
+    else
+        warn("Failed to load script.")
+    end
+else
+    warn("Failed to fetch script from URL:", scriptContent)
+end
+
+-- Vòng lặp kiểm tra biến Attack
+task.spawn(function()
+    while task.wait() do
+        if getgenv().FixAttack then
+            Click(0.000000000000000000000000000000004)  -- Thực hiện hành động click với delay
+        else
+            print("Attack is off, skipping clicks.")
+        end
+    end
+end)
+
+if getgenv().Team == "Pirates" then
+    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetTeam", "Pirates")
+elseif getgenv().Team == "Marines" then
+    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetTeam", "Marines")
+end
+wait(2)
+
 if not game:IsLoaded() then
     game.Loaded:Wait()
 end
@@ -1330,8 +1379,8 @@ end
 print("--[[Loaded UI]]--")
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 Window = Fluent:CreateWindow({
-    Title = "Trẩu Roblox-Blox Fruit",
-    SubTitle = "  https://discord.gg/WYNetPAD",
+    Title = "Trẩu Roblox [FREEPREMIUM]",
+    SubTitle = "    https://discord.gg/WYNetPAD",
     TabWidth = 155,
     Size = UDim2.fromOffset(555, 320),
     Acrylic = false, 
@@ -7623,20 +7672,26 @@ spawn(function()
     end
 end)
 WEBHOOK = Window:AddTab({ Title = "Tab Webhook", Icon = "" })
+--// Tab Webhook Hoàn Chỉnh
+local HttpService = game:GetService("HttpService")
+local StarterGui = game:GetService("StarterGui")
+
 local WebhookURL = ""
 local WebhookContent = "Server Info"
 
+-- Nhập URL Webhook
 WEBHOOK:AddInput("WebhookInput", {
     Title = "Enter Webhook URL",
     Default = "",
     Placeholder = "Paste your webhook URL here",
     Numeric = false,
     Finished = true,
-    Callback = function(Value)
-        WebhookURL = Value
+    Callback = function(value)
+        WebhookURL = value
     end
 })
 
+-- Chọn loại nội dung
 local Dropdown = WEBHOOK:AddDropdown("ContentDropdown", {
     Title = "Select Content to Send",
     Values = {"Server Info", "Time in Server"},
@@ -7644,66 +7699,95 @@ local Dropdown = WEBHOOK:AddDropdown("ContentDropdown", {
     Default = "Server Info"
 })
 
-Dropdown:OnChanged(function(Value)
-    WebhookContent = Value
+Dropdown:OnChanged(function(value)
+    WebhookContent = value
 end)
 
+-- Gửi Webhook
 WEBHOOK:AddButton({
     Title = "Send Webhook",
     Callback = function()
-        if WebhookURL == "" then
-            game.StarterGui:SetCore("SendNotification", {
-                Title = "Error",
+        if WebhookURL == nil or WebhookURL == "" then
+            StarterGui:SetCore("SendNotification", {
+                Title = "❌ Error",
                 Text = "Please enter a valid Webhook URL!",
-                Duration = 2
+                Duration = 3
             })
             return
         end
-        
+
+        -- Chuẩn bị nội dung
         local content = ""
+
         if WebhookContent == "Server Info" then
-            local success, productInfo = pcall(function()
+            local success, info = pcall(function()
                 return game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId)
             end)
-            
-            if success then
-                content = "Game: " .. productInfo.Name .. "\nServer ID: " .. game.JobId
+
+            if success and info then
+                content = string.format("📋 Game: %s\n🆔 Server ID: %s", info.Name, game.JobId)
             else
-                content = "Game: Unknown\nServer ID: " .. game.JobId
+                content = "📋 Game: Unknown\n🆔 Server ID: " .. game.JobId
             end
         elseif WebhookContent == "Time in Server" then
-            content = "Time in server: " .. math.floor(workspace.DistributedGameTime / 60) .. " minutes"
+            content = "⏱️ Time in server: " .. math.floor(workspace.DistributedGameTime / 60) .. " minutes"
+        else
+            content = "Unknown content selected."
         end
-        
-        local HttpService = game:GetService("HttpService")
+
+        -- Gửi Webhook với executor hỗ trợ
+        local bodyData = HttpService:JSONEncode({ content = content })
+
         local requestData = {
             Url = WebhookURL,
             Method = "POST",
             Headers = { ["Content-Type"] = "application/json" },
-            Body = HttpService:JSONEncode({ content = content })
+            Body = bodyData
         }
 
-        -- Kiểm tra xem có quyền gửi request không
+        -- Tự động chọn phương thức gửi
+        local success, result
         if syn and syn.request then
-            syn.request(requestData)
+            print("[Webhook] Using syn.request")
+            success, result = pcall(function()
+                return syn.request(requestData)
+            end)
         elseif http and http.request then
-            http.request(requestData)
+            print("[Webhook] Using http.request")
+            success, result = pcall(function()
+                return http.request(requestData)
+            end)
         elseif request then
-            request(requestData)
+            print("[Webhook] Using request")
+            success, result = pcall(function()
+                return request(requestData)
+            end)
         else
-            game.StarterGui:SetCore("SendNotification", {
-                Title = "Error",
-                Text = "HTTP Requests are not enabled!",
-                Duration = 2
+            StarterGui:SetCore("SendNotification", {
+                Title = "❌ Error",
+                Text = "Executor does not support HTTP requests!",
+                Duration = 3
             })
+            warn("[Webhook] No supported request method found!")
             return
         end
 
-        game.StarterGui:SetCore("SendNotification", {
-            Title = "Webhook Sent",
-            Text = "Successfully sent data to webhook!",
-            Duration = 2
-        })
+        -- Phản hồi kết quả
+        if success then
+            StarterGui:SetCore("SendNotification", {
+                Title = "✅ Webhook Sent",
+                Text = "Successfully sent data!",
+                Duration = 2
+            })
+            print("[Webhook] Data sent successfully!")
+        else
+            StarterGui:SetCore("SendNotification", {
+                Title = "❌ Failed to Send",
+                Text = "Check webhook URL or executor.",
+                Duration = 3
+            })
+            warn("[Webhook] Sending failed:", result)
+        end
     end
 })
 ESP = Window:AddTab({ Title = "Tab ESP", Icon = "" })
