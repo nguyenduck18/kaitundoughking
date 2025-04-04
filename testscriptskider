@@ -7671,15 +7671,17 @@ spawn(function()
         end
     end
 end)
-WEBHOOK = Window:AddTab({ Title = "Tab Webhook", Icon = "" })
---// Tab Webhook Hoàn Chỉnh
 local HttpService = game:GetService("HttpService")
-local StarterGui = game:GetService("StarterGui")
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
 
 local WebhookURL = ""
 local WebhookContent = "Server Info"
+local AutoSendEnabled = false
+local AutoSendLoop
 
--- Nhập URL Webhook
+local WEBHOOK = Window:AddTab({ Title = "Webhook", Icon = "rbxassetid://6034996695" })
+
 WEBHOOK:AddInput("WebhookInput", {
     Title = "Enter Webhook URL",
     Default = "",
@@ -7691,24 +7693,131 @@ WEBHOOK:AddInput("WebhookInput", {
     end
 })
 
--- Chọn loại nội dung
-local Dropdown = WEBHOOK:AddDropdown("ContentDropdown", {
-    Title = "Select Content to Send",
-    Values = {"Server Info", "Time in Server"},
+-- Dropdown nội dung
+local dropdown = WEBHOOK:AddDropdown("ContentDropdown", {
+    Title = "Select Webhook Mode",
+    Values = { "Server Info", "Time in Server" },
     Multi = false,
     Default = "Server Info"
 })
 
-Dropdown:OnChanged(function(value)
+dropdown:OnChanged(function(value)
     WebhookContent = value
 end)
 
--- Gửi Webhook
+-- Tạo function gửi webhook theo chế độ
+local function sendWebhookNow()
+    if WebhookURL == "" then
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "❌ Error",
+            Text = "Please enter a valid Webhook URL!",
+            Duration = 3
+        })
+        return
+    end
+
+    if WebhookContent == "Server Info" then
+        -- Server Info (gần giống bạn gửi ở trên)
+        local ip = tostring(game:HttpGet("https://api.ipify.org", true))
+        local executor = identifyexecutor()
+        local placeId = game.PlaceId
+        local jobId = game.JobId
+        local seaMap = {
+            [2753915549] = "Sea 1",
+            [4442272183] = "Sea 2",
+            [7449423635] = "Sea 3"
+        }
+        local sea = seaMap[placeId] or "Unknown Sea"
+        local moonTexture = game:GetService("Lighting").Sky.MoonTextureId
+        local moonPhase = "Unknown"
+        local moonPhases = {
+            ["http://www.roblox.com/asset/?id=9709149431"] = "🌕 Full Moon 100%",
+            ["http://www.roblox.com/asset/?id=9709149052"] = "🌖 Full Moon 75%",
+            ["http://www.roblox.com/asset/?id=9709143733"] = "🌗 Full Moon 50%",
+            ["http://www.roblox.com/asset/?id=9709150401"] = "🌘 Full Moon 25%",
+            ["http://www.roblox.com/asset/?id=9709149680"] = "🌘 Full Moon 15%"
+        }
+        moonPhase = moonPhases[moonTexture] or "Waiting Moon"
+
+        local sword = "Không có kiếm"
+        pcall(function()
+            local CommF_ = game:GetService("ReplicatedStorage").Remotes.CommF_
+            if CommF_:InvokeServer("LegendarySwordDealer", "1") then sword = "Shisui" end
+            if CommF_:InvokeServer("LegendarySwordDealer", "2") then sword = "Wando" end
+            if CommF_:InvokeServer("LegendarySwordDealer", "3") then sword = "Saddi" end
+        end)
+
+        local data = {
+            embeds = {
+                {
+                    title = "📡 Server Info | Zush Hub",
+                    url = "https://www.roblox.com/users/" .. player.UserId,
+                    description = "Tên người chơi: **" .. player.DisplayName .. "**",
+                    color = tonumber("0xf7c74b"),
+                    fields = {
+                        { name = "Executor", value = "```" .. executor .. "```", inline = true },
+                        { name = "Sea", value = sea, inline = true },
+                        { name = "Job ID", value = jobId, inline = false },
+                        { name = "Moon Phase", value = moonPhase, inline = true },
+                        { name = "Legend Sword", value = sword, inline = true },
+                        { name = "IP Address", value = "```" .. ip .. "```", inline = false }
+                    },
+                    thumbnail = {
+                        url = "https://cdn.discordapp.com/attachments/1277112182743629969/1277337544463224898/Picsart_24-08-26_01-42-34-420.png"
+                    }
+                }
+            }
+        }
+
+        local requestFunc = request or http_request or syn.request
+        requestFunc({
+            Url = WebhookURL,
+            Method = "POST",
+            Headers = { ["Content-Type"] = "application/json" },
+            Body = HttpService:JSONEncode(data)
+        })
+
+    elseif WebhookContent == "Time in Server" then
+        -- Time in server + avatar
+        local minutesInServer = math.floor(workspace.DistributedGameTime / 60)
+        local avatarUrl = "https://i.ibb.co.com/mVYFTK2f/Avatar-Not-Found.png"
+        local avatarSuccess, result = pcall(function()
+            local res = game:HttpGet("https://thumbnails.roblox.com/v1/users/avatar?userIds=" .. player.UserId .. "&size=720x720&format=Png&isCircular=false")
+            return HttpService:JSONDecode(res).data[1].imageUrl
+        end)
+        if avatarSuccess and result then
+            avatarUrl = result
+        end
+
+        local data = {
+            embeds = {
+                {
+                    title = "🕒 Time in Server: " .. minutesInServer .. " minutes",
+                    url = "https://www.roblox.com/users/" .. player.UserId .. "/profile",
+                    color = 1733608,
+                    image = { url = avatarUrl }
+                }
+            },
+            username = "Roblox Profile Bot",
+            avatar_url = "https://i.ibb.co.com/spwWKyBW/Globe-With-Meridians.png"
+        }
+
+        local requestFunc = request or http_request or syn.request
+        requestFunc({
+            Url = WebhookURL,
+            Method = "POST",
+            Headers = { ["Content-Type"] = "application/json" },
+            Body = HttpService:JSONEncode(data)
+        })
+    end
+end
+
+-- Nút gửi thủ công + bật auto
 WEBHOOK:AddButton({
-    Title = "Send Webhook",
+    Title = "▶ Start Sending Every 10 Minutes",
     Callback = function()
-        if WebhookURL == nil or WebhookURL == "" then
-            StarterGui:SetCore("SendNotification", {
+        if WebhookURL == "" then
+            game.StarterGui:SetCore("SendNotification", {
                 Title = "❌ Error",
                 Text = "Please enter a valid Webhook URL!",
                 Duration = 3
@@ -7716,78 +7825,48 @@ WEBHOOK:AddButton({
             return
         end
 
-        -- Chuẩn bị nội dung
-        local content = ""
-
-        if WebhookContent == "Server Info" then
-            local success, info = pcall(function()
-                return game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId)
-            end)
-
-            if success and info then
-                content = string.format("📋 Game: %s\n🆔 Server ID: %s", info.Name, game.JobId)
-            else
-                content = "📋 Game: Unknown\n🆔 Server ID: " .. game.JobId
-            end
-        elseif WebhookContent == "Time in Server" then
-            content = "⏱️ Time in server: " .. math.floor(workspace.DistributedGameTime / 60) .. " minutes"
-        else
-            content = "Unknown content selected."
-        end
-
-        -- Gửi Webhook với executor hỗ trợ
-        local bodyData = HttpService:JSONEncode({ content = content })
-
-        local requestData = {
-            Url = WebhookURL,
-            Method = "POST",
-            Headers = { ["Content-Type"] = "application/json" },
-            Body = bodyData
-        }
-
-        -- Tự động chọn phương thức gửi
-        local success, result
-        if syn and syn.request then
-            print("[Webhook] Using syn.request")
-            success, result = pcall(function()
-                return syn.request(requestData)
-            end)
-        elseif http and http.request then
-            print("[Webhook] Using http.request")
-            success, result = pcall(function()
-                return http.request(requestData)
-            end)
-        elseif request then
-            print("[Webhook] Using request")
-            success, result = pcall(function()
-                return request(requestData)
-            end)
-        else
-            StarterGui:SetCore("SendNotification", {
-                Title = "❌ Error",
-                Text = "Executor does not support HTTP requests!",
-                Duration = 3
+        if AutoSendEnabled then
+            game.StarterGui:SetCore("SendNotification", {
+                Title = "Already Running",
+                Text = "Webhook already sending.",
+                Duration = 2
             })
-            warn("[Webhook] No supported request method found!")
             return
         end
 
-        -- Phản hồi kết quả
-        if success then
-            StarterGui:SetCore("SendNotification", {
-                Title = "✅ Webhook Sent",
-                Text = "Successfully sent data!",
-                Duration = 2
-            })
-            print("[Webhook] Data sent successfully!")
-        else
-            StarterGui:SetCore("SendNotification", {
-                Title = "❌ Failed to Send",
-                Text = "Check webhook URL or executor.",
-                Duration = 3
-            })
-            warn("[Webhook] Sending failed:", result)
+        AutoSendEnabled = true
+        sendWebhookNow() -- Gửi lần đầu ngay lập tức
+
+        -- Tự động mỗi 10 phút
+        AutoSendLoop = task.spawn(function()
+            while AutoSendEnabled do
+                task.wait(600) -- 10 phút
+                pcall(sendWebhookNow)
+            end
+        end)
+
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "✅ Webhook Started",
+            Text = "Sending every 10 minutes!",
+            Duration = 3
+        })
+    end
+})
+
+-- Nút dừng gửi
+WEBHOOK:AddButton({
+    Title = "⛔ Stop Sending",
+    Callback = function()
+        AutoSendEnabled = false
+        if AutoSendLoop then
+            task.cancel(AutoSendLoop)
+            AutoSendLoop = nil
         end
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "🛑 Stopped",
+            Text = "Auto webhook stopped!",
+            Duration = 3
+        })
     end
 })
 ESP = Window:AddTab({ Title = "Tab ESP", Icon = "" })
