@@ -7651,37 +7651,61 @@ end)
 WEBHOOK:AddButton({
     Title = "Send Webhook",
     Callback = function()
-    if WebhookURL == "" then
+        if WebhookURL == "" then
+            game.StarterGui:SetCore("SendNotification", {
+                Title = "Error",
+                Text = "Please enter a valid Webhook URL!",
+                Duration = 2
+            })
+            return
+        end
+        
+        local content = ""
+        if WebhookContent == "Server Info" then
+            local success, productInfo = pcall(function()
+                return game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId)
+            end)
+            
+            if success then
+                content = "Game: " .. productInfo.Name .. "\nServer ID: " .. game.JobId
+            else
+                content = "Game: Unknown\nServer ID: " .. game.JobId
+            end
+        elseif WebhookContent == "Time in Server" then
+            content = "Time in server: " .. math.floor(workspace.DistributedGameTime / 60) .. " minutes"
+        end
+        
+        local HttpService = game:GetService("HttpService")
+        local requestData = {
+            Url = WebhookURL,
+            Method = "POST",
+            Headers = { ["Content-Type"] = "application/json" },
+            Body = HttpService:JSONEncode({ content = content })
+        }
+
+        -- Kiểm tra xem có quyền gửi request không
+        if syn and syn.request then
+            syn.request(requestData)
+        elseif http and http.request then
+            http.request(requestData)
+        elseif request then
+            request(requestData)
+        else
+            game.StarterGui:SetCore("SendNotification", {
+                Title = "Error",
+                Text = "HTTP Requests are not enabled!",
+                Duration = 2
+            })
+            return
+        end
+
         game.StarterGui:SetCore("SendNotification", {
-            Title = "Error",
-            Text = "Please enter a valid Webhook URL!",
+            Title = "Webhook Sent",
+            Text = "Successfully sent data to webhook!",
             Duration = 2
         })
-        return
     end
 })
-    
-    local content = ""
-    if WebhookContent == "Server Info" then
-        content = "Game: " .. game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name .. "\nServer ID: " .. game.JobId
-    elseif WebhookContent == "Time in Server" then
-        content = "Time in server: " .. math.floor(workspace.DistributedGameTime / 60) .. " minutes"
-    end
-    
-    local requestData = {
-        url = WebhookURL,
-        method = "POST",
-        headers = { ["Content-Type"] = "application/json" },
-        body = game:GetService("HttpService"):JSONEncode({ content = content })
-    }
-    
-    request(requestData)
-    game.StarterGui:SetCore("SendNotification", {
-        Title = "Webhook Sent",
-        Text = "Successfully sent data to webhook!",
-        Duration = 2
-    })
-end
 ESP = Window:AddTab({ Title = "Tab ESP", Icon = "" })
 local RunService = game:GetService("RunService")
 local player = game:GetService("Players").LocalPlayer
