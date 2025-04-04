@@ -7622,11 +7622,11 @@ spawn(function()
         end
     end
 end)
-Webhook = Window:AddTab({ Title = "Tab Webhook", Icon = "" })
+WEBHOOK = Window:AddTab({ Title = "Tab Webhook", Icon = "" })
 local WebhookURL = ""
 local WebhookContent = "Server Info"
 
-Webhook:AddInput("WebhookInput", {
+WEBHOOK:AddInput("WebhookInput", {
     Title = "Enter Webhook URL",
     Default = "",
     Placeholder = "Paste your webhook URL here",
@@ -7637,7 +7637,7 @@ Webhook:AddInput("WebhookInput", {
     end
 })
 
-local Dropdown = WebhookTab:AddDropdown("ContentDropdown", {
+local Dropdown = WEBHOOK:AddDropdown("ContentDropdown", {
     Title = "Select Content to Send",
     Values = {"Server Info", "Time in Server"},
     Multi = false,
@@ -7648,7 +7648,7 @@ Dropdown:OnChanged(function(Value)
     WebhookContent = Value
 end)
 
-Webhook:AddButton("Send Webhook", function()
+WEBHOOK:AddButton("Send Webhook", function()
     if WebhookURL == "" then
         game.StarterGui:SetCore("SendNotification", {
             Title = "Error",
@@ -7679,7 +7679,6 @@ Webhook:AddButton("Send Webhook", function()
         Duration = 2
     })
 end)
----- test --- 
 ESP = Window:AddTab({ Title = "Tab ESP", Icon = "" })
 local RunService = game:GetService("RunService")
 local player = game:GetService("Players").LocalPlayer
