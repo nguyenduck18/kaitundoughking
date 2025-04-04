@@ -7648,7 +7648,9 @@ Dropdown:OnChanged(function(Value)
     WebhookContent = Value
 end)
 
-WEBHOOK:AddButton("Send Webhook", function()
+WEBHOOK:AddButton({
+    Title = "Send Webhook",
+    Callback = function()
     if WebhookURL == "" then
         game.StarterGui:SetCore("SendNotification", {
             Title = "Error",
@@ -7657,6 +7659,7 @@ WEBHOOK:AddButton("Send Webhook", function()
         })
         return
     end
+})
     
     local content = ""
     if WebhookContent == "Server Info" then
@@ -7678,7 +7681,7 @@ WEBHOOK:AddButton("Send Webhook", function()
         Text = "Successfully sent data to webhook!",
         Duration = 2
     })
-end)
+end
 ESP = Window:AddTab({ Title = "Tab ESP", Icon = "" })
 local RunService = game:GetService("RunService")
 local player = game:GetService("Players").LocalPlayer
