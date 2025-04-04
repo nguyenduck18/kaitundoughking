@@ -1378,16 +1378,16 @@ function AttackNoCoolDown()
 end
 print("--[[Loaded UI]]--")
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
-Window = Fluent:CreateWindow({
-    Title = "Trẩu Roblox [FREEPREMIUM]",
+local Window = Fluent:CreateWindow({
+    Title = "Trẩu Roblox  [FREEPREMIUM]",
     SubTitle = "    https://discord.gg/WYNetPAD",
     TabWidth = 155,
     Size = UDim2.fromOffset(555, 320),
     Acrylic = false, 
-    Theme = "Ocean",
+    Theme = "Dark",
     MinimizeKey = Enum.KeyCode.LeftControl 
 })
-Shop = Window:AddTab({ Title = "Tab Shop", Icon = "" })
+local Shop = Window:AddTab({ Title = "Tab Shop", Icon = "" })
 sex = {
     "WildDares",
     "BossBuild",
@@ -1655,7 +1655,7 @@ Shop:AddButton({
         end
     end
 })
-Server = Window:AddTab({ Title = "Tab Status And Server", Icon = "" })
+local Server = Window:AddTab({ Title = "Tab Status And Server", Icon = "" })
 Time = Server:AddParagraph({
     Title = "Time Zone",
     Content = ""
@@ -2003,7 +2003,7 @@ function Hop()
     end
     Teleport()
 end
-LGa = Window:AddTab({ Title = "Tab Local Player", Icon = "" })
+local LGa = Window:AddTab({ Title = "Tab Local Player", Icon = "" })
 LGa:AddButton({
     Title = "Stop Tween",
     Callback = function()
@@ -2772,7 +2772,7 @@ spawn(function()
         end)
     end
 end)
-Main = Window:AddTab({ Title = "Tab Farming", Icon = "" })
+local Main = Window:AddTab({ Title = "Tab Farming", Icon = "" })
 Main:AddButton({
     Title = "Copy discord invite link",
     Callback = function()
@@ -3473,7 +3473,7 @@ Toggle = Main:AddToggle("Toggle", {Title = "Skill F", Default = false })
 Toggle:OnChanged(function(Value)
     getgenv().SkillF = Value
 end)
-Stack = Window:AddTab({ Title = "Tab Stack Farm", Icon = "" })
+local Stack = Window:AddTab({ Title = "Tab Stack Farm", Icon = "" })
 Dropdown = Stack:AddDropdown("DropdownFarm", {
     Title = "Select Melee",
     Values = {"Superhuman", "DeathStep", "Sharkman Karate", "Electric Claw", "Dragon Talon", "GodHuman"},
@@ -4349,7 +4349,7 @@ spawn(function()
         end
     end
 end)
-Other = Window:AddTab({ Title = "Tab Farming Other", Icon = "" })
+local Other = Window:AddTab({ Title = "Tab Farming Other", Icon = "" })
 Other:AddParagraph({
         Title = "Quest Dragon",
         Content = ""
@@ -4934,7 +4934,7 @@ spawn(function()
         end
     end
 end)
-Blog = Window:AddTab({ Title = "Tab Fruit And Raid", Icon = "" })
+local Blog = Window:AddTab({ Title = "Tab Fruit And Raid", Icon = "" })
 Toggle = Blog:AddToggle("Toggle", {Title = "Random Devil Fruit", Default = false })
 Toggle:OnChanged(function(Value)
     getgenv().RandomFruit = Value
@@ -5238,7 +5238,7 @@ Blog:AddButton({
     end
 })
 end
-Sea = Window:AddTab({ Title = "Tab Sea Event", Icon = "" })
+local Sea = Window:AddTab({ Title = "Tab Sea Event", Icon = "" })
 SetSpeedBoatSlider = Sea:AddSlider("SliderSpeedBoat", {
 	Title = "Ship Speed",
 	Default = 300,
@@ -6139,7 +6139,7 @@ task.spawn(function()
         end
     end
 end)
-ChooseSkill = Window:AddTab({ Title = "Tab Setting Select Skill", Icon = "" })
+local ChooseSkill = Window:AddTab({ Title = "Tab Setting Select Skill", Icon = "" })
 ChooseSkill:AddParagraph({
     Title = "Setting Sea Event",
     Content = string.rep("-", 21)
@@ -6324,7 +6324,7 @@ task.spawn(function()
         end)
     end
 end)
-Volcanic = Window:AddTab({ Title = "Tab Volcanic Event", Icon = "" })
+local Volcanic = Window:AddTab({ Title = "Tab Volcanic Event", Icon = "" })
 Volcanic:AddButton({
 	Title = "Destroy Lava In Prehistoric Island",
 	Callback = function()
@@ -6574,7 +6574,7 @@ Toggle = Volcanic:AddToggle("Toggle", {
 Toggle:OnChanged(function(v404)
     getgenv().UseGun = v404
 end)
-Race = Window:AddTab({ Title = "Tab Upgrade Race", Icon = "" })
+local Race = Window:AddTab({ Title = "Tab Upgrade Race", Icon = "" })
 Race:AddParagraph({
     Title = "Race Draco",
     Content = string.rep("-", 21)
@@ -7188,7 +7188,7 @@ spawn(function()
         end
     end
 end)
-Get = Window:AddTab({ Title = "Tab Get Items And Buy", Icon = "" })
+local Get = Window:AddTab({ Title = "Tab Get Items And Buy", Icon = "" })
 Toggle = Get:AddToggle("Toggle", {Title = "Auto Trade Bone", Default = false})
 Toggle:OnChanged(function(Value)
     getgenv().AutoTradeBone = Value
@@ -7678,22 +7678,32 @@ local player = Players.LocalPlayer
 local WebhookURL = ""
 local WebhookContent = "Server Info"
 local AutoSendEnabled = false
-local AutoSendLoop
+local AutoSendLoop = nil
 
-local WEBHOOK = Window:AddTab({ Title = "Webhook", Icon = "rbxassetid://6034996695" })
+-- Tạo tab webhook an toàn
+local success, WEBHOOK = pcall(function()
+    return Window:AddTab({
+        Title = "Tab Webhook",
+        Icon = ""
+    })
+end)
 
+if not success or not WEBHOOK then
+    warn("❌ Không thể tạo tab Webhook! Kiểm tra Window có tồn tại không.")
+    return
+end
+
+-- Nhập webhook URL
 WEBHOOK:AddInput("WebhookInput", {
     Title = "Enter Webhook URL",
-    Default = "",
     Placeholder = "Paste your webhook URL here",
-    Numeric = false,
-    Finished = true,
     Callback = function(value)
         WebhookURL = value
+        print("[Webhook] URL set to:", WebhookURL)
     end
 })
 
--- Dropdown nội dung
+-- Dropdown chọn chế độ gửi
 local dropdown = WEBHOOK:AddDropdown("ContentDropdown", {
     Title = "Select Webhook Mode",
     Values = { "Server Info", "Time in Server" },
@@ -7703,9 +7713,10 @@ local dropdown = WEBHOOK:AddDropdown("ContentDropdown", {
 
 dropdown:OnChanged(function(value)
     WebhookContent = value
+    print("[Webhook] Mode selected:", WebhookContent)
 end)
 
--- Tạo function gửi webhook theo chế độ
+-- Hàm gửi webhook
 local function sendWebhookNow()
     if WebhookURL == "" then
         game.StarterGui:SetCore("SendNotification", {
@@ -7716,20 +7727,35 @@ local function sendWebhookNow()
         return
     end
 
+    local requestFunc = request or http_request or syn and syn.request
+    if not requestFunc then
+        warn("[Webhook] ❌ Executor không hỗ trợ HTTP request!")
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "❌ Error",
+            Text = "Executor của bạn không hỗ trợ HTTP request!",
+            Duration = 3
+        })
+        return
+    end
+
     if WebhookContent == "Server Info" then
-        -- Server Info (gần giống bạn gửi ở trên)
-        local ip = tostring(game:HttpGet("https://api.ipify.org", true))
-        local executor = identifyexecutor()
+        local ip = "Unavailable"
+        pcall(function()
+            ip = game:HttpGet("https://api.ipify.org", true)
+        end)
+
+        local executor = identifyexecutor() or "Unknown"
         local placeId = game.PlaceId
         local jobId = game.JobId
+
         local seaMap = {
             [2753915549] = "Sea 1",
             [4442272183] = "Sea 2",
             [7449423635] = "Sea 3"
         }
         local sea = seaMap[placeId] or "Unknown Sea"
+
         local moonTexture = game:GetService("Lighting").Sky.MoonTextureId
-        local moonPhase = "Unknown"
         local moonPhases = {
             ["http://www.roblox.com/asset/?id=9709149431"] = "🌕 Full Moon 100%",
             ["http://www.roblox.com/asset/?id=9709149052"] = "🌖 Full Moon 75%",
@@ -7737,7 +7763,7 @@ local function sendWebhookNow()
             ["http://www.roblox.com/asset/?id=9709150401"] = "🌘 Full Moon 25%",
             ["http://www.roblox.com/asset/?id=9709149680"] = "🌘 Full Moon 15%"
         }
-        moonPhase = moonPhases[moonTexture] or "Waiting Moon"
+        local moonPhase = moonPhases[moonTexture] or "Waiting Moon"
 
         local sword = "Không có kiếm"
         pcall(function()
@@ -7752,7 +7778,7 @@ local function sendWebhookNow()
                 {
                     title = "📡 Server Info | Zush Hub",
                     url = "https://www.roblox.com/users/" .. player.UserId,
-                    description = "Tên người chơi: **" .. player.DisplayName .. "**",
+                    description = "**Tên người chơi:** " .. player.DisplayName,
                     color = tonumber("0xf7c74b"),
                     fields = {
                         { name = "Executor", value = "```" .. executor .. "```", inline = true },
@@ -7769,7 +7795,6 @@ local function sendWebhookNow()
             }
         }
 
-        local requestFunc = request or http_request or syn.request
         requestFunc({
             Url = WebhookURL,
             Method = "POST",
@@ -7778,16 +7803,13 @@ local function sendWebhookNow()
         })
 
     elseif WebhookContent == "Time in Server" then
-        -- Time in server + avatar
         local minutesInServer = math.floor(workspace.DistributedGameTime / 60)
         local avatarUrl = "https://i.ibb.co.com/mVYFTK2f/Avatar-Not-Found.png"
-        local avatarSuccess, result = pcall(function()
+
+        pcall(function()
             local res = game:HttpGet("https://thumbnails.roblox.com/v1/users/avatar?userIds=" .. player.UserId .. "&size=720x720&format=Png&isCircular=false")
-            return HttpService:JSONDecode(res).data[1].imageUrl
+            avatarUrl = HttpService:JSONDecode(res).data[1].imageUrl
         end)
-        if avatarSuccess and result then
-            avatarUrl = result
-        end
 
         local data = {
             embeds = {
@@ -7802,7 +7824,6 @@ local function sendWebhookNow()
             avatar_url = "https://i.ibb.co.com/spwWKyBW/Globe-With-Meridians.png"
         }
 
-        local requestFunc = request or http_request or syn.request
         requestFunc({
             Url = WebhookURL,
             Method = "POST",
@@ -7812,7 +7833,7 @@ local function sendWebhookNow()
     end
 end
 
--- Nút gửi thủ công + bật auto
+-- Bắt đầu gửi định kỳ
 WEBHOOK:AddButton({
     Title = "▶ Start Sending Every 10 Minutes",
     Callback = function()
@@ -7827,17 +7848,16 @@ WEBHOOK:AddButton({
 
         if AutoSendEnabled then
             game.StarterGui:SetCore("SendNotification", {
-                Title = "Already Running",
-                Text = "Webhook already sending.",
-                Duration = 2
+                Title = "⚠️ Already Running",
+                Text = "Webhook is already running!",
+                Duration = 3
             })
             return
         end
 
         AutoSendEnabled = true
-        sendWebhookNow() -- Gửi lần đầu ngay lập tức
+        sendWebhookNow()
 
-        -- Tự động mỗi 10 phút
         AutoSendLoop = task.spawn(function()
             while AutoSendEnabled do
                 task.wait(600) -- 10 phút
@@ -7869,7 +7889,7 @@ WEBHOOK:AddButton({
         })
     end
 })
-ESP = Window:AddTab({ Title = "Tab ESP", Icon = "" })
+local ESP = Window:AddTab({ Title = "Tab ESP", Icon = "" })
 local RunService = game:GetService("RunService")
 local player = game:GetService("Players").LocalPlayer
 local IslandESP = false
@@ -8082,7 +8102,7 @@ Toggle:OnChanged(function(Value)
         end
     end
 end)
-PVP = Window:AddTab({ Title = "Tab PVP", Icon = "" })
+local PVP = Window:AddTab({ Title = "Tab PVP", Icon = "" })
 local Playerslist = {}
 for i, player in ipairs(game.Players:GetPlayers()) do
     Playerslist[i] = player.Name
