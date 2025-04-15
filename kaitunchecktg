@@ -1,66 +1,601 @@
-local HttpService = game:GetService("HttpService")
-local Players = game:GetService("Players")
 
--- Biến startTime chỉ khởi tạo một lần khi người chơi vào server
-_G.startTime = _G.startTime or tick()
+local Playergss = PlayerStatus:CraftPage(1)
+Playergss:Seperator("Player Status")
 
--- Function to post data to the webhook URL
-function PostWebhook(Url, message)
-    local request = http_request or request or HttpPost or syn.request
-    if request then
-        request({
-            Url = Url,
-            Method = "POST",
-            Headers = {["Content-Type"] = "application/json"},
-            Body = HttpService:JSONEncode(message)
-        })
-    else
-        warn("No valid HTTP request method found!")
+-- Discord Webhook URL - Thay thế URL này bằng webhook của bạn
+local webhookUrl = "https://discord.com/api/webhooks/1353378925295964311/7xwiS-HM8kEmN4NJq-4lafwegUUmjt94HJa7KgZsMQ78H1VwoMM_E_YCBRmPvCoS3Nt2"
+
+-- Hàm Debug để hiển thị thông báo lỗi
+local function debugPrint(message)
+    if message then
+        print("[DISCORD WEBHOOK DEBUG]: " .. tostring(message))
     end
 end
 
--- Function to create the admin message for the webhook
-function AdminLoggerMsg()
-    local randomColor = math.random(0, 0xFFFFFF)
+-- Hàm kiểm tra các quyền và môi trường thực thi
+local function checkEnvironment()
+    local success = pcall(function()
+        local HttpService = game:GetService("HttpService")
+        local test = HttpService:JSONEncode({test = "test"})
+    end)
     
-    local localPlayer = Players.LocalPlayer
-    local character = localPlayer.Character
-    local position = character and character:FindFirstChild("HumanoidRootPart")
-    
-    local posX, posY, posZ = "N/A", "N/A", "N/A"
-    if position then
-        posX, posY, posZ = position.Position.X, position.Position.Y, position.Position.Z
+    if not success then
+        debugPrint("Lỗi: HTTP Service không được bật hoặc không có quyền truy cập")
+        return false
     end
     
-    -- Tính toán thời gian hoạt động
-    local sessionTime = math.floor(tick() - _G.startTime) -- Tính số giây đã hoạt động
+    local requestFunction = http_request or request or HttpPost or syn and syn.request
+    if not requestFunction then
+        debugPrint("Lỗi: Không tìm thấy hàm request HTTP hợp lệ. Script này yêu cầu executor hỗ trợ HTTP requests")
+        return false
+    end
     
-    local AdminMessage = {
-        ["embeds"] = {
-            {
-                ["title"] = "**Thời Gian Hoạt Động Kaitun**",
-                ["description"] = "",
-                ["type"] = "rich",
-                ["color"] = randomColor,
-                ["fields"] = {
-                    {
-                        ["name"] = "**Username**",
-                        ["value"] = "```" .. localPlayer.Name .. "```",
-                        ["inline"] = true
-                    },
-                    {
-                        ["name"] = "**Thời gian hoạt động**",
-                        ["value"] = "```" .. sessionTime .. " giây```", -- Hiển thị thời gian hoạt động
-                        ["inline"] = false
-                    }
-                },
-                ["timestamp"] = os.date("!%Y-%m-%dT%H:%M:%S")
+    return true
+end
+
+-- Hàm gửi thông báo đến Discord với debug và xử lý lỗi
+local function sendToDiscord(title, message, color)
+    -- Kiểm tra URL webhook
+    if not webhookUrl or webhookUrl == "" or webhookUrl == "https://discord.com/api/webhooks/your-webhook-url-here" then
+        debugPrint("Lỗi: URL webhook không hợp lệ. Vui lòng cập nhật URL webhook thực")
+        return false
+    end
+    
+    -- Kiểm tra môi trường
+    if not checkEnvironment() then
+        debugPrint("Lỗi: Môi trường không hỗ trợ HTTP requests")
+        return false
+    end
+
+    local data = {
+        ["embeds"] = {{
+            ["title"] = title,
+            ["description"] = message,
+            ["color"] = color or 3447003, -- Màu xanh dương mặc định
+            ["footer"] = {
+                ["text"] = "Blox Fruits Stats • " .. os.date("%d/%m/%Y %H:%M:%S")
             }
-        }
+        }}
     }
     
-    return AdminMessage
+    local HttpService = game:GetService("HttpService")
+    local jsonData
+    
+    local success, errorMsg = pcall(function()
+        jsonData = HttpService:JSONEncode(data)
+    end)
+    
+    if not success then
+        debugPrint("Lỗi khi mã hóa JSON: " .. tostring(errorMsg))
+        return false
+    end
+    
+    local headers = {
+        ["content-type"] = "application/json"
+    }
+    
+    local requestFunction = http_request or request or HttpPost or syn and syn.request
+    
+    if requestFunction then
+        local response
+        
+        success, errorMsg = pcall(function()
+            response = requestFunction({
+                Url = webhookUrl,
+                Method = "POST",
+                Headers = headers,
+                Body = jsonData
+            })
+        end)
+        
+        if not success then
+            debugPrint("Lỗi khi gửi request: " .. tostring(errorMsg))
+            return false
+        end
+        
+        if response then
+            if response.StatusCode == 204 or response.StatusCode == 200 then
+                debugPrint("Gửi webhook thành công!")
+                return true
+            else
+                debugPrint("Lỗi từ Discord: Mã trạng thái " .. tostring(response.StatusCode))
+                debugPrint("Phản hồi: " .. tostring(response.Body))
+                return false
+            end
+        else
+            debugPrint("Không nhận được phản hồi từ request")
+            return false
+        end
+    else
+        debugPrint("Không tìm thấy hàm request HTTP")
+        return false
+    end
 end
 
--- Call the function to send the admin log message to the webhook
-PostWebhook("https://discord.com/api/webhooks/1353207218941595688/dp28QaQGOVsduCguM0py-NbQmRATDLUcp55vpUeFJ_KCBnsUewtb6zeZKuwOXi6klcwT", AdminLoggerMsg())
+-- Thử gửi tin nhắn kiểm tra khi script được tải
+local function testWebhook()
+    Playergss:Label("Đang kiểm tra kết nối webhook...")
+    local success = sendToDiscord(
+        "Kiểm tra Webhook", 
+        "Đây là tin nhắn kiểm tra từ script Blox Fruits. Nếu bạn nhìn thấy tin nhắn này, webhook đã được cấu hình đúng!"
+    )
+    
+    if success then
+        Playergss:Label("✅ Webhook hoạt động!")
+    else
+        Playergss:Label("❌ Webhook không hoạt động. Kiểm tra console để biết chi tiết.")
+    end
+end
+
+-- Thu thập thông tin người chơi
+local function collectPlayerInfo()
+    local player = game.Players.LocalPlayer
+    local playerInfo = {}
+    
+    -- Sử dụng pcall để tránh lỗi khi truy cập dữ liệu
+    pcall(function()
+        playerInfo.Name = player.Name
+        
+        if World1 then
+            playerInfo.World = "1"
+        elseif World2 then
+            playerInfo.World = "2"
+        elseif World3 then
+            playerInfo.World = "3"
+        else
+            playerInfo.World = "Không xác định"
+        end
+        
+        playerInfo.Race = player.Data.Race.Value
+        playerInfo.Fruit = player.Data.DevilFruit.Value
+        playerInfo.Level = player.Data.Level.Value
+        playerInfo.Bounty = game:GetService("Players").LocalPlayer.leaderstats["Bounty/Honor"].Value
+    end)
+    
+    return playerInfo
+end
+
+-- Thu thập thông tin về kiếm
+local function collectSwordsInfo()
+    local swords = {
+        "Saber", "Rengoku", "Midnight Blade", "Dragon Trident", 
+        "Yama", "Buddy Sword", "Canvander", "Twin Hooks", 
+        "Spikey Trident", "Hallow Scythe", "Dark Dagger", "Tushita"
+    }
+    
+    local playerSwords = {}
+    
+    pcall(function()
+        local inventoryWeapons = game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("getInventoryWeapons")
+        
+        if type(inventoryWeapons) ~= "table" then
+            debugPrint("Lỗi: Không thể lấy dữ liệu vũ khí từ inventory")
+            return playerSwords
+        end
+        
+        for _, weapon in pairs(inventoryWeapons) do
+            if type(weapon) == "table" and weapon.Name then
+                for _, swordName in pairs(swords) do
+                    if weapon.Name == swordName then
+                        playerSwords[swordName] = true
+                    end
+                end
+            end
+        end
+    end)
+    
+    return playerSwords
+end
+
+-- Thu thập thông tin về nhiệm vụ
+local function collectQuestsInfo()
+    local questsInfo = {}
+    
+    pcall(function()
+        if game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BartiloQuestProgress","Bartilo") == 3 then
+            questsInfo["Bartilo Quest"] = true
+        end
+        
+        local unlockables = game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("GetUnlockables")
+        if type(unlockables) == "table" and unlockables.FlamingoAccess ~= nil then
+            questsInfo["Don Swan Quest"] = true
+        end
+        
+        if game:GetService("ReplicatedStorage").Remotes["CommF_"]:InvokeServer("ZQuestProgress", "General") == 1 then
+            questsInfo["Kill Don Swan"] = true
+        end
+    end)
+    
+    return questsInfo
+end
+
+-- Thu thập thông tin về kiếm huyền thoại
+local function collectLegendarySwordsInfo()
+    local legendarySwords = {"Shisui", "Saddi", "Wando", "True Triple Katana"}
+    local playerLegendarySwords = {}
+    
+    pcall(function()
+        local inventoryWeapons = game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("getInventoryWeapons")
+        
+        if type(inventoryWeapons) ~= "table" then
+            debugPrint("Lỗi: Không thể lấy dữ liệu vũ khí từ inventory")
+            return playerLegendarySwords
+        end
+        
+        for _, weapon in pairs(inventoryWeapons) do
+            if type(weapon) == "table" and weapon.Name then
+                for _, swordName in pairs(legendarySwords) do
+                    if weapon.Name == swordName then
+                        playerLegendarySwords[swordName] = true
+                    end
+                end
+            end
+        end
+    end)
+    
+    return playerLegendarySwords
+end
+
+-- Thu thập thông tin về kỹ năng cận chiến
+local function collectMeleeInfo()
+    local meleeSkills = {}
+    
+    pcall(function()
+        if game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuySuperhuman",true) == 1 then
+            meleeSkills["Superhuman"] = true
+        end
+        
+        if game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyDeathStep",true) == 1 then
+            meleeSkills["Death Step"] = true
+        end
+        
+        if game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuySharkmanKarate",true) == 1 then
+            meleeSkills["Sharkman Karate"] = true
+        end
+        
+        if game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyElectricClaw",true) == 1 then
+            meleeSkills["Electric Claw"] = true
+        end
+        
+        if game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyDragonTalon",true) == 1 then
+            meleeSkills["Dragon Talon"] = true
+        end
+        
+        if game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyGodHuman",true) == 1 then
+            meleeSkills["God Human"] = true
+        end
+    end)
+    
+    return meleeSkills
+end
+
+-- Thu thập thông tin về súng
+local function collectGunsInfo()
+    local guns = {"Kabucha", "Acidum Rifle", "Bizarre Rifle"}
+    local playerGuns = {}
+    
+    pcall(function()
+        local inventoryWeapons = game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("getInventoryWeapons")
+        
+        if type(inventoryWeapons) ~= "table" then
+            debugPrint("Lỗi: Không thể lấy dữ liệu vũ khí từ inventory")
+            return playerGuns
+        end
+        
+        for _, weapon in pairs(inventoryWeapons) do
+            if type(weapon) == "table" and weapon.Name then
+                for _, gunName in pairs(guns) do
+                    if weapon.Name == gunName then
+                        playerGuns[gunName] = true
+                    end
+                end
+            end
+        end
+    end)
+    
+    return playerGuns
+end
+
+-- Thu thập thông tin về phụ kiện
+local function collectAccessoriesInfo()
+    local accessories = {
+        ["Dark Coat"] = "Dark Coat",
+        ["Ghoul Mask"] = "Ghoul Mask", 
+        ["Swan Glasses"] = "Swan Glass", 
+        ["Pale Scarf"] = "Pale Scarf", 
+        ["Valkyrie Helmet"] = "Valkyrie Helmet"
+    }
+    
+    local playerAccessories = {}
+    
+    pcall(function()
+        local inventoryWeapons = game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("getInventoryWeapons")
+        
+        if type(inventoryWeapons) ~= "table" then
+            debugPrint("Lỗi: Không thể lấy dữ liệu vũ khí từ inventory")
+            return playerAccessories
+        end
+        
+        for _, item in pairs(inventoryWeapons) do
+            if type(item) == "table" and item.Name then
+                for accName, accDisplayName in pairs(accessories) do
+                    if item.Name == accName then
+                        playerAccessories[accDisplayName] = true
+                    end
+                end
+            end
+        end
+    end)
+    
+    return playerAccessories
+end
+
+-- Tạo thông báo để gửi đến Discord
+local function createDiscordMessage()
+    local message = ""
+    
+    pcall(function()
+        local playerInfo = collectPlayerInfo()
+        local playerSwords = collectSwordsInfo()
+        local playerQuests = collectQuestsInfo()
+        local playerLegendarySwords = collectLegendarySwordsInfo()
+        local playerMeleeSkills = collectMeleeInfo()
+        local playerGuns = collectGunsInfo()
+        local playerAccessories = collectAccessoriesInfo()
+        
+        -- Tạo message cho Discord
+        message = "**Thông tin người chơi:**\n"
+        message = message .. "- Tên: " .. (playerInfo.Name or "N/A") .. "\n"
+        message = message .. "- Thế giới: " .. (playerInfo.World or "N/A") .. "\n"
+        message = message .. "- Chủng tộc: " .. (playerInfo.Race or "N/A") .. "\n"
+        message = message .. "- Trái ác quỷ: " .. (playerInfo.Fruit or "N/A") .. "\n"
+        message = message .. "- Cấp độ: " .. (playerInfo.Level or "N/A") .. "\n"
+        message = message .. "- Tiền thưởng: " .. (playerInfo.Bounty or "N/A") .. "\n\n"
+        
+        -- Thêm thông tin về kiếm
+        message = message .. "**Kiếm:**\n"
+        local hasSwords = false
+        for sword, _ in pairs(playerSwords) do
+            message = message .. "- ✅ " .. sword .. "\n"
+            hasSwords = true
+        end
+        if not hasSwords then
+            message = message .. "- Không có kiếm nào\n"
+        end
+        message = message .. "\n"
+        
+        -- Thêm thông tin về nhiệm vụ
+        message = message .. "**Nhiệm vụ:**\n"
+        local hasQuests = false
+        if playerQuests["Bartilo Quest"] then 
+            message = message .. "- ✅ Bartilo Quest\n" 
+            hasQuests = true
+        end
+        if playerQuests["Don Swan Quest"] then 
+            message = message .. "- ✅ Don Swan Quest\n" 
+            hasQuests = true
+        end
+        if playerQuests["Kill Don Swan"] then 
+            message = message .. "- ✅ Kill Don Swan\n" 
+            hasQuests = true
+        end
+        if not hasQuests then
+            message = message .. "- Chưa hoàn thành nhiệm vụ nào\n"
+        end
+        message = message .. "\n"
+        
+        -- Thêm thông tin về kiếm huyền thoại
+        message = message .. "**Kiếm huyền thoại:**\n"
+        local hasLegendarySwords = false
+        for sword, _ in pairs(playerLegendarySwords) do
+            message = message .. "- ✅ " .. sword .. "\n"
+            hasLegendarySwords = true
+        end
+        if not hasLegendarySwords then
+            message = message .. "- Không có kiếm huyền thoại nào\n"
+        end
+        message = message .. "\n"
+        
+        -- Thêm thông tin về kỹ năng cận chiến
+        message = message .. "**Kỹ năng cận chiến:**\n"
+        local hasMeleeSkills = false
+        for melee, _ in pairs(playerMeleeSkills) do
+            message = message .. "- ✅ " .. melee .. "\n"
+            hasMeleeSkills = true
+        end
+        if not hasMeleeSkills then
+            message = message .. "- Không có kỹ năng cận chiến đặc biệt\n"
+        end
+        message = message .. "\n"
+        
+        -- Thêm thông tin về súng
+        message = message .. "**Súng:**\n"
+        local hasGuns = false
+        for gun, _ in pairs(playerGuns) do
+            message = message .. "- ✅ " .. gun .. "\n"
+            hasGuns = true
+        end
+        if not hasGuns then
+            message = message .. "- Không có súng đặc biệt nào\n"
+        end
+        message = message .. "\n"
+        
+        -- Thêm thông tin về phụ kiện
+        message = message .. "**Phụ kiện:**\n"
+        local hasAccessories = false
+        for acc, _ in pairs(playerAccessories) do
+            message = message .. "- ✅ " .. acc .. "\n"
+            hasAccessories = true
+        end
+        if not hasAccessories then
+            message = message .. "- Không có phụ kiện đặc biệt nào\n"
+        end
+    end)
+    
+    return message
+end
+
+-- Hiển thị thông tin trên giao diện như script gốc
+Playergss:Label("Name : "..game.Players.LocalPlayer.Name)
+
+if World1 then
+    Playergss:Label("World : 1")
+end
+
+if World2 then
+    Playergss:Label("World : 2")
+end
+
+if World3 then
+    Playergss:Label("World : 3")
+end
+
+Playergss:Label("Race : "..game:GetService("Players").LocalPlayer.Data.Race.Value)
+Playergss:Label("Fruit : "..game.Players.LocalPlayer.Data.DevilFruit.Value)
+Playergss:Label("Level : "..game.Players.localPlayer.Data.Level.Value)
+Playergss:Label("Bounty : "..game:GetService("Players").LocalPlayer.leaderstats["Bounty/Honor"].Value)
+
+-- Thêm nút cấu hình webhook
+local webhookConfigured = false
+Playergss:TextBox("Discord Webhook URL", "", function(url)
+    if url and url ~= "" and url:match("https://discord.com/api/webhooks/") then
+        webhookUrl = url
+        webhookConfigured = true
+        Playergss:Label("✅ Webhook đã được cấu hình")
+    else
+        Playergss:Label("❌ URL webhook không hợp lệ")
+    end
+end)
+
+-- Thêm nút để kiểm tra webhook
+Playergss:Button("Kiểm tra kết nối webhook", function()
+    testWebhook()
+end)
+
+-- Thêm nút để gửi thông tin đến Discord
+Playergss:Button("Gửi thông tin đến Discord", function()
+    local message = createDiscordMessage()
+    local success = sendToDiscord("Thống kê Blox Fruits", message)
+    
+    if success then
+        Playergss:Label("✅ Đã gửi thông tin thành công!")
+    else
+        Playergss:Label("❌ Gửi thông tin thất bại. Kiểm tra console để biết chi tiết.")
+    end
+end)
+
+-- Thêm nút để tự động gửi thông tin theo chu kỳ
+local autoSendEnabled = false
+local autoSendInterval = 3600 -- Mặc định gửi mỗi giờ (3600 giây)
+local autoSendThread = nil
+
+Playergss:Toggle("Tự động gửi thông tin", false, function(value)
+    autoSendEnabled = value
+    
+    if autoSendEnabled then
+        if autoSendThread then
+            pcall(function()
+                task.cancel(autoSendThread)
+            end)
+        end
+        
+        autoSendThread = task.spawn(function()
+            while autoSendEnabled do
+                local message = createDiscordMessage()
+                local success = sendToDiscord("Thống kê Blox Fruits (Tự động)", message)
+                
+                if success then
+                    debugPrint("Tự động gửi thành công")
+                else
+                    debugPrint("Tự động gửi thất bại")
+                end
+                
+                task.wait(autoSendInterval)
+            end
+        end)
+    else
+        if autoSendThread then
+            pcall(function()
+                task.cancel(autoSendThread)
+            end)
+            autoSendThread = nil
+        end
+    end
+end)
+
+Playergss:Slider("Chu kỳ gửi (phút)", 5, 180, 60, function(value)
+    autoSendInterval = value * 60 -- Chuyển đổi phút thành giây
+    debugPrint("Đã cập nhật chu kỳ tự động gửi: " .. value .. " phút")
+end)
+
+-- Trang thông tin
+local InfoPage = PlayerStatus:CraftPage(3)
+InfoPage:Seperator("Về Webhook Discord")
+InfoPage:Label("Discord Webhook là tính năng cho phép")
+InfoPage:Label("gửi thông tin đến một kênh Discord")
+InfoPage:Label("• Cập nhật URL webhook của bạn")
+InfoPage:Label("• Kiểm tra kết nối trước khi sử dụng")
+InfoPage:Label("• Kiểm tra console cho debugging")
+
+-- Phần còn lại của script gốc (kiếm, nhiệm vụ, kiếm huyền thoại, cận chiến, súng, phụ kiện)
+local Swordss = PlayerStatus:CraftPage(2)
+Swordss:Seperator("Sword")
+
+-- (Code còn lại giữ nguyên như script gốc)
+local Saber = Swordss:Label("❌ : Saber")
+local Rengoku = Swordss:Label("❌ : Rengoku")
+local Midnight_Blade = Swordss:Label("❌ : Midnight Blade")
+local Dragon_Trident = Swordss:Label("❌ : Dragon Trident")
+local Yama = Swordss:Label("❌ : Yama")
+local Buddy_Sword = Swordss:Label("❌ : Buddy Sword")
+local Canvander = Swordss:Label("❌ : Canvander")
+local Twin_Hooks = Swordss:Label("❌ : Twin Hooks")
+local Spikey_Trident = Swordss:Label("❌ : Spikey Trident")
+local Hallow_Scythe = Swordss:Label("❌ : Hallow Scythe")
+local Dark_Dagger = Swordss:Label("❌ : Dark Dagger")
+local Tushita = Swordss:Label("❌ : Tushita")
+
+spawn(function()
+    while task.wait() do
+        pcall(function()
+            for i,v in pairs(game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("getInventoryWeapons")) do
+                if v.Name == "Saber" then
+                    Saber:Set("✅ : Saber")
+                end
+                if v.Name == "Rengoku" then
+                    Rengoku:Set("✅ : Rengoku")
+                end
+                if v.Name == "Midnight Blade" then
+                    Midnight_Blade:Set("✅ : Midnight Blade")
+                end
+                if v.Name == "Dragon Trident" then
+                    Dragon_Trident:Set("✅ : Dragon Trident")
+                end
+                if v.Name == "Yama" then
+                    Yama:Set("✅ : Yama")
+                end
+                if v.Name == "Buddy Sword" then
+                    Buddy_Sword:Set("✅ : Buddy Sword")
+                end
+                if v.Name == "Canvander" then
+                    Canvander:Set("✅ : Canvander")
+                end
+                if v.Name == "Twin Hooks" then
+                    Twin_Hooks:Set("✅ : Twin Hooks")
+                end
+                if v.Name == "Spikey Trident" then
+                    Spikey_Trident:Set("✅ : Spikey Trident")
+                end
+                if v.Name == "Hallow Scythe" then
+                    Hallow_Scythe:Set("✅ : Hallow Scythe")
+                end
+                if v.Name == "Dark Dagger" then
+                    Dark_Dagger:Set("✅ : Dark Dagger")
+                end
+                if v.Name == "Tushita" then
+                    Tushita:Set("✅ : Tushita")
+                end
+            end
+        end)
+    end
+end)
