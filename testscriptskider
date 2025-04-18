@@ -1,37 +1,40 @@
+-- ✅ Đảm bảo game đã load xong
 repeat wait() until game:IsLoaded() and game.Players.LocalPlayer
 
--- 📦 Dịch base64
-local function b64decode(str)
-    return syn and syn.crypt.base64.decode(str) or game:GetService("HttpService"):Base64Decode(str)
-end
-
--- 📌 Domain thật đã encode base64: "shopgiare.cfd" → c2hvcGdpYXJlLmNmZA==
-local encodedDomain = "c2hvcGdpYXJlLmNmZA=="
-local domain = b64decode(encodedDomain)
+-- 🔑 Lấy key và hwid từ getgenv() hoặc user ID Roblox
+local Players = game:GetService("Players")
+local HttpService = game:GetService("HttpService")
 
 local key = getgenv().Key or ""
-local hwid = gethwid and gethwid() or tostring(game.Players.LocalPlayer.UserId)
+local hwid = gethwid and gethwid() or tostring(Players.LocalPlayer.UserId)
 
+-- 🌐 Domain để trực tiếp – không encode
+local domain = "shopgiare.cfd"
 local url = "https://" .. domain .. "/api/checkhwid.php?key=" .. key .. "&hwid=" .. hwid
+
+-- 🌐 Gửi request xác thực key
 local success, response = pcall(function()
-    return game:GetService("HttpService"):JSONDecode(game:HttpGet(url))
+    return HttpService:JSONDecode(game:HttpGet(url))
 end)
 
+-- ❌ Nếu lỗi thì kick
 if not success then
-    game.Players.LocalPlayer:Kick("Lỗi kết nối. Liên hệ admin.")
+    Players.LocalPlayer:Kick("Không thể kết nối tới server. Liên hệ admin.")
     return
 end
 
+-- ❌ Nếu key không hợp lệ thì cũng kick
 if response.status ~= "true" then
-    game.Players.LocalPlayer:Kick("Key không hợp lệ hoặc HWID sai.")
+    Players.LocalPlayer:Kick("Key hoặc HWID không hợp lệ.")
     return
 end
 
-print("✔ Key hợp lệ")
+-- ✅ Nếu key hợp lệ
+print("✔ Key hợp lệ, script tiếp tục chạy...")
 
 game.StarterGui:SetCore("SendNotification", {
     Title = "Zush Hub",
-    Text = "Đăng nhập thành công",
+    Text = "Xác minh thành công!",
     Duration = 5
 })
 
