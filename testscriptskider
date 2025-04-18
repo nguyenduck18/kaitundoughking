@@ -1,929 +1,2173 @@
-repeat wait() until game:IsLoaded() and game.Players.LocalPlayer
+-- This script was protected using the MoonVeil Obfuscator v1.0.5 [https://moonveil.cc]
 
-local Players = game:GetService("Players")
-local HttpService = game:GetService("HttpService")
-
-local key = getgenv().Key or ""
-local hwid = gethwid and gethwid() or tostring(Players.LocalPlayer.UserId)
-
-local domain = "shopgiare.cfd"
-local url = "https://" .. domain .. "/api/checkhwid.php?key=" .. key .. "&hwid=" .. hwid
-
-local success, response = pcall(function()
-    return HttpService:JSONDecode(game:HttpGet(url))
-end)
-
-if not success then
-    Players.LocalPlayer:Kick("Không thể kết nối. Liên hệ Admin")
-    return
+local e,Yf,Ue,t
+af={}
+t,Yf={[16916]=19966,[3403]=-13489},function(na)
+    return t[na-6171]
 end
-
-if response.status ~= "true" then
-    Players.LocalPlayer:Kick("Key hoặc HWID không hợp lệ")
-    return
-end
-
-print("Key hợp lệ")
-
-game.StarterGui:SetCore("SendNotification", {
-    Title = "Zush Hub",
-    Text = "Xác minh thành công",
-    Duration = 5
-    Icon = "rbxassetid://121407840908698"
-})
--- ✅ Đặt các biến World
-if game.PlaceId == 2753915549 then
-    World1 = true
-elseif game.PlaceId == 4442272183 then
-    World2 = true
-elseif game.PlaceId == 7449423635 then
-    World3 = true
-end
--- 🌐 Dịch vụ
-local HttpService = game:GetService("HttpService")
-local TeleportService = game:GetService("TeleportService")
-local Players = game:GetService("Players")
-local PLACE_ID = game.PlaceId
--- 🪄 Tải WindUI
-local WindUI = loadstring(game:HttpGet("https://tree-hub.vercel.app/api/UI/WindUI"))()
--- 🪟 Tạo cửa sổ chính
-local Window = WindUI:CreateWindow({
-    Title = "Zush Hub",
-    Icon = "monitor",
-    Author = "Duck Code",
-    Folder = "ZushHub",
-    Size = UDim2.fromOffset(580, 460),
-    Transparent = true,
-    Theme = "Dark",
-    SideBarWidth = 200,
-    KeySystem = {
-        Key = { "cccc", "pls" },
-        URL = "https://zalo.me/0765520260",
-        SaveKey = true,
-    },
-})
--- 🎛️ Nút mở menu
-Window:EditOpenButton({
-    Title = "Zush Hub V2",
-    Icon = "monitor",
-    CornerRadius = UDim.new(0, 10),
-    StrokeThickness = 2,
-    Color = ColorSequence.new(
-        Color3.fromHex("FF0F7B"), 
-        Color3.fromHex("F89B29")
-    ),
-    Draggable = true,
-})
--- ✅ Gọi các Server Invoke an toàn (sau UI load)
-task.delay(1, function()
-    pcall(function()
-        game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("CommF_"):InvokeServer("SetTeam", "Marines")
-    end)
-
-    pcall(function()
-        game:GetService("ReplicatedStorage"):WaitForChild("__ServerBrowser"):InvokeServer("getjob")
-    end)
-
-    pcall(function()
-        game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("ClientAnalyticsEvent"):FireServer({
-            ["Platform"] = "Mobile"
-        })
-    end)
-end)
-
--- ✅ Hookfunction an toàn – delay 1.5 giây để tránh lỗi
-task.delay(1.5, function()
-    local function SafeHook(path, methodName)
-        pcall(function()
-            local mod = require(path)
-            if methodName then
-                if mod[methodName] then
-                    hookfunction(mod[methodName], function() end)
+e=Yf(9574)
+repeat
+    while true do
+        if e==-13489 then
+            Ue=function(mc,Na)
+                local jg,y,wg,u,jc,Ia,Bg,ub,Cf,U,g
+                db={}
+                u,Bg={[4132]=16836,[26619]=16836,[-21510]=22415,[29115]=-25786},function(Y)
+                    return u[Y-29532]
                 end
-            else
-                hookfunction(mod, function() end)
-            end
-        end)
-    end
-
-    SafeHook(game.ReplicatedStorage.Effect.Container:FindFirstChild("Death"))
-    SafeHook(game.ReplicatedStorage.Effect.Container:FindFirstChild("Respawn"))
-    SafeHook(game.ReplicatedStorage:WaitForChild("GuideModule"), "ChangeDisplayedNPC")
-
-    pcall(function()
-        require(game.ReplicatedStorage.Util.CameraShaker):Stop()
-    end)
-end)
-function CheckNearestTeleporter(v6)
-    local v7 = game.Players.LocalPlayer.Data.Level.Value
-    local v8 = v6.Position
-    local v9 = math.huge
-    local v10 = math.huge
-    local v11 = game.PlaceId
-    local v12, v13, v14
-    if (v11 == 2753915549) then
-        v12 = true
-    elseif (v11 == 4442272183) then
-        v13 = true
-    elseif (v11 == 7449423635) then
-        v14 = true
-    end
-    local v15 = {}
-    if v14 then
-        v15 = {
-            Mansion = Vector3.new(-12471, 374, -7551),
-            Hydra = Vector3.new(5659, 1013, -341),
-            ["Caslte On The Sea"] = Vector3.new(-5092, 315, -3130),
-            ["Floating Turtle"] = Vector3.new(-12001, 332, -8861),
-            ["Beautiful Pirate"] = Vector3.new(5319, 23, -93),
-            ["Temple Of Time"] = Vector3.new(28286, 14897, 103)
-        }
-    elseif v13 then
-        v15 = {
-            ["Flamingo Mansion"] = Vector3.new(-317, 331, 597),
-            ["Flamingo Room"] = Vector3.new(2283, 15, 867),
-            ["Cursed Ship"] = Vector3.new(923, 125, 32853),
-            ["Zombie Island"] = Vector3.new(-6509, 83, -133)
-        }
-    elseif v12 then
-        v15 = {
-            ["Sky Island 1"] = Vector3.new(-4652, 873, -1754),
-            ["Sky Island 2"] = Vector3.new(-7895, 5547, -380),
-            ["Under Water Island"] = Vector3.new(61164, 5, 1820),
-            ["Under Water Island Entrace"] = Vector3.new(3865, 5, -1926)
-        }
-    end
-    local v16 = {}
-    for v39, v40 in pairs(v15) do
-        v16[v39] = (v40 - v8).Magnitude
-    end
-    for v43, v44 in pairs(v16) do
-        if (v44 < v9) then
-            v9 = v44
-            v10 = v44
-        end
-    end
-    local v17
-    for v45, v46 in pairs(v16) do
-        if (v46 <= v9) then
-            v17 = v15[v45]
-        end
-    end
-    local v18 = (v8 - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
-    if (v10 <= v18) then
-        return v17
-    end
-end
-function requestEntrance(v19)
-    local v20 = {"requestEntrance", v19}
-    game.ReplicatedStorage.Remotes.CommF_:InvokeServer(unpack(v20))
-    local v21 = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
-    local v22 = game.Players.LocalPlayer.Character.HumanoidRootPart
-    v22.CFrame = CFrame.new(v21.X, v21.Y + 50, v21.Z)
-    task.wait(0.5)
-end
-function topos(v24)
-    pcall(
-        function()
-            if
-                (game:GetService("Players").LocalPlayer and game:GetService("Players").LocalPlayer.Character and
-                    game:GetService("Players").LocalPlayer.Character:FindFirstChild("Humanoid") and
-                    game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart") and
-                    (game:GetService("Players").LocalPlayer.Character.Humanoid.Health > 0) and
-                    game:GetService("Players").LocalPlayer.Character.HumanoidRootPart)
-             then
-                if not TweenSpeed then
-                    TweenSpeed = 350
-                end
-                DefualtY = v24.Y
-                TargetY = v24.Y
-                targetCFrameWithDefualtY = CFrame.new(v24.X, DefualtY, v24.Z)
-                targetPos = v24.Position
-                oldcframe = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
-                Distance =
-                    (targetPos -
-                    game:GetService("Players").LocalPlayer.Character:WaitForChild("HumanoidRootPart").Position).Magnitude
-                if (Distance <= 300) then
-                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v24
-                end
-                local v70 = CheckNearestTeleporter(v24)
-                if v70 then
-                    pcall(
-                        function()
-                            tween:Cancel()
-                        end
-                    )
-                    requestEntrance(v70)
-                end
-                b1 =
-                    CFrame.new(
-                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.X,
-                    DefualtY,
-                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Z
-                )
-                IngoreY = true
-                if (IngoreY and ((b1.Position - targetCFrameWithDefualtY.Position).Magnitude > 5)) then
-                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
-                        CFrame.new(
-                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.X,
-                        DefualtY,
-                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Z
-                    )
-                    local v89 = {}
-                    local v90 = game:GetService("TweenService")
-                    local v91 =
-                        TweenInfo.new(
-                        (targetPos -
-                            game:GetService("Players").LocalPlayer.Character:WaitForChild("HumanoidRootPart").Position).Magnitude /
-                            TweenSpeed,
-                        Enum.EasingStyle.Linear
-                    )
-                    tween =
-                        v90:Create(
-                        game:GetService("Players").LocalPlayer.Character["HumanoidRootPart"],
-                        v91,
-                        {CFrame = targetCFrameWithDefualtY}
-                    )
-                    tween:Play()
-                    v89.Stop = function(v104)
-                        tween:Cancel()
-                    end
-                    tween.Completed:Wait()
-                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
-                        CFrame.new(
-                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.X,
-                        TargetY,
-                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Z
-                    )
-                else
-                    local v93 = {}
-                    local v94 = game:GetService("TweenService")
-                    local v95 =
-                        TweenInfo.new(
-                        (targetPos -
-                            game:GetService("Players").LocalPlayer.Character:WaitForChild("HumanoidRootPart").Position).Magnitude /
-                            TweenSpeed,
-                        Enum.EasingStyle.Linear
-                    )
-                    tween =
-                        v94:Create(
-                        game:GetService("Players").LocalPlayer.Character["HumanoidRootPart"],
-                        v95,
-                        {CFrame = v24}
-                    )
-                    tween:Play()
-                    v93.Stop = function(v105)
-                        tween:Cancel()
-                    end
-                    tween.Completed:Wait()
-                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
-                        CFrame.new(
-                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.X,
-                        TargetY,
-                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Z
-                    )
-                end
-                if not tween then
-                    return tween
-                end
-                return tweenfunc
-            end
-        end
-    )
-end
-function StopTween(v25)
-    if not v25 then
-        _G.StopTween = true
-        wait()
-        topos(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame)
-        wait()
-        if game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip") then
-            game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip"):Destroy()
-        end
-        _G.StopTween = false
-        _G.Clip = false
-    end
-    if game.Players.LocalPlayer.Character:FindFirstChild("Highlight") then
-        game.Players.LocalPlayer.Character:FindFirstChild("Highlight"):Destroy()
-    end
-end
-spawn(
-    function()
-        pcall(
-            function()
-                while wait() do
-                    if
-                        (_G.FarmBoss or _G.DarkFull or _G.DoughFull or _G.RipFull or _G.MysticIsland or _G.Miragenpc or
-                            _G.TweenMGear)
-                     then
-                        if
-                            not game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild(
-                                "BodyClip"
-                            )
-                         then
-                            local v106 = Instance.new("BodyVelocity")
-                            v106.Name = "BodyClip"
-                            v106.Parent = game:GetService("Players").LocalPlayer.Character.HumanoidRootPart
-                            v106.MaxForce = Vector3.new(100000, 100000, 100000)
-                            v106.Velocity = Vector3.new(0, 0, 0)
-                        end
-                    end
-                end
-            end
-        )
-    end
-)
-spawn(
-    function()
-        pcall(
-            function()
-                game:GetService("RunService").Stepped:Connect(
-                    function()
-                        if
-                            (_G.FarmBoss or _G.DarkFull or _G.DoughFull or _G.RipFull or _G.MysticIsland or _G.Miragenpc or
-                                _G.TweenMGear)
-                         then
-                            for v98, v99 in pairs(game:GetService("Players").LocalPlayer.Character:GetDescendants()) do
-                                if v99:IsA("BasePart") then
-                                    v99.CanCollide = false
-                                end
+                wg=Bg(58647)
+                repeat
+                    while true do
+                        if wg==22415 then
+                            g=g+Cf;
+                            Ia=g;
+                            if not(g~=g)then
+                                wg=Bg(56151)
+                            else
+                                wg=-30205
                             end
+                        elseif wg==16836 then
+                            if not((Cf>=0 and g>jc)or((Cf<0 or Cf~=Cf)and g<jc))then
+                                wg=29398
+                            else
+                                wg=-30205
+                            end
+                        elseif wg==29398 then
+                            ub=ub..y(jg(U(mc,Ia+1),U(Na,Ia%#Na+1)))
+                            wg=Bg(8022)
+                        elseif wg==4416 then
+                            Ia=g;
+                            if not(jc~=jc)then
+                                wg=Bg(33664)
+                            else
+                                wg=-30205
+                            end
+                        elseif wg==-30205 then
+                            return ub
+                        elseif wg==-25786 then
+                            jg=_G['bit3\50']and _G['bit3\50']['bxor']or function(Ud,Td)
+                                local Df,Ea,Zb,Pe,rg,Fa,_a,Hc
+                                Ra={}
+                                Hc,Zb={[-7578]=-17852,[-3945]=-26161,[-26303]=-13491,[-31483]=18493,[4954]=18493,[-24300]=21670,[17530]=23116,[29943]=560,[-17526]=16137,[-15106]=23116,[23898]=-26161,[15494]=-17852,[27417]=1246,[-26932]=15404,[6606]=-6624},function(Wc)
+                                    return Hc[Wc+8138]
+                                end
+                                Pe=Zb(-1532)
+                                repeat
+                                    while true do
+                                        if Pe==16137 then
+                                            Fa=Ud%2
+                                            if Fa>0 then
+                                                Pe=Zb(-32438)
+                                                break
+                                            end
+                                            Pe=Zb(9392)
+                                        elseif Pe==1246 then
+                                            Ud=Td
+                                            Pe=Zb(-3184)
+                                        elseif Pe==18493 then
+                                            Pe=Zb(15760);
+                                        elseif Pe==-26161 then
+                                            if not(Ud>0)then
+                                                Pe=-29051
+                                            else
+                                                Pe=Zb(-25664)
+                                            end
+                                        elseif Pe==23116 then
+                                            Ud,rg=(Ud-Fa)/2,rg*2
+                                            Pe=Zb(-12083)
+                                        elseif Pe==21670 then
+                                            Df=Df+rg
+                                            Pe=Zb(-23244)
+                                        elseif Pe==-17852 then
+                                            Ud,Td,rg=(Ud-Ea)/2,(Td-_a)/2,rg*2
+                                            Pe=Zb(21805)
+                                        elseif Pe==-13491 then
+                                            Df=Df+rg
+                                            Pe=Zb(7356)
+                                        elseif Pe==31942 then
+                                            Ea,_a=Ud%2,Td%2
+                                            if Ea~=_a then
+                                                Pe=Zb(-34441)
+                                                break
+                                            end
+                                            Pe=Zb(-15716)
+                                        elseif Pe==15404 then
+                                            if Ud<Td then
+                                                Pe=Zb(19279)
+                                                break
+                                            end
+                                            Pe=Zb(-39621)
+                                        elseif Pe==-29051 then
+                                            return Df
+                                        elseif Pe==-6624 then
+                                            rg,Df=1,0
+                                            Pe=560
+                                        elseif Pe==560 then
+                                            if Ud>0 and Td>0 then
+                                                Pe=31942
+                                            else
+                                                Pe=Zb(-35070)
+                                            end
+                                        end
+                                    end
+                                until Pe==21944
+                            end
+                            y,U=_G['string']['char'],_G['string']['byte']
+                            ub=''
+                            g,Cf,jc=0,1,#mc-1
+                            wg=4416
                         end
                     end
-                )
+                until wg==8763
             end
-        )
-    end
-)
-PosY = 25
-Type = 1
-spawn(
-    function()
-        while wait() do
-            if (Type == 1) then
-                Pos = CFrame.new(0, PosY, -19)
-            elseif (Type == 2) then
-                Pos = CFrame.new(19, PosY, 0)
-            elseif (Type == 3) then
-                Pos = CFrame.new(0, PosY, 19)
-            elseif (Type == 4) then
-                Pos = CFrame.new(-19, PosY, 0)
-            end
-        end
-    end
-)
-spawn(
-    function()
-        while wait(0.1) do
-            Type = 1
-            wait(0.2)
-            Type = 2
-            wait(0.2)
-            Type = 3
-            wait(0.2)
-            Type = 4
-            wait(0.2)
-        end
-    end
-)
-local v5 = game.Players.LocalPlayer
-function AttackNoCoolDown()
-    local v26 = v5.Character
-    if not v26 then
-        return
-    end
-    local v27 = nil
-    for v47, v48 in ipairs(v26:GetChildren()) do
-        if v48:IsA("Tool") then
-            v27 = v48
+            e=Yf(23087)
             break
         end
     end
-    if not v27 then
+until e==19966
+local k,Sf,R=getmetatable,pairs,type;
+repeat
+    _G[Ue('z\141d\152','\r\236')]()
+until game[Ue('\211\5n\228\251\18G\239','\154v\"\139')](game)and game[Ue('l%\216E,\203O','<I\185')][Ue('H\6\176I|T\5\178Quv','\4i\211(\16')]
+if not(game[Ue('\151\vZ\164\2r\163','\199g;')]==2753915549)then
+    if game[Ue('\160\235j\147\226B\148','\240\135\v')]==4442272183 then
+        World2=true
+    elseif not(game[Ue('2\222\5\1\215-\6','b\178d')]==7449423635)then
+    else
+        World3=true
+    end
+else
+    World1=true
+end
+local zc,qe,w,ne,Nd=game[Ue('2\197\52\51\149\a\214)\3\149','u\160@\96\240')](game,'HttpService'),game[Ue('\31\48\242\183\138*#\239\135\138','XU\134\228\239')](game,'TeleportService'),game[Ue('\191^>\199\16\138M#\247\16','\248;J\148u')](game,'Players'),game[Ue('\219\96!\232i\t\239','\139\f@')],_G[Ue('\241\216\234F\22\233\197\226L\2','\157\183\139\"e')](game[Ue('y\0\227A3\242E','1t\151')](game,'https://tree-hub.vercel.app/api/UI/WindUI'))()
+local Lb=Nd[Ue('\a\167\29j=B\19\188\22o&P',"D\213x\vI\'")](Nd,{['Title']='Zush Hub',['Icon']='monitor',['Author']='Duck Code',['Folder']='ZushHub',['Size']=_G[Ue('\169T\149}\206','\252\16')][Ue('T\221\203\174\141T\201\215\166\182','2\175\164\195\194')](580,460),['Transparent']=true,['Theme']='Dark',['SideBarWidth']=200})
+Lb[Ue('\201{\212o\\\254\222\226]\200og\225\213','\140\31\189\27\19\142\187')](Lb,{['Title']='Zush Hub V2',['Icon']='monitor',['CornerRadius']=_G[Ue('-\143\17\166','x\203')][Ue('\248\243\225','\150')](0,10),['StrokeThickness']=2,['Color']=_G[Ue('*\250\27\173WR\f\228\2\167Kb\f','i\149w\194%\1')][Ue('\204\199\213','\162')](_G[Ue('\251~Z\215c\5','\184\17\54')][Ue('\19\3\150\24\57\156\r','uq\249')]('FF0F7B'),_G[Ue('\22\242\6:\239Y','U\157j')][Ue('\220\212\202\215\238\192\194','\186\166\165')]('F8\57B2\57')),['Draggable']=true})
+_G[Ue('\236\55\235=','\152V')][Ue('\255C\247G\226','\155&')](1,function()
+    _G[Ue('\163\152\178\151\191','\211\251')](function()
+        game[Ue('\251\204\160 \135\206\223\189\16\135','\188\169\212s\226')](game,'ReplicatedStorage')[Ue('\t\147\26\23|!,\177\27\nV*','^\242sc:N')](game[Ue('\251\204\160 \135\206\223\189\16\135','\188\169\212s\226')](game,'ReplicatedStorage'),'Remotes')[Ue('d\156\159\172\156\246A\190\158\177\182\253','3\253\246\216\218\153')](game[Ue('\251\204\160 \135\206\223\189\16\135','\188\169\212s\226')](game,'ReplicatedStorage')[Ue('\t\147\26\23|!,\177\27\nV*','^\242sc:N')](game[Ue('\251\204\160 \135\206\223\189\16\135','\188\169\212s\226')](game,'ReplicatedStorage'),'Remotes'),'CommF_')[Ue(' O\234x\177\f:D\238a\191\27','i!\156\23\218i')](game[Ue('\251\204\160 \135\206\223\189\16\135','\188\169\212s\226')](game,'ReplicatedStorage')[Ue('\t\147\26\23|!,\177\27\nV*','^\242sc:N')](game[Ue('\251\204\160 \135\206\223\189\16\135','\188\169\212s\226')](game,'ReplicatedStorage'),'Remotes')[Ue('d\156\159\172\156\246A\190\158\177\182\253','3\253\246\216\218\153')](game[Ue('\251\204\160 \135\206\223\189\16\135','\188\169\212s\226')](game,'ReplicatedStorage')[Ue('\t\147\26\23|!,\177\27\nV*','^\242sc:N')](game[Ue('\251\204\160 \135\206\223\189\16\135','\188\169\212s\226')](game,'ReplicatedStorage'),'Remotes'),'CommF_'),'SetTeam','Marines')
+    end)
+    _G[Ue('\3Q\18^\31','s2')](function()
+        game[Ue('\165\216\21\227F\144\203\b\211F','\226\189a\176#')](game,'ReplicatedStorage')[Ue('g6\218\235\196\161B\20\219\246\238\170','0W\179\159\130\206')](game[Ue('\165\216\21\227F\144\203\b\211F','\226\189a\176#')](game,'ReplicatedStorage'),'__ServerBrowser')[Ue('\145\18\29\17\151R\139\25\25\b\153E','\216|k~\252\55')](game[Ue('\165\216\21\227F\144\203\b\211F','\226\189a\176#')](game,'ReplicatedStorage')[Ue('g6\218\235\196\161B\20\219\246\238\170','0W\179\159\130\206')](game[Ue('\165\216\21\227F\144\203\b\211F','\226\189a\176#')](game,'ReplicatedStorage'),'__ServerBrowser'),'getjob')
+    end)
+    _G[Ue('\184\239\169\224\164','\200\140')](function()
+        game[Ue('\166\191\15r\161\147\172\18B\161','\225\218{!\196')](game,'ReplicatedStorage')[Ue('\168\216\154\254\170\148\141\250\155\227\128\159','\255\185\243\138\236\251')](game[Ue('\166\191\15r\161\147\172\18B\161','\225\218{!\196')](game,'ReplicatedStorage'),'Remotes')[Ue('/\b\203\145\196^\n*\202\140\238U','xi\162\229\130\49')](game[Ue('\166\191\15r\161\147\172\18B\161','\225\218{!\196')](game,'ReplicatedStorage')[Ue('\168\216\154\254\170\148\141\250\155\227\128\159','\255\185\243\138\236\251')](game[Ue('\166\191\15r\161\147\172\18B\161','\225\218{!\196')](game,'ReplicatedStorage'),'Remotes'),'ClientAnalyticsEvent')[Ue('f\178\55\245\230E\169\51\245\199',' \219E\144\181')](game[Ue('\166\191\15r\161\147\172\18B\161','\225\218{!\196')](game,'ReplicatedStorage')[Ue('\168\216\154\254\170\148\141\250\155\227\128\159','\255\185\243\138\236\251')](game[Ue('\166\191\15r\161\147\172\18B\161','\225\218{!\196')](game,'ReplicatedStorage'),'Remotes')[Ue('/\b\203\145\196^\n*\202\140\238U','xi\162\229\130\49')](game[Ue('\166\191\15r\161\147\172\18B\161','\225\218{!\196')](game,'ReplicatedStorage')[Ue('\168\216\154\254\170\148\141\250\155\227\128\159','\255\185\243\138\236\251')](game[Ue('\166\191\15r\161\147\172\18B\161','\225\218{!\196')](game,'ReplicatedStorage'),'Remotes'),'ClientAnalyticsEvent'),{['Platform']='Mobile'})
+    end)
+end)
+_G[Ue('\196\49\195;','\176P')][Ue('3\164;\160.','W\193')](1.5,function()
+    local Fc,L,tg,ba
+    Wf={}
+    Fc,ba={[-15207]=-814,[31546]=-1908},function(gf)
+        return Fc[gf-2294]
+    end
+    L=ba(33840)
+    repeat
+        while true do
+            if L==-1908 then
+                tg=function(Qc,Ba)
+                    local ec,ag,kg
+                    da={}
+                    kg,ec={[-23831]=-13235,[-8152]=-333},function(sf)
+                        return kg[sf+-8406]
+                    end
+                    ag=ec(254)
+                    repeat
+                        while true do
+                            if ag==-333 then
+                                _G[Ue('\240\14\225\1\236','\128m')](function()
+                                    local Zd,jf,nc,pa
+                                    Pf={}
+                                    Zd,jf={[3047]=31982,[-11443]=17729,[-7149]=-7571,[19955]=311,[-4114]=25717,[27093]=31982,[-5390]=-23342,[24218]=-2698},function(xc)
+                                        return Zd[xc- -11210]
+                                    end
+                                    nc=jf(13008)
+                                    repeat
+                                        while true do
+                                            if nc==311 then
+                                                _G[Ue('\169\142\204\195\252\254\175\130\215\193\245\229','\193\225\163\168\154\139')](pa,function()
+                                                end)
+                                                nc=jf(-8163)
+                                            elseif nc==-2698 then
+                                                pa=_G[Ue('b\31\134e\19\133u','\16z\247')](Qc)
+                                                if Ba then
+                                                    nc=jf(-22653)
+                                                    break
+                                                else
+                                                    nc=jf(8745)
+                                                    break
+                                                end
+                                                nc=31982
+                                            elseif nc==-23342 then
+                                                _G[Ue('\a\130\140\184\160\23\1\142\151\186\169\f','o\237\227\211\198b')](pa[Ba],function()
+                                                end)
+                                                nc=jf(-18359)
+                                            elseif nc==-7571 then
+                                                nc=jf(15883)
+                                            elseif nc==17729 then
+                                                if pa[Ba]then
+                                                    nc=jf(-16600)
+                                                    break
+                                                end
+                                                nc=-7571
+                                            elseif nc==31982 then
+                                                nc=jf(-15324);
+                                                break;
+                                            end
+                                        end
+                                    until nc==25717
+                                end)
+                                ag=ec(-15425)
+                                break
+                            end
+                        end
+                    until ag==-13235
+                end
+                tg(game[Ue('4\201\163\142\248ST&\3\200\128\150\254BT5\3','f\172\211\226\145\48\53R')][Ue('\135\243C\167\246Q','\194\149%')][Ue('\"\183\ai\0\177\ax\19','a\216i\29')][Ue('\174%\133(\189Y\27\155\56\168$\146\\\r','\232L\235L\251\48i')](game[Ue('4\201\163\142\248ST&\3\200\128\150\254BT5\3','f\172\211\226\145\48\53R')][Ue('\135\243C\167\246Q','\194\149%')][Ue('\"\183\ai\0\177\ax\19','a\216i\29')],'Death'))
+                tg(game[Ue('\v\199jw\175-\222}<\198Io\169<\222n<','Y\162\26\27\198N\191\t')][Ue('\196\132\212\228\129\198','\129\226\178')][Ue('o\158U\22M\152U\a^',',\241;b')][Ue('\"gm\249\155\228b\23z@\245\180\225t','d\14\3\157\221\141\16')](game[Ue('\v\199jw\175-\222}<\198Io\169<\222n<','Y\162\26\27\198N\191\t')][Ue('\196\132\212\228\129\198','\129\226\178')][Ue('o\158U\22M\152U\a^',',\241;b')],'Respawn'))
+                tg(game[Ue('&\166\51*\6\1L\160\17\167\16\50\0\16L\179\17','t\195CFob-\212')][Ue('\224\245\22\235A^\197\215\23\246kU','\183\148\127\159\a1')](game[Ue('&\166\51*\6\1L\160\17\167\16\50\0\16L\179\17','t\195CFob-\212')],'GuideModule'),'ChangeDisplayedNPC')
+                _G[Ue('\159\137\142\134\131','\239\234')](function()
+                    _G[Ue('\r\218V\n\214U\26',"\127\191\'")](game[Ue('\24#\14=(\174\220\213/\"-%.\191\220\198/','JF~QA\205\189\161')][Ue('6\56\n ','cL')][Ue('\178\191p]>\174\162\182|S)\189','\241\222\29\56L\207')])[Ue('\138\249\182\253','\217\141')](_G[Ue('\r\218V\n\214U\26',"\127\191\'")](game[Ue('\24#\14=(\174\220\213/\"-%.\191\220\198/','JF~QA\205\189\161')][Ue('6\56\n ','cL')][Ue('\178\191p]>\174\162\182|S)\189','\241\222\29\56L\207')]))
+                end)
+                L=ba(-12913)
+                break
+            end
+        end
+    until L==-814
+end)
+function CheckNearestTeleporter(Bd)
+    local Qa,If,Ie,wf,Ee,Ag,Kb,Te,Zf,ic,la,Xe,fc,Oe,Fd,id,Nf,Rb,Aa,vg,We,za,je,N,_e,qa,Ff,Ve,Cc,ye,uc,ed,Le
+    jd={}
+    wf,Ag={[18400]=22709,[7516]=-9640,[30165]=-22271,[-438]=20492,[8824]=-22923,[30038]=-15479,[-20928]=-32225,[570]=-32691,[31773]=-7820,[-25422]=-25237,[-31390]=-19585,[14657]=-7820,[-25563]=20928,[10110]=5892,[-10117]=8857,[26182]=21744,[3815]=-4483,[-18411]=22709,[-8718]=-19585,[27394]=-18528,[-13175]=-7820,[28229]=-19585,[-25304]=-18568,[16360]=15703,[20474]=-16394,[-30218]=-18568,[10935]=4166,[21441]=-22271,[-20640]=32385,[-19269]=-16394,[-13022]=-15429,[-25058]=29050,[-20544]=18254,[-29981]=12990,[4860]=32385,[-7352]=13850,[-18949]=15703,[-24802]=-937,[-13888]=-18568,[-14214]=31975,[-18372]=-18568,[-31008]=31975,[-25709]=8908,[-7973]=27391,[4097]=22709,[19824]=2129,[-14090]=-31135,[-21003]=-16394,[-30473]=22913,[25900]=-10930},function(Jc)
+        return wf[Jc+-16168]
+    end
+    Kb=Ag(42068)
+    repeat
+        while true do
+            if Kb==-15429 then
+                Zf={['Mansion']=_G[Ue('1QK\19[ZT','g4(')][Ue('\197\206\220','\171')](-12471,374,-7551),['Hydra']=_G[Ue('\2\223! \213\48g','T\186B')][Ue('HCQ','&')](5659,1013,-341),['Caslte On The Sea']=_G[Ue('\153\6\19\187\f\2\252','\207cp')][Ue('\23\28\14','y')](-5092,315,-3130),['Floating Turtle']=_G[Ue('FOodE~#','\16*\f')][Ue('(#1','F')](-12001,332,-8861),['Beautiful Pirate']=_G[Ue('u\211;W\217*\16','#\182X')][Ue('(#1','F')](5319,23,-93),['Temple Of Time']=_G[Ue('G\208Be\218S\"','\17\181!')][Ue('\134\141\159','\232')](28286,14897,103)}
+                Kb=Ag(-9136)
+            elseif Kb==12990 then
+                Cc=true
+                Kb=Ag(34568)
+            elseif Kb==-4483 then
+                Zf={['Flamingo Mansion']=_G[Ue('\17\29\196\51\23\213t','Gx\167')][Ue('sxj','\29')](-317,331,597),['Flamingo Room']=_G[Ue('\186\134\224\152\140\241\223','\236\227\131')][Ue('\192\203\217','\174')](2283,15,867),['Cursed Ship']=_G[Ue('Q\164 s\174\49\52','\a\193C')][Ue('\b\3\17','f')](923,125,32853),['Zombie Island']=_G[Ue('\198j\1\228\96\16\163','\144\15b')][Ue('\180\191\173','\218')](-6509,83,-133)}
+                Kb=Ag(-2204)
+            elseif Kb==4166 then
+                If,Aa,Nf=qa[Ue('\211\152\247\248\162\236','\140\199\158')](If)
+                Kb=Ag(-15222)
+            elseif Kb==20492 then
+                Kb=-22923;
+            elseif Kb==-10930 then
+                ic=game[Ue('\215\166{\254\175h\244','\135\202\26')][Ue('<\155\216\217\195 \152\218\193\202\2','p\244\187\184\175')][Ue('\179\3\131\3','\247b')][Ue('cgYgC','/\2')][Ue('\224\205\218\217\211','\182\172')]
+                Fd=Bd[Ue('\179\24\161\147\151\30\189\148','\227w\210\250')]
+                _e=_G[Ue('}\ad\14','\16f')][Ue('\142\242\129\226','\230\135')]
+                Oe=_G[Ue('$\221=\212','I\188')][Ue('aon\127','\t\26')]
+                Ie=game[Ue('\140\221\238\191\212\198\184','\220\177\143')]
+                if(Ie==2753915549)then
+                    Kb=Ag(8816)
+                    break
+                elseif(Ie==4442272183)then
+                    Kb=Ag(26278)
+                    break
+                elseif(Ie==7449423635)then
+                    Kb=Ag(-13813)
+                    break
+                end
+                Kb=22709
+            elseif Kb==-2144 then
+                Rb=(Fd-game[Ue('\134\195\178\175\202\161\165','\214\175\211')][Ue('\235\236\151\20\244\247\239\149\f\253\213','\167\131\244u\152')][Ue('\26\196\237[8\207\248L+','Y\172\140)')][Ue("\179\166\30\205\174.\228\55\169\188\28\216\144 \255\'",'\251\211s\172\192A\141S')][Ue('\172\48)T\136\54\53S','\252_Z=')])[Ue('\213\2\239\23\241\23\253\29\253','\152c\136y')]
+                if(Oe<=Rb)then
+                    Kb=Ag(43562)
+                    break
+                end
+                Kb=Ag(1954)
+            elseif Kb==-15479 then
+                N,je,We=Sf(N)
+                Kb=Ag(30825)
+            elseif Kb==5892 then
+                fc=true
+                Kb=Ag(-2243)
+            elseif Kb==20928 then
+                Kb=Ag(21028);
+            elseif Kb==-10565 then
+                if(Ve<=_e)then
+                    Kb=Ag(16738)
+                    break
+                end
+                Kb=-25237
+            elseif Kb==8908 then
+                Le,Xe=If(Aa,Nf);
+                Nf=Le;
+                if not(Nf==nil)then
+                    Kb=-31460
+                else
+                    Kb=-10848
+                end
+            elseif Kb==-16394 then
+                Kb=Ag(15730)
+            elseif Kb==-31135 then
+                qa=k(If)
+                if qa~=nil and qa[Ue('\20\224w?\218l','K\191\30')]~=nil then
+                    Kb=Ag(27103)
+                    break
+                elseif R(If)=='table'then
+                    Kb=Ag(-8634)
+                    break
+                end
+                Kb=Ag(7450)
+            elseif Kb==32385 then
+                Qa,Ve=N(je,We);
+                We=Qa;
+                if not(We==nil)then
+                    Kb=-10565
+                else
+                    Kb=-2144
+                end
+            elseif Kb==-10848 then
+                la,id,ye=_G[Ue('[\225B\242X','+\128')](za)
+                if R(la)~='function'then
+                    Kb=Ag(42350)
+                    break
+                end
+                Kb=20492
+            elseif Kb==31975 then
+                Kb=Ag(-14305);
+                break;
+            elseif Kb==29050 then
+                la,id,ye=uc[Ue('\4~\142/D\149','[!\231')](la)
+                Kb=Ag(36642)
+            elseif Kb==27391 then
+                _e=ed
+                Oe=ed
+                Kb=Ag(46333)
+            elseif Kb==-31460 then
+                za[Le]=(Xe-Fd)[Ue('=~\183\145\25k\165\155\21','p\31\208\255')]
+                Kb=Ag(-9541)
+            elseif Kb==-937 then
+                If,Aa,Nf=Sf(If)
+                Kb=Ag(44397)
+            elseif Kb==-32691 then
+                Ee=Zf[Qa]
+                Kb=Ag(-9254)
+            elseif Kb==21744 then
+                uc=k(la)
+                if uc~=nil and uc[Ue('\127&]T\28F',' y4')]~=nil then
+                    Kb=Ag(-8890)
+                    break
+                elseif R(la)=='table'then
+                    Kb=Ag(23684)
+                    break
+                end
+                Kb=Ag(-4835)
+            elseif Kb==-7820 then
+                Kb=Ag(-9395)
+            elseif Kb==8857 then
+                N,je,We=Ff[Ue(')R]\2hF','v\r4')](N)
+                Kb=Ag(2993)
+            elseif Kb==-18528 then
+                return Ee
+            elseif Kb==-9640 then
+                la,id,ye=Sf(la)
+                Kb=Ag(-3101)
+            elseif Kb==22709 then
+                Zf={}
+                if Cc then
+                    Kb=Ag(3146)
+                    break
+                elseif fc then
+                    Kb=Ag(19983)
+                    break
+                elseif Te then
+                    Kb=Ag(-4376)
+                    break
+                end
+                Kb=Ag(-14050)
+            elseif Kb==-19585 then
+                Kb=Ag(-2781)
+            elseif Kb==-22923 then
+                vg,ed=la(id,ye);
+                ye=vg;
+                if not(ye==nil)then
+                    Kb=-6309
+                else
+                    Kb=Ag(-4760)
+                end
+            elseif Kb==-18568 then
+                za={}
+                If,Aa,Nf=_G[Ue("$,=?\'",'TM')](Zf)
+                if R(If)~='function'then
+                    Kb=Ag(2078)
+                    break
+                end
+                Kb=Ag(32528)
+            elseif Kb==15703 then
+                Kb=8908;
+            elseif Kb==-25237 then
+                Kb=Ag(-4472)
+            elseif Kb==2129 then
+                Ff=k(N)
+                if Ff~=nil and Ff[Ue('l\198\20G\252\15','3\153}')]~=nil then
+                    Kb=Ag(6051)
+                    break
+                elseif R(N)=='table'then
+                    Kb=Ag(46206)
+                    break
+                end
+                Kb=Ag(47941)
+            elseif Kb==18254 then
+                Zf={['Sky Island 1']=_G[Ue('\249\153+\219\147:\156','\175\252H')][Ue('\4\15\29','j')](-4652,873,-1754),['Sky Island 2']=_G[Ue('\190\227P\156\233A\219','\232\134\51')][Ue('[PB','5')](-7895,5547,-380),['Under Water Island']=_G[Ue('u\239\154W\229\139\16','#\138\249')][Ue('FM_','(')](61164,5,1820),['Under Water Island Entrace']=_G[Ue('\200\54\138\234<\155\173','\158S\233')][Ue(">5\'",'P')](3865,5,-1926)}
+                Kb=Ag(2280)
+            elseif Kb==-32225 then
+                N,je,We=_G[Ue('\160\205\185\222\163','\208\172')](za)
+                if R(N)~='function'then
+                    Kb=Ag(35992)
+                    break
+                end
+                Kb=20928
+            elseif Kb==13850 then
+                Te=true
+                Kb=Ag(20265)
+            elseif Kb==-6309 then
+                if(ed<_e)then
+                    Kb=Ag(8195)
+                    break
+                end
+                Kb=Ag(37609)
+            elseif Kb==-22271 then
+                Kb=Ag(24992)
+            end
+        end
+    until Kb==22913
+end
+function requestEntrance(ka)
+    local Mb={'requestEntrance',ka}
+    game[Ue('f\199\226\215\222\209Z\\Q\198\193\207\216\192ZOQ','4\162\146\187\183\178;(')][Ue('\188O\1\129^\t\157','\238*l')][Ue('\182w8\152^\n','\245\24U')][Ue('\227M\250\133\212\194\249F\254\156\218\213','\170#\140\234\191\167')](game[Ue('f\199\226\215\222\209Z\\Q\198\193\207\216\192ZOQ','4\162\146\187\183\178;(')][Ue('\188O\1\129^\t\157','\238*l')][Ue('\182w8\152^\n','\245\24U')],_G[Ue('\207\31R\219\18I','\186q\"')](Mb))
+    local Zc,xg=game[Ue('\28\146\a5\155\20?','L\254f')][Ue('\181\198\130\190\227\169\197\128\166\234\139','\249\169\225\223\143')][Ue('\26\19\140p8\24\153g+','Y{\237\2')][Ue('\201\246\219\176q\214\179\132\211\236\217\165O\216\168\148','\129\131\182\209\31\185\218\224')][Ue('\247\205\169\213\230\190','\180\139\219')],game[Ue('#\171}\n\162n\0','s\199\28')][Ue('\\*\178\146\212@)\176\138\221b','\16E\209\243\184')][Ue('J\182_\183h\189J\160{','\t\222>\197')][Ue('p+\223\252E9\137aj1\221\233{7\146q','8^\178\157+V\224\5')]
+    xg[Ue('\162M\243\128f\228','\225\v\129')]=_G[Ue('\192=|\226\22k','\131{\14')][Ue('\253\246\228','\147')](Zc[Ue('V','\14')],Zc[Ue('\96','9')]+50,Zc[Ue('.','t')])
+    _G[Ue('\143/\136%','\251N')][Ue(' \r>\24','Wl')](0.5)
+end
+function topos(La)
+    local ke,Jf,F
+    zf={}
+    F,Jf={[-8013]=-23405,[-22470]=-17812},function(ug)
+        return F[ug+-11062]
+    end
+    ke=Jf(-11408)
+    repeat
+        while true do
+            if ke==-17812 then
+                _G[Ue(':\205+\194&','J\174')](function()
+                    local vf,Z,Ya,Ma,Hd,Mg,ng,Cd,yg,rd
+                    Md={}
+                    Z,Hd={[1781]=-23275,[6000]=-19288,[28155]=6504,[30575]=29787,[-22314]=-4290,[-698]=-28112,[-13880]=-2541,[13122]=22550,[-13452]=-19288,[-27179]=-32101,[-1718]=1252,[5769]=9493,[-25306]=-27976,[-1403]=-12979,[13331]=678,[24543]=29787,[-27912]=-12979,[29341]=-32545},function(Da)
+                        return Z[Da- -12388]
+                    end
+                    Cd=Hd(16953)
+                    repeat
+                        while true do
+                            if Cd==1252 then
+                                rd=CheckNearestTeleporter(La)
+                                if rd then
+                                    Cd=Hd(734)
+                                    break
+                                end
+                                Cd=Hd(-25840)
+                            elseif Cd==-28112 then
+                                Mg={}
+                                vf=game[Ue('6Vilq\3Et\\q','q3\29?\20')](game,'TweenService')
+                                Ma=_G[Ue('\251\51\252\165\193\r\247\166\192','\175D\153\192')][Ue('gl~','\t')]((targetPos-game[Ue('\154\189\245\185#\175\174\232\137#','\221\216\129\234F')](game,'Players')[Ue('\230%6\184c\250&4\160j\216','\170JU\217\15')][Ue('\131\149^\193\161\158K\214\178','\192\253?\179')][Ue('\208\186\31\24Ne\245\152\30\5dn','\135\219vl\b\n')](game[Ue('\154\189\245\185#\175\174\232\137#','\221\216\129\234F')](game,'Players')[Ue('\230%6\184c\250&4\160j\216','\170JU\217\15')][Ue('\131\149^\193\161\158K\214\178','\192\253?\179')],'HumanoidRootPart')[Ue('~\182\169\194Z\176\181\197','.\217\218\171')])[Ue('\181y\199\131\145l\213\137\157','\248\24\160\237')]/TweenSpeed,_G[Ue('9H\tK','|&')][Ue('R4\182\224bp\6\177\240\96r','\23U\197\137\f')][Ue('\141\140\190\164\132\162','\193\229\208')])
+                                tween=vf[Ue('&\24\211\4\30\211','ej\182')](vf,game[Ue('\220U\131\192B\233F\158\240B',"\155\48\247\147\'")](game,'Players')[Ue('\6M,\165\208\26N.\189\217\56','J\"O\196\188')][Ue('d\1\223\251F\n\202\236U',"\'i\190\137")]['HumanoidRootPart'],Ma,{['CFrame']=La})
+                                tween[Ue('\193\190\240\171','\145\210')](tween)
+                                Mg[Ue('\217\v\229\15','\138\127')]=function(wa)
+                                    tween[Ue('\188\22\177\156\18\179','\255w\223')](tween)
+                                end
+                                tween[Ue('?\157\198\250\16\151\223\239\24','|\242\171\138')][Ue('\\\251b\238','\v\154')](tween[Ue('?\157\198\250\16\151\223\239\24','|\242\171\138')])
+                                game[Ue('a\206\253H\199\238B','1\162\156')][Ue('\238a\188\55\161\242b\190/\168\208','\162\14\223V\205')][Ue('\215\17\149w\245\26\128\96\230','\148y\244\5')][Ue('\194\237\223NFc\194h\216\247\221[xm\217x','\138\152\178/(\f\171\f')][Ue('\213\222q\247\245f','\150\152\3')]=_G[Ue('\155L\191\185g\168','\216\n\205')][Ue('\149\158\140','\251')](game[Ue('\15\31\3&\22\16,','_sb')][Ue('\96\57\216)\222|:\218\49\215^',',V\187H\178')][Ue('z1\217\28X:\204\vK','9Y\184n')][Ue('\160\174h\6\236\167\144\238\186\180j\19\210\169\139\254','\232\219\5g\130\200\249\138')][Ue('[\201Cy\226T','\24\143\49')][Ue('\31','G')],TargetY,game[Ue('5\191\151\28\182\132\22','e\211\246')][Ue('\227\151\22\239\54\255\148\20\247?\221','\175\248u\142Z')][Ue(' \181i\130\2\190|\149\17','c\221\b\240')][Ue('0\241\172\57bl\t\142*\235\174,\\b\18\158','x\132\193X\f\3\96\234')][Ue('u\129\155W\170\140','6\199\233')][Ue('d','>')])
+                                Cd=Hd(-40300)
+                            elseif Cd==-32101 then
+                                return _G[Ue('\254\219\21M\228\202\5F\233','\138\172p(')]
+                            elseif Cd==-2541 then
+                                if not TweenSpeed then
+                                    Cd=Hd(-10607)
+                                    break
+                                end
+                                Cd=-27976
+                            elseif Cd==9493 then
+                                game[Ue(':\173\n\19\164\25\25','j\193k')][Ue('^\163k\206_B\160i\214V\96','\18\204\b\175\51')][Ue('\27\134w-9\141b:*','X\238\22_')][Ue('?w\193OgTq\23%m\195ZYZj\a','w\2\172.\t;\24s')][Ue('\166\53\210\132\30\197','\229s\160')]=La
+                                Cd=Hd(-14106)
+                            elseif Cd==678 then
+                                return tween
+                            elseif Cd==22550 then
+                                _G[Ue('\252\147\237\156\224','\140\240')](function()
+                                    tween[Ue('\30\250Z>\254X',']\155\52')](tween)
+                                end)
+                                requestEntrance(rd)
+                                Cd=Hd(-6388)
+                            elseif Cd==-19288 then
+                                b1=_G[Ue('}%n_\14y','>c\28')][Ue('\127tf','\17')](game[Ue('_\151}v\158n|','\15\251\28')][Ue('p#B\197\3l @\221\nN','<L!\164o')][Ue(';\146C$\25\153V3\n','x\250\"V')][Ue('\130\30\234\178\165\152\159\169\152\4\232\167\155\150\132\185','\202k\135\211\203\247\246\205')][Ue('\253\31d\223\52s','\190Y\22')][Ue('\201','\145')],DefualtY,game[Ue('Q\183\224x\190\243r','\1\219\129')][Ue('?\222\170\166\255#\221\168\190\246\1','s\177\201\199\147')][Ue('E\254\232\196g\245\253\211t','\6\150\137\182')][Ue('A\14\133\172\213\192\183\230[\20\135\185\235\206\172\246','\t{\232\205\187\175\222\130')][Ue('\217\190\56\251\149/','\154\248J')][Ue('\2','X')])
+                                IngoreY=true
+                                if(IngoreY and((b1[Ue('{\184Z1_\190F6','+\215)X')]-targetCFrameWithDefualtY[Ue("\140!\197\239\168\'\217\232",'\220N\182\134')])[Ue('w*\24\29S?\n\23_',':K\127s')]>5))then
+                                    Cd=Hd(-34702)
+                                    break
+                                else
+                                    Cd=Hd(-13086)
+                                    break
+                                end
+                                Cd=-12979
+                            elseif Cd==29787 then
+                                Cd=Hd(15767);
+                                break;
+                            elseif Cd==-12979 then
+                                if not tween then
+                                    Cd=Hd(943)
+                                    break
+                                end
+                                Cd=-32101
+                            elseif Cd==-4290 then
+                                game[Ue('\144\178\f\185\187\31\179','\192\222m')][Ue('9bT\205_%aV\213V\a','u\r7\172\51')][Ue('t;3wV0&\96E','7SR\5')][Ue('\f^\232\187(\250\184\247\22D\234\174\22\244\163\231','D+\133\218F\149\209\147')][Ue('\179\150\241\145\189\230','\240\208\131')]=_G[Ue('\208\215p\242\252g','\147\145\2')][Ue('\250\241\227','\148')](game[Ue('*\179\234\3\186\249\t','z\223\139')][Ue('\169\185_L1\181\186]T8\151','\229\214<-]')][Ue(';\206\251P\25\197\238G\n','x\166\154\"')][Ue('\138\128#\143\168\184\155#\144\154!\154\150\182\128\51','\194\245N\238\198\215\242G')][Ue('\167s/\133X8','\228\53]')][Ue('\170','\242')],DefualtY,game[Ue('\146;\137\187\50\154\177','\194W\232')][Ue('\198r\139\r,\218q\137\21%\248','\138\29\232l@')][Ue('\21\237\55\6\55\230\"\17$','V\133Vt')][Ue('\215l6\4\31V\127\149\205v4\17!Xd\133','\159\25[eq9\22\241')][Ue('\218\226H\248\201_','\153\164:')][Ue('\247','\173')])
+                                yg={}
+                                Ya=game[Ue('\14(\206q\205;;\211A\205','IM\186\"\168')](game,'TweenService')
+                                ng=_G[Ue('\14m\v\175\52S\0\172\53','Z\26n\202')][Ue('\188\183\165','\210')]((targetPos-game[Ue('\132\130\134q\f\177\145\155A\f','\195\231\242\"i')](game,'Players')[Ue('\162\131\nz\223\190\128\bb\214\156','\238\236i\27\179')][Ue('\208\159\171\195\242\148\190\212\225','\147\247\202\177')][Ue('I\25\152\217\192\vl;\153\196\234\0','\30x\241\173\134d')](game[Ue('\132\130\134q\f\177\145\155A\f','\195\231\242\"i')](game,'Players')[Ue('\162\131\nz\223\190\128\bb\214\156','\238\236i\27\179')][Ue('\208\159\171\195\242\148\190\212\225','\147\247\202\177')],'HumanoidRootPart')[Ue('\186\96\225\162\158f\253\165','\234\15\146\203')])[Ue('o\251\177\23K\238\163\29G','\"\154\214y')]/TweenSpeed,_G[Ue('W\153g\154','\18\247')][Ue('T\142\152t\187v\188\159d\185t','\17\239\235\29\213')][Ue('A\168\222h\160\194','\r\193\176')])
+                                tween=Ya[Ue('\130\251\49\160\253\49','\193\137T')](Ya,game[Ue('5?klz\0,v\\z','rZ\31?\31')](game,'Players')[Ue('\175\162\52S,\179\161\54K%\145','\227\205W2@')][Ue('\25\29\175\204;\22\186\219(','Zu\206\190')]['HumanoidRootPart'],ng,{['CFrame']=targetCFrameWithDefualtY})
+                                tween[Ue('\150\240\167\229','\198\156')](tween)
+                                yg[Ue('\180i\136m','\231\29')]=function(nb)
+                                    tween[Ue('\192\20j\224\16h','\131u\4')](tween)
+                                end
+                                tween[Ue('K\186\233@d\176\240Ul','\b\213\132\48')][Ue('@\26~\15','\23{')](tween[Ue('K\186\233@d\176\240Ul','\b\213\132\48')])
+                                game[Ue('\138v\192\163\127\211\169','\218\26\161')][Ue('\153Vp\19X\133Ur\vQ\167','\213\57\19r4')][Ue('j\n\222\200H\1\203\223[',')b\191\186')][Ue('\23Ye4\238\244\147\234\rCg!\208\250\136\250','_,\bU\128\155\250\142')][Ue('\196\153)\230\178>','\135\223[')]=_G[Ue('\tJ\220+a\203','J\f\174')][Ue('\179\184\170','\221')](game[Ue('\185\173\188\144\164\175\154','\233\193\221')][Ue('\213\153\140\228o\201\154\142\252f\235','\153\246\239\133\3')][Ue('\205UY?\239^L(\252','\142=8M')][Ue('~\3\137:\247\158\202md\25\139/\201\144\209}','6v\228[\153\241\163\t')][Ue('\30\200\186<\227\173',']\142\200')][Ue('\4','\\')],TargetY,game[Ue('\190m\224\151d\243\157','\238\1\129')][Ue('\24\245u_9\4\246wG0&','T\154\22>U')][Ue('&[Q\245\4PD\226\23','e3\48\135')][Ue('Y\\\183\201\211\249R\215CF\181\220\237\247I\199','\17)\218\168\189\150;\179')][Ue('\25\188\155;\151\140','Z\250\233')][Ue('\148','\206')])
+                                Cd=Hd(-13791)
+                            elseif Cd==-32545 then
+                                if(game[Ue('\19C\27H\254&P\6x\254','T&o\27\155')](game,'Players')[Ue('\227\231gz\239\255\228eb\230\221','\175\136\4\27\131')]and game[Ue('\133\fT\155\149\176\31I\171\149','\194i \200\240')](game,'Players')[Ue('\228\16]\188z\248\19_\164s\218','\168\127>\221\22')][Ue('\30\57|\202<2i\221/',']Q\29\184')]and game[Ue('\233\237W\220.\220\254J\236.','\174\136#\143K')](game,'Players')[Ue('vw\224\29-jt\226\5$H',':\24\131|A')][Ue('\224\254\248\177\194\245\237\166\209','\163\150\153\195')][Ue('_\137\173g\167\200\253j\148\128k\136\205\235','\25\224\195\3\225\161\143')](game[Ue('\233\237W\220.\220\254J\236.','\174\136#\143K')](game,'Players')[Ue('vw\224\29-jt\226\5$H',':\24\131|A')][Ue('\224\254\248\177\194\245\237\166\209','\163\150\153\195')],'Humanoid')and game[Ue('_\129\159\205\166j\146\130\253\166','\24\228\235\158\195')](game,'Players')[Ue('N\175\209\191\219R\172\211\167\210p','\2\192\178\222\183')][Ue('*\147\251\194\b\152\238\213\27','i\251\154\176')][Ue('S\224\31z\171<\170f\253\50v\132\57\188','\21\137q\30\237U\216')](game[Ue('_\129\159\205\166j\146\130\253\166','\24\228\235\158\195')](game,'Players')[Ue('N\175\209\191\219R\172\211\167\210p','\2\192\178\222\183')][Ue('*\147\251\194\b\152\238\213\27','i\251\154\176')],'HumanoidRootPart')and(game[Ue('\205\241\\M9\248\226A}9','\138\148(\30\\')](game,'Players')[Ue('\168\31\205\243\b\180\28\207\235\1\150','\228p\174\146d')][Ue('\217\144^V\251\155KA\232','\154\248?$')][Ue('|\153\146!Z\131\150$','4\236\255@')][Ue('\ni\220.x\213','B\f\189')]>0)and game[Ue('q\165\215\188\184D\182\202\140\184','6\192\163\239\221')](game,'Players')[Ue('b\t\167\158I~\n\165\134@\\','.f\196\255%')][Ue('s\138\1\175Q\129\20\184B','0\226\96\221')][Ue('\171w\192\215\183=\220\166\177m\194\194\137\51\199\182','\227\2\173\182\217R\181\194')])then
+                                    Cd=Hd(-26268)
+                                    break
+                                end
+                                Cd=Hd(12155)
+                            elseif Cd==-27976 then
+                                DefualtY=La[Ue('r','+')]
+                                TargetY=La[Ue('\216','\129')]
+                                targetCFrameWithDefualtY=_G[Ue('Bw\196\96\\\211','\1\49\182')][Ue('\200\195\209','\166')](La[Ue(',','t')],DefualtY,La[Ue('\167','\253')])
+                                targetPos=La[Ue('\214]\170\222\242[\182\217','\134\50\217\183')]
+                                oldcframe=game[Ue('w\138\247^\131\228T',"\'\230\150")][Ue('\21\133\bj\250\t\134\nr\243+','Y\234k\v\150')][Ue('\228\238\23\174\198\229\2\185\213','\167\134v\220')][Ue('\166!\158\238\4@\163\96\188;\156\251:N\184p','\238T\243\143j/\202\4')][Ue('\177\205f\147\230q','\242\139\20')]
+                                Distance=(targetPos-game[Ue('\168\4\192d\155\157\23\221T\155','\239a\180\55\254')](game,'Players')[Ue('_p\226\165\230Cs\224\189\239a','\19\31\129\196\138')][Ue('V\127\134\238tt\147\249g','\21\23\231\156')][Ue('\4K\6\14\23]!i\a\19=V','S*ozQ2')](game[Ue('\168\4\192d\155\157\23\221T\155','\239a\180\55\254')](game,'Players')[Ue('_p\226\165\230Cs\224\189\239a','\19\31\129\196\138')][Ue('V\127\134\238tt\147\249g','\21\23\231\156')],'HumanoidRootPart')[Ue('\31(%\r;.9\n','OGVd')])[Ue('B\248\211If\237\193Cj',"\15\153\180\'")]
+                                if(Distance<=300)then
+                                    Cd=Hd(-6619)
+                                    break
+                                end
+                                Cd=1252
+                            elseif Cd==-23275 then
+                                TweenSpeed=350
+                                Cd=Hd(-37694)
+                            end
+                        end
+                    until Cd==6504
+                end)
+                ke=Jf(3049)
+                break
+            end
+        end
+    until ke==-23405
+end
+function StopTween(me)
+    local Ef,hb,xb
+    _f={}
+    Ef,xb={[20586]=25952,[-10718]=-26280,[-7048]=10109,[-3089]=10109,[-13271]=15721,[522]=-21432,[-11670]=27511,[18387]=-7253,[15199]=23937},function(sb)
+        return Ef[sb+-7321]
+    end
+    hb=xb(22520)
+    repeat
+        while true do
+            if hb==25952 then
+                if game[Ue('\1\57\196(0\215\"','QU\165')][Ue('\138\144\21X\210\150\147\23@\219\180','\198\255v9\190')][Ue('\239\239\227t\205\228\246c\222','\172\135\130\6')][Ue('l\159\14\96a\143\\Y\130#lN\138J',"*\246\96\4\'\230.")](game[Ue('\1\57\196(0\215\"','QU\165')][Ue('\138\144\21X\210\150\147\23@\219\180','\198\255v9\190')][Ue('\239\239\227t\205\228\246c\222','\172\135\130\6')],'Highlight')then
+                    hb=xb(-3397)
+                    break
+                end
+                hb=xb(4232)
+            elseif hb==27511 then
+                game[Ue('\206\230b\137b\251\245\127\185b','\137\131\22\218\a')](game,'Players')[Ue('F\247\181\\)Z\244\183D x','\n\152\214=E')][Ue('\3c\157\154!h\136\141\50','@\v\252\232')][Ue('\31\200\236C\137\156\a\166\5\210\238V\183\146\28\182','W\189\129\"\231\243n\194')][Ue('\225\56\141\147\236^~\212%\160\159\195[h','\167Q\227\247\170\55\f')](game[Ue('\206\230b\137b\251\245\127\185b','\137\131\22\218\a')](game,'Players')[Ue('F\247\181\\)Z\244\183D x','\n\152\214=E')][Ue('\3c\157\154!h\136\141\50','@\v\252\232')][Ue('\31\200\236C\137\156\a\166\5\210\238V\183\146\28\182','W\189\129\"\231\243n\194')],'BodyClip')[Ue('\209\185\162\225\174\190\236','\149\220\209')](game[Ue('\206\230b\137b\251\245\127\185b','\137\131\22\218\a')](game,'Players')[Ue('F\247\181\\)Z\244\183D x','\n\152\214=E')][Ue('\3c\157\154!h\136\141\50','@\v\252\232')][Ue('\31\200\236C\137\156\a\166\5\210\238V\183\146\28\182','W\189\129\"\231\243n\194')][Ue('\225\56\141\147\236^~\212%\160\159\195[h','\167Q\227\247\170\55\f')](game[Ue('\206\230b\137b\251\245\127\185b','\137\131\22\218\a')](game,'Players')[Ue('F\247\181\\)Z\244\183D x','\n\152\214=E')][Ue('\3c\157\154!h\136\141\50','@\v\252\232')][Ue('\31\200\236C\137\156\a\166\5\210\238V\183\146\28\182','W\189\129\"\231\243n\194')],'BodyClip'))
+                hb=xb(25708)
+            elseif hb==23937 then
+                if not me then
+                    hb=xb(-5950)
+                    break
+                end
+                hb=25952
+            elseif hb==-7253 then
+                _G[Ue('2O\160\212\53L\170\193\15','a;\207\164')]=false
+                _G[Ue('\vF!Z','H*')]=false
+                hb=xb(27907)
+            elseif hb==15721 then
+                _G[Ue('\232S\30\178\239P\20\167\213',"\187\'q\194")]=true
+                _G[Ue('\233\18\247\a','\158s')]()
+                topos(game[Ue('~!q\245\192K2l\197\192','9D\5\166\165')](game,'Players')[Ue('\221\196\182l8\193\199\180t1\227','\145\171\213\rT')][Ue('\195\247\6\53\225\252\19\"\242','\128\159gG')][Ue('\30\174\181}\21\15k\154\4\180\183h+\1p\138','V\219\216\28{\96\2\254')][Ue('^wI|\\^','\29\49;')])
+                _G[Ue('\233\\\247I','\158=')]()
+                if game[Ue('\159\251EiN\170\232XYN','\216\158\49:+')](game,'Players')[Ue('\134n\170\187\225\154m\168\163\232\184','\202\1\201\218\141')][Ue('6\175\251\159\20\164\238\136\a','u\199\154\237')][Ue('W.\156\190\229Oa\144M4\158\171\219Az\128','\31[\241\223\139 \b\244')][Ue('\241\241\191\55\182\53\b\196\236\146;\153\48\30','\183\152\209S\240\\z')](game[Ue('\159\251EiN\170\232XYN','\216\158\49:+')](game,'Players')[Ue('\134n\170\187\225\154m\168\163\232\184','\202\1\201\218\141')][Ue('6\175\251\159\20\164\238\136\a','u\199\154\237')][Ue('W.\156\190\229Oa\144M4\158\171\219Az\128','\31[\241\223\139 \b\244')],'BodyClip')then
+                    hb=xb(-4349)
+                    break
+                end
+                hb=-7253
+            elseif hb==10109 then
+                hb=xb(7843);
+                break;
+            elseif hb==-26280 then
+                game[Ue('^\192\148w\201\135}','\14\172\245')][Ue('\238\252\51I\155\242\255\49Q\146\208','\162\147P(\247')][Ue('\188\164Z\230\158\175O\241\141','\255\204;\148')][Ue('\194{w8\204\220\170\247fZ4\227\217\188','\132\18\25\\\138\181\216')](game[Ue('^\192\148w\201\135}','\14\172\245')][Ue('\238\252\51I\155\242\255\49Q\146\208','\162\147P(\247')][Ue('\188\164Z\230\158\175O\241\141','\255\204;\148')],'Highlight')[Ue('\253.{\205\57g\192','\185K\b')](game[Ue('^\192\148w\201\135}','\14\172\245')][Ue('\238\252\51I\155\242\255\49Q\146\208','\162\147P(\247')][Ue('\188\164Z\230\158\175O\241\141','\255\204;\148')][Ue('\194{w8\204\220\170\247fZ4\227\217\188','\132\18\25\\\138\181\216')](game[Ue('^\192\148w\201\135}','\14\172\245')][Ue('\238\252\51I\155\242\255\49Q\146\208','\162\147P(\247')][Ue('\188\164Z\230\158\175O\241\141','\255\204;\148')],'Highlight'))
+                hb=xb(273)
+            end
+        end
+    until hb==-21432
+end
+_G[Ue('#\222\49\217>','P\174')](function()
+    local Yc,ia,h
+    Of={}
+    h,ia={[10213]=-2945,[-2256]=25834},function(lc)
+        return h[lc- -30673]
+    end
+    Yc=ia(-32929)
+    repeat
+        while true do
+            if Yc==25834 then
+                _G[Ue('\168\191\185\176\180','\216\220')](function()
+                    local Sd,Dg,ea,Hb
+                    rc={}
+                    Sd,ea={[-15354]=6666,[-30448]=-13156,[-19709]=-17965,[14600]=6666,[31052]=26189,[20040]=-21936,[-25574]=-19833,[30900]=7443},function(oa)
+                        return Sd[oa+1204]
+                    end
+                    Dg=ea(29696)
+                    repeat
+                        while true do
+                            if Dg==-2325 then
+                                if(_G[Ue('\253:EE\249\52D[','\187[7(')]or _G[Ue('E;ibG/we','\1Z\27\t')]or _G[Ue('\234\165\225>\198\140\225\53\194','\174\202\148Y')]or _G[Ue('v<Bb ^H','$U2')]or _G[Ue('\25\27\218l\140\207\29\17\197y\139\200','Tb\169\24\229\172')]or _G[Ue("e+\6]O\'\26LK",'(Bt<')]or _G[Ue('P\248\"i|I\200\"m\96','\4\143G\f\18')])then
+                                    Dg=ea(-20913)
+                                    break
+                                end
+                                Dg=ea(13396)
+                            elseif Dg==-21936 then
+                                Dg=ea(-16558)
+                            elseif Dg==-4023 then
+                                Dg=ea(-26778);
+                                break;
+                            elseif Dg==7443 then
+                                Dg=-13156;
+                            elseif Dg==6666 then
+                                Dg=ea(-31652)
+                            elseif Dg==26189 then
+                                Hb=_G[Ue('\1\196.\5)\196>\20','H\170]q')][Ue('\251\240\226','\149')]('BodyVelocity')
+                                Hb[Ue('\151k\180o','\217\n')]='BodyClip'
+                                Hb[Ue('\174\193h\155\206n','\254\160\26')]=game[Ue('# \201s\255\22\51\212C\255','dE\189 \154')](game,'Players')[Ue('\140\217\55\144\244\144\218\53\136\253\178','\192\182T\241\152')][Ue('\187\136v\206\153\131c\217\138','\248\224\23\188')][Ue('%c\157g\135Z\132\180?y\159r\185T\159\164','m\22\240\6\233\53\237\208')]
+                                Hb[Ue('\252\150(\246\222\133\51\213','\177\247P\176')]=_G[Ue('*{\30\bq\15O','|\30}')][Ue('\175\164\182','\193')](100000,100000,100000)
+                                Hb[Ue('\244\142\216)\193\130\192?','\162\235\180F')]=_G[Ue('\187\154\139\153\144\154\222','\237\255\232')][Ue('IBP',"\'")](0,0,0)
+                                Dg=ea(18836)
+                            elseif Dg==-13156 then
+                                if not(_G[Ue('\154\134\132\147','\237\231')]())then
+                                    Dg=-4023
+                                else
+                                    Dg=-2325
+                                end
+                            elseif Dg==-17965 then
+                                if not game[Ue('\213;\190\168\158\224(\163\152\158','\146^\202\251\251')](game,'Players')[Ue('\238&\202\a\173\242%\200\31\164\208','\162I\169f\193')][Ue('\250\223\139\219\216\212\158\204\203','\185\183\234\169')][Ue('fsngyXak|ilrGVz{','.\6\3\6\23\55\b\15')][Ue('>=B\127\200\243x\v os\231\246n','xT,\27\142\154\n')](game[Ue('\213;\190\168\158\224(\163\152\158','\146^\202\251\251')](game,'Players')[Ue('\238&\202\a\173\242%\200\31\164\208','\162I\169f\193')][Ue('\250\223\139\219\216\212\158\204\203','\185\183\234\169')][Ue('fsngyXak|ilrGVz{','.\6\3\6\23\55\b\15')],'BodyClip')then
+                                    Dg=ea(29848)
+                                    break
+                                end
+                                Dg=-21936
+                            end
+                        end
+                    until Dg==-19833
+                end)
+                Yc=ia(-20460)
+                break
+            end
+        end
+    until Yc==-2945
+end)
+_G[Ue('\140y\158~\145','\255\t')](function()
+    local Va,f,Me
+    Ka={}
+    Va,f={[12643]=22669,[28113]=-26972},function(l)
+        return Va[l-16452]
+    end
+    Me=f(44565)
+    repeat
+        while true do
+            if Me==-26972 then
+                _G[Ue('\254\247\239\248\226','\142\148')](function()
+                    local kd,E,Wd
+                    Eg={}
+                    Wd,E={[-9664]=16201,[22430]=407},function(Gb)
+                        return Wd[Gb- -14030]
+                    end
+                    kd=E(8400)
+                    repeat
+                        while true do
+                            if kd==407 then
+                                game[Ue('\31\166\255\246d*\181\226\198d','X\195\139\165\1')](game,'RunService')[Ue('@\181\54c\177\54w','\19\193S')][Ue(' \142W\r\132Z\23','c\225\57')](game[Ue('\31\166\255\246d*\181\226\198d','X\195\139\165\1')](game,'RunService')[Ue('@\181\54c\177\54w','\19\193S')],function()
+                                    local q,ve,rb,gd,b,mb,re,Q,Ig
+                                    Oc={}
+                                    b,gd={[20574]=-20760,[-16041]=-15906,[-14960]=9225,[24111]=-29661,[12440]=1094,[-21771]=-13210,[-1659]=-19139,[1132]=-29661,[-24277]=1844,[24240]=-24578,[-343]=-19139,[9616]=324,[-11445]=-20760,[4576]=1094,[-13116]=-19174,[20789]=30471,[19545]=13947},function(Ob)
+                                        return b[Ob+24395]
+                                    end
+                                    mb=gd(-4850)
+                                    repeat
+                                        while true do
+                                            if mb==1844 then
+                                                re=k(q)
+                                                if re~=nil and re[Ue('\233S\135\194i\156','\182\f\238')]~=nil then
+                                                    mb=gd(-40436)
+                                                    break
+                                                elseif R(q)=='table'then
+                                                    mb=gd(-37511)
+                                                    break
+                                                end
+                                                mb=-20760
+                                            elseif mb==-29661 then
+                                                mb=gd(-24738)
+                                            elseif mb==-15906 then
+                                                q,rb,Ig=re[Ue('!y\243\nC\232','~&\154')](q)
+                                                mb=gd(-3821)
+                                            elseif mb==-19139 then
+                                                Q,ve=q(rb,Ig);
+                                                Ig=Q;
+                                                if Ig==nil then
+                                                    mb=-22833
+                                                else
+                                                    mb=gd(-14779)
+                                                end
+                                            elseif mb==-13210 then
+                                                mb=gd(-39355);
+                                                break;
+                                            elseif mb==13947 then
+                                                if(_G[Ue('d/\231\n\96!\230\20','\"N\149g')]or _G[Ue('\235E\247\26\233Q\233\29','\175$\133q')]or _G[Ue('SX\210p\127q\210{{','\23\55\167\23')]or _G[Ue('P\t\163D\21\191n','\2\96\211')]or _G[Ue('/\183:&\194\195+\189%3\197\196','b\206IR\171\160')]or _G[Ue('\186R\25~\144^\5o\148','\247;k\31')]or _G[Ue('\14\164+\174\193\23\148+\170\221','Z\211N\203\175')])then
+                                                    mb=gd(-155)
+                                                    break
+                                                end
+                                                mb=-13210
+                                            elseif mb==-22833 then
+                                                mb=gd(-46166)
+                                            elseif mb==30471 then
+                                                ve[Ue('\133\17\141\187\167\170\28\138\156\173','\198p\227\248\200')]=false
+                                                mb=gd(-284)
+                                            elseif mb==-19174 then
+                                                q,rb,Ig=Sf(q)
+                                                mb=gd(-35840)
+                                            elseif mb==-20760 then
+                                                mb=gd(-11955)
+                                            elseif mb==1094 then
+                                                mb=gd(-26054);
+                                            elseif mb==324 then
+                                                if ve[Ue('\171\145\163','\226')](ve,'BasePart')then
+                                                    mb=gd(-3606)
+                                                    break
+                                                end
+                                                mb=gd(-23263)
+                                            elseif mb==-24578 then
+                                                q,rb,Ig=_G[Ue(']\181D\166^','-\212')](game[Ue('\199\215I\22\230\242\196T&\230','\128\178=E\131')](game,'Players')[Ue('qD\136&\158mG\138>\151O','=+\235G\242')][Ue('u;\229\31W0\240\bD','6S\132m')][Ue('YN\254b&\175<{E\238G-\168,','\30+\138&C\220_')](game[Ue('\199\215I\22\230\242\196T&\230','\128\178=E\131')](game,'Players')[Ue('qD\136&\158mG\138>\151O','=+\235G\242')][Ue('u;\229\31W0\240\bD','6S\132m')]))
+                                                if R(q)~='function'then
+                                                    mb=gd(-48672)
+                                                    break
+                                                end
+                                                mb=gd(-19819)
+                                            end
+                                        end
+                                    until mb==9225
+                                end)
+                                kd=E(-23694)
+                                break
+                            end
+                        end
+                    until kd==16201
+                end)
+                Me=f(29095)
+                break
+            end
+        end
+    until Me==22669
+end)
+PosY=25
+Type=1
+_G[Ue('\218\130\200\133\199','\169\242')](function()
+    local Rd,hd,pe
+    Xc={}
+    Rd,pe={[3185]=-8389,[32143]=-4610,[-8910]=-4610,[-19169]=-22673,[-23357]=9846,[18434]=-1115,[-32628]=-4610,[12553]=-14518,[3133]=11117,[-6979]=9260,[-8281]=-4610,[4434]=-31503},function(xd)
+        return Rd[xd+-15572]
+    end
+    hd=pe(20006)
+    repeat
+        while true do
+            if hd==-31503 then
+                hd=-14518;
+            elseif hd==-14518 then
+                if _G[Ue('q\159o\138','\6\254')]()then
+                    hd=pe(-7785)
+                else
+                    hd=-5408
+                end
+            elseif hd==9846 then
+                if(Type==1)then
+                    hd=pe(8593)
+                    break
+                elseif(Type==2)then
+                    hd=pe(-3597)
+                    break
+                elseif(Type==3)then
+                    hd=pe(34006)
+                    break
+                elseif(Type==4)then
+                    hd=pe(18705)
+                    break
+                end
+                hd=-4610
+            elseif hd==-22673 then
+                Pos=_G[Ue('\249\164n\219\143y','\186\226\28')][Ue('/$6','A')](19,PosY,0)
+                hd=pe(47715)
+            elseif hd==-5408 then
+                hd=pe(18757);
+                break;
+            elseif hd==9260 then
+                Pos=_G[Ue('\170\254\253\136\213\234','\233\184\143')][Ue('zqc','\20')](0,PosY,-19)
+                hd=pe(-17056)
+            elseif hd==11117 then
+                Pos=_G[Ue('\tx\158+S\137','J>\236')][Ue('\201\194\208','\167')](-19,PosY,0)
+                hd=pe(6662)
+            elseif hd==-1115 then
+                Pos=_G[Ue('\243\228\31\209\207\b','\176\162m')][Ue('\173\166\180','\195')](0,PosY,19)
+                hd=pe(7291)
+            elseif hd==-4610 then
+                hd=pe(28125)
+            end
+        end
+    until hd==-8389
+end)
+_G[Ue('<\r.\n!','O}')](function()
+    local be,md,ha
+    v={}
+    md,be={[-17977]=422,[3494]=5235,[-25757]=5235,[28791]=-20170,[27188]=-25328},function(ef)
+        return md[ef- -8846]
+    end
+    ha=be(18342)
+    repeat
+        while true do
+            if ha==5235 then
+                if _G[Ue('A\247_\226','6\150')](0.10000000000000001)then
+                    ha=be(-26823)
+                else
+                    ha=27236
+                end
+            elseif ha==-25328 then
+                ha=be(-5352);
+            elseif ha==27236 then
+                ha=be(19945);
+                break;
+            elseif ha==422 then
+                Type=1
+                _G[Ue('\206\153\208\140','\185\248')](0.20000000000000001)
+                Type=2
+                _G[Ue('\234\161\244\180','\157\192')](0.20000000000000001)
+                Type=3
+                _G[Ue('\154\157\132\136','\237\252')](0.20000000000000001)
+                Type=4
+                _G[Ue('A\228_\241','6\133')](0.20000000000000001)
+                ha=be(-34603)
+            end
+        end
+    until ha==-20170
+end)
+local Yd=game[Ue('d\128ZM\137IG','4\236;')][Ue('\140\145\232\165a\144\146\234\189h\178','\192\254\139\196\r')]
+function AttackNoCoolDown()
+    local Ac=Yd[Ue('\157\146\203}\191\153\222j\172','\222\250\170\15')]
+    if not(not Ac)then
+    else
         return
     end
-    local function v28(v49)
-        return v49 and v49:FindFirstChild("Humanoid") and (v49.Humanoid.Health > 0)
-    end
-    local function v29(v50)
-        local v51 = game:GetService("Workspace").Enemies:GetChildren()
-        local v52 = {}
-        local v53 = v26:GetPivot().Position
-        for v56, v57 in ipairs(v51) do
-            local v58 = v57:FindFirstChild("HumanoidRootPart")
-            if (v58 and v28(v57) and ((v58.Position - v53).Magnitude <= v50)) then
-                table.insert(v52, v57)
-            end
+    local Jb=nil
+    for hf,cg in _G[Ue('\130\240B\130\242P','\235\128#')](Ac[Ue('mlE\239\253CeU\222\240D','*\t1\172\149')](Ac))do
+        if not(cg[Ue('\140\182\132','\197')](cg,'Tool'))then
+        else
+            Jb=cg
+            break
         end
-        return v52
     end
-    if v27:FindFirstChild("LeftClickRemote") then
-        local v59 = 1
-        local v60 = v29(60)
-        for v71, v72 in ipairs(v60) do
-            local v73 = (v72.HumanoidRootPart.Position - v26:GetPivot().Position).Unit
-            pcall(
-                function()
-                    v27.LeftClickRemote:FireServer(v73, v59)
-                end
-            )
-            v59 = v59 + 1
-            if (v59 > 1000000000) then
-                v59 = 1
-            end
-        end
+    if not(not Jb)then
     else
-        local v61 = {}
-        local v62 = game:GetService("Workspace").Enemies:GetChildren()
-        local v63 = v26:GetPivot().Position
-        local v64 = nil
-        for v74, v75 in ipairs(v62) do
-            if (not v75:GetAttribute("IsBoat") and v28(v75)) then
-                local v100 = v75:FindFirstChild("Head")
-                if (v100 and ((v63 - v100.Position).Magnitude <= 60)) then
-                    table.insert(v61, {v75, v100})
-                    v64 = v100
+        return
+    end
+    local function zg(V)
+        return V and V[Ue('\251}\169\227\157K\190\206\96\132\239\178N\168','\189\20\199\135\219\"\204')](V,'Humanoid')and(V[Ue('L\245b\218j\239f\223','\4\128\15\187')][Ue('\18\196\179\54\213\186','Z\161\210')]>0)
+    end
+    local function Fg(Se)
+        local nd,pb,se,xf,Lc,Xb,G,od,of,B,Lf,Wb,gg
+        Bc={}
+        nd,se={[-11960]=-13151,[4758]=47,[-16970]=-8861,[9732]=6738,[10862]=4244,[11864]=-20813,[7748]=-14443,[4185]=14268,[28776]=1285,[-16303]=-15363,[-26628]=-14443,[29968]=-6522},function(Yb)
+            return nd[Yb-6273]
+        end
+        Lf=se(36241)
+        repeat
+            while true do
+                if Lf==-8861 then
+                    od,B=Wb(of,xf);
+                    xf=od;
+                    if not(xf==nil)then
+                        Lf=se(-5687)
+                    else
+                        Lf=se(18137)
+                    end
+                elseif Lf==-6522 then
+                    Xb=game[Ue('*\220\14\229W\31\207\19\213W','m\185z\182\50')](game,'Workspace')[Ue('\228\231\31\204\224\31\210','\161\137z')][Ue('\187\54Wr8\149?GC5\146','\252S#1P')](game[Ue('*\220\14\229W\31\207\19\213W','m\185z\182\50')](game,'Workspace')[Ue('\228\231\31\204\224\31\210','\161\137z')])
+                    gg={}
+                    pb=Ac[Ue('5\25LK\27\nWo','r|8\27')](Ac)[Ue('\194A\174w\230G\178p','\146.\221\30')]
+                    Wb,of,xf=_G[Ue('\228\50+\228\48\57','\141BJ')](Xb)
+                    if R(Wb)~='function'then
+                        Lf=se(-10030)
+                        break
+                    end
+                    Lf=47
+                elseif Lf==1285 then
+                    _G[Ue('\194X\212U\211','\182\57')][Ue("\t;\b\5\'\15",'\96U{')](gg,B)
+                    Lf=se(17135)
+                elseif Lf==6738 then
+                    Wb,of,xf=Lc[Ue('\176\25\27\155#\0','\239Fr')](Wb)
+                    Lf=se(14021)
+                elseif Lf==4244 then
+                    Lf=se(-10697)
+                elseif Lf==-15363 then
+                    Lc=k(Wb)
+                    if Lc~=nil and Lc[Ue(' \192K\v\250P','\127\159\"')]~=nil then
+                        Lf=se(16005)
+                        break
+                    elseif R(Wb)=='table'then
+                        Lf=se(10458)
+                        break
+                    end
+                    Lf=-14443
+                elseif Lf==-14443 then
+                    Lf=se(11031)
+                elseif Lf==-20813 then
+                    return gg
+                elseif Lf==47 then
+                    Lf=-8861;
+                elseif Lf==-13151 then
+                    G=B[Ue('x\139\210\183\151%\199M\150\255\187\184 \209','>\226\188\211\209L\181')](B,'HumanoidRootPart')
+                    if(G and zg(B)and((G[Ue('o\190owK\184sp','?\209\28\30')]-pb)[Ue('z\238\23\127^\251\5uR','7\143p\17')]<=Se))then
+                        Lf=se(35049)
+                        break
+                    end
+                    Lf=4244
+                elseif Lf==14268 then
+                    Wb,of,xf=Sf(Wb)
+                    Lf=se(-20355)
                 end
             end
+        until Lf==18525
+    end
+    if not(Jb[Ue('\250\129\134\132\57\26y\207\156\171\136\22\31o','\188\232\232\224\127s\v')](Jb,'LeftClickRemote'))then
+        local fb,nf,_,D={},game[Ue('q?\175u\239D,\178E\239','6Z\219&\138')](game,'Workspace')[Ue('\209ht\249ot\231','\148\6\17')][Ue('\220\225<\19v\242\232,\"{\245','\155\132HP\30')](game[Ue('q?\175u\239D,\178E\239','6Z\219&\138')](game,'Workspace')[Ue('\209ht\249ot\231','\148\6\17')]),Ac[Ue('\184W\215\178\150D\204\150','\255\50\163\226')](Ac)[Ue('\148\253\150/\176\251\138(','\196\146\229F')],nil
+        for fd,ga in _G[Ue('Z\142\30Z\140\f','3\254\127')](nf)do
+            local He,Ha,z,gb
+            dd={}
+            Ha,He={[993]=4163,[-15395]=29096,[11627]=29096,[31761]=-3925,[27895]=-26865,[24983]=-3808,[-27785]=-25124},function(cf)
+                return Ha[cf- -12077]
+            end
+            z=He(-39862)
+            repeat
+                while true do
+                    if z==29096 then
+                        z=He(19684)
+                    elseif z==-26865 then
+                        _G[Ue('\246\19\224\30\231','\130r')][Ue('\129\190:\141\162=','\232\208I')](fb,{ga,gb})
+                        D=gb
+                        z=He(-450)
+                    elseif z==-25124 then
+                        if(not ga[Ue('&F\235\194\230\172\19J\253\246\230\189','a#\159\131\146\216')](ga,'IsBoat')and zg(ga))then
+                            z=He(-11084)
+                            break
+                        end
+                        z=-3925
+                    elseif z==-3925 then
+                        z=He(12906);
+                        break;
+                    elseif z==4163 then
+                        gb=ga[Ue('\138\\\157\249\191J\154\191A\176\245\144O\140','\204\53\243\157\249#\232')](ga,'Head')
+                        if(gb and((_-gb[Ue('\b\144\17\30,\150\r\25','X\255bw')])[Ue('\221\22\b\225\249\3\26\235\245','\144wo\143')]<=60))then
+                            z=He(15818)
+                            break
+                        end
+                        z=He(-27472)
+                    end
+                end
+            until z==-3808
         end
-        if not v64 then
+        if not(not D)then
+        else
             return
         end
-        pcall(
-            function()
-                local v76 = game:GetService("ReplicatedStorage")
-                local v77 = v76:WaitForChild("Modules"):WaitForChild("Net"):WaitForChild("RE/RegisterAttack")
-                local v78 = v76:WaitForChild("Modules"):WaitForChild("Net"):WaitForChild("RE/RegisterHit")
-                if (#v61 > 0) then
-                    v77:FireServer(1e-9)
-                    v78:FireServer(v64, v61)
-                else
-                    task.wait(1e-9)
+        _G[Ue('\240\173\225\162\236','\128\206')](function()
+            local og,Ed,sa,mg,Lg,zb
+            Rc={}
+            og,Lg={[-11752]=20763,[-16996]=108,[30937]=20763,[-23250]=20763,[-27586]=-22585,[-21993]=-28451,[-25715]=-6464},function(pf)
+                return og[pf+26339]
+            end
+            sa=Lg(-52054)
+            repeat
+                while true do
+                    if sa==20763 then
+                        sa=Lg(-48332);
+                        break;
+                    elseif sa==-6464 then
+                        Ed=game[Ue('^^!\163\150kM<\147\150','\25;U\240\243')](game,'ReplicatedStorage')
+                        mg=Ed[Ue('\184\127V\a\28\148\157]W\26\54\159','\239\30?sZ\251')](Ed,'Modules')[Ue('\136X\96\5\211>\173za\24\249\53','\223\57\tq\149Q')](Ed[Ue('\184\127V\a\28\148\157]W\26\54\159','\239\30?sZ\251')](Ed,'Modules'),'Net')[Ue('-\t-\140g\t\b+,\145M\2','zhD\248!f')](Ed[Ue('\184\127V\a\28\148\157]W\26\54\159','\239\30?sZ\251')](Ed,'Modules')[Ue('\136X\96\5\211>\173za\24\249\53','\223\57\tq\149Q')](Ed[Ue('\184\127V\a\28\148\157]W\26\54\159','\239\30?sZ\251')](Ed,'Modules'),'Net'),'RE/RegisterAttack')
+                        zb=Ed[Ue('\224\227\254h+\160\197\193\255u\1\171','\183\130\151\28m\207')](Ed,'Modules')[Ue('\193}\235\151\137\247\228_\234\138\163\252','\150\28\130\227\207\152')](Ed[Ue('\224\227\254h+\160\197\193\255u\1\171','\183\130\151\28m\207')](Ed,'Modules'),'Net')[Ue('\152\252\168\228\154\230\189\222\169\249\176\237','\207\157\193\144\220\137')](Ed[Ue('\224\227\254h+\160\197\193\255u\1\171','\183\130\151\28m\207')](Ed,'Modules')[Ue('\193}\235\151\137\247\228_\234\138\163\252','\150\28\130\227\207\152')](Ed[Ue('\224\227\254h+\160\197\193\255u\1\171','\183\130\151\28m\207')](Ed,'Modules'),'Net'),'RE/RegisterHit')
+                        if(#fb>0)then
+                            sa=Lg(-53925)
+                            break
+                        else
+                            sa=Lg(-43335)
+                            break
+                        end
+                        sa=Lg(-38091)
+                    elseif sa==108 then
+                        _G[Ue('\14\127\tu','z\30')][Ue('*\31\52\n',']~')](1.0000000000000001e-09)
+                        sa=Lg(-49589)
+                    elseif sa==-22585 then
+                        mg[Ue('\189]&\20\55\158F\"\20\22','\251\52Tqd')](mg,1.0000000000000001e-09)
+                        zb[Ue('j\23\212SPI\f\208Sq',',~\166\54\3')](zb,D,fb)
+                        sa=Lg(4598)
+                    end
+                end
+            until sa==-28451
+        end)
+    else
+        local C,Ze,Oa,_b,qg
+        mf={}
+        qg,Oa={[-585]=-28227,[-30334]=-8276},function(ld)
+            return qg[ld- -20591]
+        end
+        C=Oa(-50925)
+        repeat
+            while true do
+                if C==-8276 then
+                    _b=1
+                    Ze=Fg(60)
+                    for rf,yd in _G[Ue('\187\242\239\187\240\253','\210\130\142')](Ze)do
+                        local Hg=(yd[Ue('r\205O\1\5\128\151\182h\215M\20;\142\140\166',':\184\"\96k\239\254\210')][Ue('\152\232\v\240\188\238\23\247','\200\135x\153')]-Ac[Ue('Zu\150\155tf\141\191','\29\16\226\203')](Ac)[Ue('\185\21 \21\157\19<\18','\233zS|')])[Ue('\239I\211S',"\186\'")]
+                        _G[Ue('\15\185\30\182\19','\127\218')](function()
+                            Jb[Ue('r\194\57z\135\19\204]\204\rk\169\16\209[','>\167_\14\196\127\165')][Ue('\15y\214\187/,b\210\187\14','I\16\164\222|')](Jb[Ue('r\194\57z\135\19\204]\204\rk\169\16\209[','>\167_\14\196\127\165')],Hg,_b)
+                        end)
+                        _b=_b+1
+                        if not((_b>1000000000))then
+                        else
+                            _b=1
+                        end
+                    end
+                    C=Oa(-21176)
+                    break
                 end
             end
-        )
+        until C==-28227
     end
 end
-_G.FastAttack = true
-spawn(
-    function()
-        while wait(0.1) do
-            if _G.FastAttack then
-                pcall(
-                    function()
-                        repeat
-                            task.wait(0.1)
-                            AttackNoCoolDown()
-                        until not _G.FastAttack
-                    end
-                )
-            end
-        end
+_G[Ue('\18\172\236#\185 \185\254\52\147','T\205\159W\248')]=true
+_G[Ue('\157\6\143\1\128','\238v')](function()
+    local Sa,Ge,ad
+    Fe={}
+    ad,Sa={[9250]=-11510,[-17349]=-7602,[-26038]=2863,[-31544]=-17700,[-25135]=5931,[26065]=5931,[21070]=-11686,[-8093]=-16193},function(m)
+        return ad[m- -20062]
     end
-)
-function AutoHaki()
-    if not game:GetService("Players").LocalPlayer.Character:FindFirstChild("HasBuso") then
-        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("Buso")
-    end
-end
-function EquipWeapon(v30)
-    if not Nill then
-        if game.Players.LocalPlayer.Backpack:FindFirstChild(v30) then
-            Tool = game.Players.LocalPlayer.Backpack:FindFirstChild(v30)
-            wait(0.1)
-            game.Players.LocalPlayer.Character.Humanoid:EquipTool(Tool)
-        end
-    end
-end
-_G.SelectWeapon = "Melee"
-task.spawn(
-    function()
-        while wait() do
-            pcall(
-                function()
-                    if (_G.SelectWeapon == "Melee") then
-                        for v101, v102 in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
-                            if (v102.ToolTip == "Melee") then
-                                if game.Players.LocalPlayer.Backpack:FindFirstChild(tostring(v102.Name)) then
-                                    _G.SelectWeapon = v102.Name
-                                end
-                            end
-                        end
-                    elseif (_G.SelectWeapon == "Sword") then
-                        for v116, v117 in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
-                            if (v117.ToolTip == "Sword") then
-                                if game.Players.LocalPlayer.Backpack:FindFirstChild(tostring(v117.Name)) then
-                                    _G.SelectWeapon = v117.Name
-                                end
-                            end
-                        end
-                    elseif (_G.SelectWeapon == "Gun") then
-                        for v140, v141 in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
-                            if (v141.ToolTip == "Gun") then
-                                if game.Players.LocalPlayer.Backpack:FindFirstChild(tostring(v141.Name)) then
-                                    _G.SelectWeapon = v141.Name
-                                end
-                            end
-                        end
-                    elseif (_G.SelectWeapon == "Fruit") then
-                        for v143, v144 in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
-                            if (v144.ToolTip == "Blox Fruit") then
-                                if game.Players.LocalPlayer.Backpack:FindFirstChild(tostring(v144.Name)) then
-                                    _G.SelectWeapon = v144.Name
-                                end
-                            end
-                        end
-                    end
-                end
-            )
-        end
-    end
-)
--- Tabs
-local Tabs = {}
-
--- Info tab
-Tabs.Info = Window:Tab({
-    Title = "Info Hub",
-    Icon = "bell",
-    Desc = "trang liên hệ",
-})
-
-Tabs.Info:Section({ Title = "Thông tin" })
-
-Tabs.Info:Button({
-    Title = "Discord",
-    Desc = "Click để sao chép link Discord",
-    Callback = function()
-        setclipboard("https://discord.gg") -- thay link thật tại đây
-        WindUI:Notify({
-            Title = "Discord Copied",
-            Content = "Link đã được sao chép vào clipboard",
-            Icon = "link",
-            Duration = 4
-        })
-    end
-})
-
-Tabs.Info:Button({
-    Title = "Zalo",
-    Desc = "Click để lấy link box",
-    Callback = function()
-        setclipboard("https://zalo.me/g/ipfcqs376") -- thay link thật tại đây
-        WindUI:Notify({
-            Title = "Zalo Copied",
-            Content = "Đã sao chép link Box",
-            Icon = "link",
-            Duration = 4
-        })
-    end
-})
-
-Tabs.Info:Button({
-    Title = "Teleport Sea 1",
-    Desc = "Dịch chuyển về Sea 1",
-    Callback = function()
-        pcall(function()
-            game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("TravelMain")
-        end)
-    end
-})
-
-Tabs.Info:Button({
-    Title = "Teleport Sea 2",
-    Desc = "Dịch chuyển về Sea 2",
-    Callback = function()
-        pcall(function()
-            game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("TravelDressrosa")
-        end)
-    end
-})
-
-Tabs.Info:Button({
-    Title = "Teleport Sea 3",
-    Desc = "Dịch chuyển về Sea 3",
-    Callback = function()
-        pcall(function()
-            game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("TravelZou")
-        end)
-    end
-})
--- ===== TAB MAIN =====
-Tabs.Main = Window:Tab({
-    Title = "Farm Boss",
-    Icon = "rocket",
-    Desc = "Trang chính",
-})
-
-Tabs.Main:Dropdown({
-    Title = "Select Boss",
-    Desc = "Chọn boss để farm",
-    Values = { "rip_indra True Form", "Dough King", "Darkbeard" },
-    Value = "rip_indra True Form",
-    Callback = function(v31)
-        _G.SelectBoss = v31
-    end
-})
-
--- Toggle: Farm Boss Select
-Tabs.Main:Toggle({
-    Title = "Farm Boss Select",
-    Default = false,
-    Callback = function(v32)
-        _G.FarmBoss = v32
-        StopTween(_G.FarmBoss)
-    end
-})
-spawn(
-    function()
-        while wait() do
-            if _G.FarmBoss then
-                pcall(
-                    function()
-                        if game:GetService("Workspace").Enemies:FindFirstChild(_G.SelectBoss) then
-                            for v118, v119 in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
-                                if (v119.Name == _G.SelectBoss) then
-                                    if
-                                        (v119:FindFirstChild("Humanoid") and v119:FindFirstChild("HumanoidRootPart") and
-                                            (v119.Humanoid.Health > 0))
-                                     then
-                                        repeat
-                                            task.wait()
-                                            AutoHaki()
-                                            EquipWeapon(_G.SelectWeapon)
-                                            v119.HumanoidRootPart.CanCollide = false
-                                            v119.Humanoid.WalkSpeed = 0
-                                            topos(v119.HumanoidRootPart.CFrame * Pos)
-                                            sethiddenproperty(
-                                                game:GetService("Players").LocalPlayer,
-                                                "SimulationRadius",
-                                                math.huge
-                                            )
-                                        until not _G.FarmBoss or not v119.Parent or (v119.Humanoid.Health <= 0)
-                                    end
-                                end
-                            end
-                        elseif game:GetService("ReplicatedStorage"):FindFirstChild(_G.SelectBoss) then
-                            topos(
-                                game:GetService("ReplicatedStorage"):FindFirstChild(_G.SelectBoss).HumanoidRootPart.CFrame *
-                                    CFrame.new(5, 10, 7)
-                            )
-                        end
-                    end
-                )
-            end
-        end
-    end
-)
-Tabs.Main:Toggle({
-    Title = "Auto Buy Sword Legendary",
-    Default = false,
-    Callback = function(v38)
-        _G.BuyLegendarySword = v38
-    end
-})
-spawn(
-    function()
-        while wait() do
-            if _G.BuyLegendarySword then
-                pcall(
-                    function()
-                        local v86 = {[1] = "LegendarySwordDealer", [2] = "1"}
-                        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(v86))
-                        local v86 = {[1] = "LegendarySwordDealer", [2] = "2"}
-                        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(v86))
-                        local v86 = {[1] = "LegendarySwordDealer", [2] = "3"}
-                        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(v86))
-                        if (_G.BuyLegendarySword_Hop and _G.BuyLegendarySword and World2) then
-                            wait(10)
-                            Hop()
-                        end
-                    end
-                )
-            end
-        end
-    end
-)
-Tabs.Main:Toggle({
-    Title = "Teleport Mirage Island",
-    Default = false,
-    Callback = function(v34)
-        _G.MysticIsland = v34
-        StopTween(_G.MysticIsland)
-    end
-})
-spawn(
-    function()
-        pcall(
-            function()
-                while wait() do
-                    if _G.MysticIsland then
-                        local v82 = game:GetService("Workspace").Map:FindFirstChild("MysticIsland")
-                        if v82 then
-                            local v114 = v82.WorldPivot.Position
-                            topos(CFrame.new(v114.X, 500, v114.Z))
-                        end
-                    end
-                end
-            end
-        )
-    end
-)
-Tabs.Main:Toggle({
-    Title = "Teleport Advanced Fruit Dealer",
-    Default = false,
-    Callback = function(v35)
-        _G.Miragenpc = v35
-        StopTween(_G.Miragenpc)
-    end
-})
-spawn(
-    function()
-        while wait() do
-            if _G.Miragenpc then
-                local v81 = game.ReplicatedStorage.NPCs:FindFirstChild("Advanced Fruit Dealer")
-                if (v81 and v81:IsA("Model")) then
-                    local v103 = v81.PrimaryPart and v81.PrimaryPart.Position
-                    if v103 then
-                        topos(CFrame.new(v103))
-                    end
-                end
-            end
-        end
-    end
-)
-Tabs.Main:Toggle({
-    Title = "Auto Lock Moon",
-    Default = false,
-    Callback = function(v36)
-        _G.LockCamToMoon = v36
-    end
-})
-spawn(
-    function()
-        while wait() do
-            pcall(
-                function()
-                    if _G.LockCamToMoon then
-                        wait(0.1)
-                        local v83 = game.Lighting:GetMoonDirection()
-                        local v84 = game.Workspace.CurrentCamera.CFrame.p + (v83 * 100)
-                        game.Workspace.CurrentCamera.CFrame = CFrame.lookAt(game.Workspace.CurrentCamera.CFrame.p, v84)
-                    end
-                end
-            )
-        end
-    end
-)
-Tabs.Main:Toggle({
-    Title = "Tween Gear",
-    Default = false,
-    Callback = function(v37)
-        _G.TweenMGear = v37
-        StopTween(_G.TweenMGear)
-    end
-})
-spawn(
-    function()
-        pcall(
-            function()
-                while wait() do
-                    if _G.TweenMGear then
-                        if game:GetService("Workspace").Map:FindFirstChild("MysticIsland") then
-                            for v120, v121 in pairs(game:GetService("Workspace").Map.MysticIsland:GetChildren()) do
-                                if v121:IsA("MeshPart") then
-                                    if (v121.Material == Enum.Material.Neon) then
-                                        topos(v121.CFrame)
-                                    end
-                                end
-                            end
-                        end
-                    end
-                end
-            end
-        )
-    end
-)
--- ===== TẠO HÀM CẬP NHẬT SERVER CHUNG =====
-local function CreateServerUpdater(tab, apiUrl)
-    local serverButtons = {}
-
-    local function UpdateServerList()
-        local success, response = pcall(function()
-            return game:HttpGet(apiUrl)
-        end)
-
-        if not success then
-            warn("Không thể kết nối đến API")
-            return
-        end
-
-        local data
-        local ok = pcall(function()
-            data = HttpService:JSONDecode(response)
-        end)
-
-        if not ok or not data or not data.JobId then
-            warn("Lỗi dữ liệu JSON hoặc thiếu 'JobId'")
-            warn("Phản hồi API:", response)
-            return
-        end
-
-        -- Danh sách ID mới
-        local newIds = {}
-        for _, entry in ipairs(data.JobId) do
-            for id, _ in pairs(entry) do
-                table.insert(newIds, id)
-            end
-        end
-
-        -- So sánh và cập nhật
-        local newSet = {}
-        for _, id in ipairs(newIds) do newSet[id] = true end
-
-        -- Xóa nút không còn
-        for id, button in pairs(serverButtons) do
-            if not newSet[id] then
-                button:Destroy()
-                serverButtons[id] = nil
-            end
-        end
-
-        -- Tạo nút mới
-        for _, id in ipairs(newIds) do
-            if not serverButtons[id] then
-                serverButtons[id] = tab:Button({
-                    Title = "Join Server: " .. id,
-                    Desc = "Click để vào server",
-                    Callback = function()
-                        TeleportService:TeleportToPlaceInstance(PLACE_ID, id, Players.LocalPlayer)
-                    end
-                })
-            end
-        end
-    end
-
-    -- Tự động cập nhật mỗi 5 giây
-    task.spawn(function()
+    Ge=Sa(-28155)
+    repeat
         while true do
-            pcall(UpdateServerList)
-            task.wait(5)
+            if Ge==-7602 then
+                Ge=Sa(-10812);
+                break;
+            elseif Ge==-17700 then
+                if _G[Ue('\250\150\51\227H\200\131!\244b','\188\247@\151\t')]then
+                    Ge=Sa(1008)
+                    break
+                end
+                Ge=Sa(6003)
+            elseif Ge==-11686 then
+                _G[Ue('\159m\142b\131','\239\14')](function()
+                    local oe,Ld,i
+                    xe={}
+                    i,Ld={[-10785]=-13693,[-29022]=26356,[18652]=27324},function(Ad)
+                        return i[Ad-26016]
+                    end
+                    oe=Ld(44668)
+                    repeat
+                        while true do
+                            if oe==26356 then
+                                if not _G[Ue('!\19\137\27,\19\6\155\f\6','gr\250om')]then
+                                    oe=15496
+                                else
+                                    oe=3116
+                                end
+                            elseif oe==27324 then
+                                oe=3116;
+                            elseif oe==3116 then
+                                _G[Ue('\129:\134\48','\245[')][Ue('_kA~','(\n')](0.10000000000000001)
+                                AttackNoCoolDown()
+                                oe=Ld(-3006)
+                            elseif oe==15496 then
+                                oe=Ld(15231);
+                                break;
+                            end
+                        end
+                    until oe==-13693
+                end)
+                Ge=Sa(-45197)
+            elseif Ge==5931 then
+                Ge=Sa(-46100)
+            elseif Ge==-16193 then
+                Ge=2863;
+            elseif Ge==2863 then
+                if not(_G[Ue('\228w\250b','\147\22')](0.10000000000000001))then
+                    Ge=Sa(-37411)
+                else
+                    Ge=Sa(-51606)
+                end
+            end
         end
+    until Ge==-11510
+end)
+function AutoHaki()
+    local Gc,Ja,va
+    Tb={}
+    Gc,va={[-13678]=10855,[-5101]=-13165,[-11431]=12352,[29298]=19247},function(bd)
+        return Gc[bd-16810]
+    end
+    Ja=va(46108)
+    repeat
+        while true do
+            if Ja==10855 then
+                Ja=va(11709);
+                break;
+            elseif Ja==19247 then
+                if not game[Ue('\196#]9\144\241\48@\t\144','\131F)j\245')](game,'Players')[Ue('\221\56K\3s\193;I\27z\227','\145W(b\31')][Ue('5jfH\23as_\4','v\2\a:')][Ue('\138\140p\225\157\164\190\191\145]\237\178\161\168','\204\229\30\133\219\205\204')](game[Ue('\196#]9\144\241\48@\t\144','\131F)j\245')](game,'Players')[Ue('\221\56K\3s\193;I\27z\227','\145W(b\31')][Ue('5jfH\23as_\4','v\2\a:')],'HasBuso')then
+                    Ja=va(5379)
+                    break
+                end
+                Ja=10855
+            elseif Ja==12352 then
+                game[Ue('0\231\194\171\248\5\244\223\155\248','w\130\182\248\157')](game,'ReplicatedStorage')[Ue('\225\v\254\220\26\246\192','\179n\147')][Ue('1\48\20\31\25&','r_y')][Ue('\148\b\178\231M\221\142\3\182\254C\202','\221f\196\136&\184')](game[Ue('0\231\194\171\248\5\244\223\155\248','w\130\182\248\157')](game,'ReplicatedStorage')[Ue('\225\v\254\220\26\246\192','\179n\147')][Ue('1\48\20\31\25&','r_y')],'Buso')
+                Ja=va(3132)
+            end
+        end
+    until Ja==-13165
+end
+function EquipWeapon(Gg)
+    local df,bb,J
+    Hf={}
+    J,df={[2004]=-15350,[-3487]=20400,[-1727]=31388,[7000]=-15350,[-21323]=21949,[5137]=-7018,[5263]=-15849},function(bc)
+        return J[bc-25607]
+    end
+    bb=df(30870)
+    repeat
+        while true do
+            if bb==31388 then
+                Tool=game[Ue('\5\17k,\24x&','U}\n')][Ue('\159\139\254\177j\131\136\252\169c\161','\211\228\157\208\6')][Ue('G9b\fu9b\f','\5X\1g')][Ue('\\\139\141\27\149\184\173i\150\160\23\186\189\187','\26\226\227\127\211\209\223')](game[Ue('\5\17k,\24x&','U}\n')][Ue('\159\139\254\177j\131\136\252\169c\161','\211\228\157\208\6')][Ue('G9b\fu9b\f','\5X\1g')],Gg)
+                _G[Ue('\177\179\175\166','\198\210')](0.10000000000000001)
+                game[Ue('\213q,\252x?\246','\133\29M')][Ue('\247D\226]\147\235G\224E\154\201','\187+\129<\255')][Ue('\182I\182q\148B\163f\135','\245!\215\3')][Ue('\204!\159o\234;\155j','\132T\242\14')][Ue('p@\v\151Ee\17\145Y','5\49~\254')](game[Ue('\213q,\252x?\246','\133\29M')][Ue('\247D\226]\147\235G\224E\154\201','\187+\129<\255')][Ue('\182I\182q\148B\163f\135','\245!\215\3')][Ue('\204!\159o\234;\155j','\132T\242\14')],Tool)
+                bb=df(27611)
+            elseif bb==-15849 then
+                if not _G[Ue('\244H\214M','\186!')]then
+                    bb=df(30744)
+                    break
+                end
+                bb=21949
+            elseif bb==-7018 then
+                if game[Ue('R\t\203{\0\216q','\2e\170')][Ue('\161\141\221{6\189\142\223c?\159','\237\226\190\26Z')][Ue('\156\48\198\154\174\48\198\154','\222Q\165\241')][Ue('!c\193\fn\254W\20~\236\0A\251A','g\n\175h(\151%')](game[Ue('R\t\203{\0\216q','\2e\170')][Ue('\161\141\221{6\189\142\223c?\159','\237\226\190\26Z')][Ue('\156\48\198\154\174\48\198\154','\222Q\165\241')],Gg)then
+                    bb=df(23880)
+                    break
+                end
+                bb=df(32607)
+            elseif bb==21949 then
+                bb=df(22120);
+                break;
+            elseif bb==-15350 then
+                bb=df(4284)
+            end
+        end
+    until bb==20400
+end
+_G[Ue('BrzB\229\206FrwW\233\212',"\17\23\22\'\134\186")]='Melee'
+_G[Ue('\193\182\198\188','\181\215')][Ue('3\190!\185.','@\206')](function()
+    local Bb,Dd,ac
+    bg={}
+    Dd,Bb={[-24361]=5515,[6392]=-4737,[-28491]=-4737,[-21119]=-6192},function(qd)
+        return Dd[qd+27541]
+    end
+    ac=Bb(-48660)
+    repeat
+        while true do
+            if ac==-4737 then
+                if _G[Ue('\206\21\208\0','\185t')]()then
+                    ac=-13606
+                else
+                    ac=-18680
+                end
+            elseif ac==-13606 then
+                _G[Ue('\28X\rW\0','l;')](function()
+                    local eb,Rf,yf,Wa,Kc,ge,Ke,I,Cg,Eb,pg,Kf,r,ja,sd,Qb,Jd,wc,Ic,Fb,Xd,Qe,aa,sg,we,Dc,P
+                    kc={}
+                    Xd,Eb={[-15056]=-9352,[19298]=-16819,[4626]=16168,[-32123]=19875,[28332]=-7527,[23583]=-25491,[13911]=29594,[-3156]=-9642,[-17721]=-969,[-25612]=-8437,[20296]=29594,[10151]=13209,[13982]=-3167,[-988]=-12297,[-24761]=-26691,[-20951]=4456,[26936]=-24826,[-15689]=-18360,[-20590]=-15657,[984]=29594,[18630]=-17761,[-4608]=30550,[16256]=14095,[9917]=-3082,[20911]=-18360,[-7442]=30842,[16712]=-15439,[-3951]=-3167,[26203]=3961,[8192]=-25491,[18252]=25114,[3291]=-15481,[25410]=-15481,[4078]=-12180,[-31331]=3621,[-29501]=532,[28873]=19425,[-21253]=11048,[-31854]=-10185,[14329]=-7358,[24357]=-18502,[18047]=27495,[19027]=29594,[-12107]=30919,[-37]=13209,[11941]=-24826,[21338]=-18396,[-1443]=22755,[26464]=13471,[-471]=17217,[-16958]=-969,[-31376]=-17761,[16577]=32383,[21505]=18616,[19336]=15977,[12225]=-15657,[-24522]=-11304,[-21152]=18616,[14127]=15977,[7045]=29594,[4032]=18616,[-4609]=15676,[-22056]=-9642,[-4006]=4783,[-19516]=-24826,[30863]=3621,[10143]=-27617,[19137]=435,[-7921]=31221,[-7166]=15977,[-10210]=18103,[-23464]=17953,[-7463]=14965},function(hg)
+                        return Xd[hg-5184]
+                    end
+                    Rf=Eb(-2279)
+                    repeat
+                        while true do
+                            if Rf==29594 then
+                                Rf=Eb(23436);
+                                break;
+                            elseif Rf==18103 then
+                                Fb,eb,pg=Sf(Fb)
+                                Rf=Eb(8475)
+                            elseif Rf==-16819 then
+                                ja,Cg,sg=Dc[Ue('vp\170]J\177',')/\195')](ja)
+                                Rf=Eb(26689)
+                            elseif Rf==-12297 then
+                                if(we[Ue('G\203V\127\240Pc','\19\164\57')]=='Melee')then
+                                    Rf=Eb(3741)
+                                    break
+                                end
+                                Rf=Eb(-11774)
+                            elseif Rf==19875 then
+                                Rf=Eb(12229)
+                            elseif Rf==-24826 then
+                                Rf=Eb(15335)
+                            elseif Rf==15676 then
+                                _G[Ue('\24\\\201\149\153\18\28\\\196\128\149\b','K9\165\240\250f')]=sd[Ue('4\n\23\14','zk')]
+                                Rf=Eb(23814)
+                            elseif Rf==27495 then
+                                ja,Cg,sg=Sf(ja)
+                                Rf=Eb(9216)
+                            elseif Rf==-26691 then
+                                P,r,Qe=Sf(P)
+                                Rf=Eb(17125)
+                            elseif Rf==4456 then
+                                _G[Ue('k\133\19\20I5o\133\30\1E/','8\224\127q*A')]=Kc[Ue('\30\135=\131','P\230')]
+                                Rf=Eb(19166)
+                            elseif Rf==-11304 then
+                                aa,Kc=P(r,Qe);
+                                Qe=aa;
+                                if Qe==nil then
+                                    Rf=Eb(-18280)
+                                else
+                                    Rf=Eb(26522)
+                                end
+                            elseif Rf==31221 then
+                                Rf=-18502;
+                            elseif Rf==-18360 then
+                                Rf=Eb(17409);
+                            elseif Rf==32383 then
+                                Rf=Eb(-12537)
+                            elseif Rf==435 then
+                                Fb,eb,pg=Jd[Ue('\177\146\227\154\168\248','\238\205\138')](Fb)
+                                Rf=Eb(30594)
+                            elseif Rf==-15439 then
+                                wc,we=Fb(eb,pg);
+                                pg=wc;
+                                if pg==nil then
+                                    Rf=Eb(-26670)
+                                else
+                                    Rf=Eb(4196)
+                                end
+                            elseif Rf==-17761 then
+                                Rf=Eb(36047)
+                            elseif Rf==-18502 then
+                                Ke,sd=ja(Cg,sg);
+                                sg=Ke;
+                                if sg==nil then
+                                    Rf=-21879
+                                else
+                                    Rf=31186
+                                end
+                            elseif Rf==-15657 then
+                                Kf,Ic=I(Wa,yf);
+                                yf=Kf;
+                                if not(yf==nil)then
+                                    Rf=Eb(31387)
+                                else
+                                    Rf=Eb(-26939)
+                                end
+                            elseif Rf==-25491 then
+                                Rf=Eb(-15406)
+                            elseif Rf==11048 then
+                                I,Wa,yf=_G[Ue('B\153[\138A','2\248')](game[Ue('\238M7\199D$\205','\190!V')][Ue('C\171\127\166\200_\168}\190\193}','\15\196\28\199\164')][Ue('\151\56#\130\165\56#\130','\213Y@\233')][Ue('\129\n\196,\159\175\3\212\29\146\168','\198o\176o\247')](game[Ue('\238M7\199D$\205','\190!V')][Ue('C\171\127\166\200_\168}\190\193}','\15\196\28\199\164')][Ue('\151\56#\130\165\56#\130','\213Y@\233')]))
+                                if R(I)~='function'then
+                                    Rf=Eb(9262)
+                                    break
+                                end
+                                Rf=Eb(-10505)
+                            elseif Rf==17217 then
+                                Dc=k(ja)
+                                if Dc~=nil and Dc[Ue('S{\195xA\216','\f$\170')]~=nil then
+                                    Rf=Eb(24482)
+                                    break
+                                elseif R(ja)=='table'then
+                                    Rf=Eb(23231)
+                                    break
+                                end
+                                Rf=Eb(-15968)
+                            elseif Rf==13209 then
+                                Rf=-11304;
+                            elseif Rf==-15481 then
+                                Rf=Eb(1178)
+                            elseif Rf==3961 then
+                                if(Ic[Ue('\163D\212\155\127\210\135','\247+\187')]=='Blox Fruit')then
+                                    Rf=Eb(576)
+                                    break
+                                end
+                                Rf=Eb(13376)
+                            elseif Rf==30842 then
+                                Qb=k(P)
+                                if Qb~=nil and Qb[Ue('U\153\227~\163\248','\n\198\138')]~=nil then
+                                    Rf=Eb(-20428)
+                                    break
+                                elseif R(P)=='table'then
+                                    Rf=Eb(-19577)
+                                    break
+                                end
+                                Rf=Eb(-14332)
+                            elseif Rf==16168 then
+                                Fb,eb,pg=_G[Ue('\147\48\138#\144','\227Q')](game[Ue('\194\194\221\235\203\206\225','\146\174\188')][Ue('\235u\194d\215\247v\192|\222\213','\167\26\161\5\187')][Ue('\160\145\254\143\146\145\254\143','\226\240\157\228')][Ue('\178F\212}\239\156O\196L\226\155','\245#\160>\135')](game[Ue('\194\194\221\235\203\206\225','\146\174\188')][Ue('\235u\194d\215\247v\192|\222\213','\167\26\161\5\187')][Ue('\160\145\254\143\146\145\254\143','\226\240\157\228')]))
+                                if R(Fb)~='function'then
+                                    Rf=Eb(15327)
+                                    break
+                                end
+                                Rf=4783
+                            elseif Rf==-9352 then
+                                I,Wa,yf=Sf(I)
+                                Rf=Eb(19311)
+                            elseif Rf==-9642 then
+                                Rf=Eb(28767)
+                            elseif Rf==-12180 then
+                                ge=k(I)
+                                if ge~=nil and ge[Ue('[\207\201p\245\210','\4\144\160')]~=nil then
+                                    Rf=Eb(31648)
+                                    break
+                                elseif R(I)=='table'then
+                                    Rf=Eb(-9872)
+                                    break
+                                end
+                                Rf=Eb(-1982)
+                            elseif Rf==14965 then
+                                if(_G[Ue('m\142\205(\166\233i\142\192=\170\243','>\235\161M\197\157')]=='Melee')then
+                                    Rf=Eb(9810)
+                                    break
+                                elseif(_G[Ue('\236JT\203\194\159\232JY\222\206\133','\191/8\174\161\235')]=='Sword')then
+                                    Rf=Eb(21440)
+                                    break
+                                elseif(_G[Ue('\201{~6~\167\205{s#r\189','\154\30\18S\29\211')]=='Gun')then
+                                    Rf=Eb(-6923)
+                                    break
+                                elseif(_G[Ue('\249\vxa\128\153\253\vut\140\131','\170n\20\4\227\237')]=='Fruit')then
+                                    Rf=Eb(-16069)
+                                    break
+                                end
+                                Rf=Eb(24211)
+                            elseif Rf==-3082 then
+                                if game[Ue('.\22%\a\31\54\r','~zD')][Ue('J}\238\t\220V~\236\17\213t','\6\18\141h\176')][Ue('\211*\b\226\225*\b\226','\145Kk\137')][Ue('m\186\212\251\vK\140X\167\249\247$N\154','+\211\186\159M\"\254')](game[Ue('.\22%\a\31\54\r','~zD')][Ue('J}\238\t\220V~\236\17\213t','\6\18\141h\176')][Ue('\211*\b\226\225*\b\226','\145Kk\137')],_G[Ue('\27\52\6\205\29\50\27\222','o[u\185')](Kc[Ue('\a<$8','I]')]))then
+                                    Rf=Eb(-15767)
+                                    break
+                                end
+                                Rf=Eb(1233)
+                            elseif Rf==31186 then
+                                if(sd[Ue('\18p1*K7\54','F\31^')]=='Gun')then
+                                    Rf=Eb(34057)
+                                    break
+                                end
+                                Rf=Eb(-26147)
+                            elseif Rf==15977 then
+                                Rf=Eb(26095)
+                            elseif Rf==532 then
+                                _G[Ue('\134\19\227\57V\198\130\19\238,Z\220','\213v\143\\5\178')]=we[Ue('TKwO','\26*')]
+                                Rf=Eb(21761)
+                            elseif Rf==-3167 then
+                                Rf=Eb(19513)
+                            elseif Rf==14095 then
+                                P,r,Qe=_G[Ue('g\156~\143d','\23\253')](game[Ue('y\162\150P\171\133Z',')\206\247')][Ue('\210\254\251\133\a\206\253\249\157\14\236','\158\145\152\228k')][Ue('\23\194Jv%\194Jv','U\163)\29')][Ue('O\0N]\210a\t^l\223f','\be:\30\186')](game[Ue('y\162\150P\171\133Z',')\206\247')][Ue('\210\254\251\133\a\206\253\249\157\14\236','\158\145\152\228k')][Ue('\23\194Jv%\194Jv','U\163)\29')]))
+                                if R(P)~='function'then
+                                    Rf=Eb(-2258)
+                                    break
+                                end
+                                Rf=Eb(5147)
+                            elseif Rf==30919 then
+                                ja,Cg,sg=_G[Ue('\31\207\6\220\28','o\174')](game[Ue('/\20\251\6\29\232\f','\127x\154')][Ue('\16\148\183\49\1\f\151\181)\b.','\\\251\212Pm')][Ue('\r\168P\139?\168P\139','O\201\51\224')][Ue('\214\194\162\139\246\248\203\178\186\251\255','\145\167\214\200\158')](game[Ue('/\20\251\6\29\232\f','\127x\154')][Ue('\16\148\183\49\1\f\151\181)\b.','\\\251\212Pm')][Ue('\r\168P\139?\168P\139','O\201\51\224')]))
+                                if R(ja)~='function'then
+                                    Rf=Eb(4713)
+                                    break
+                                end
+                                Rf=31221
+                            elseif Rf==-969 then
+                                Rf=Eb(21896)
+                            elseif Rf==30550 then
+                                if game[Ue('\19M\140:D\159\48','C!\237')][Ue('\245\24\252\182}\233\27\254\174t\203','\185w\159\215\17')][Ue('rY\238\141@Y\238\141','0\56\141\230')][Ue('m.~*\162G\206X3S&\141B\216','+G\16N\228.\188')](game[Ue('\19M\140:D\159\48','C!\237')][Ue('\245\24\252\182}\233\27\254\174t\203','\185w\159\215\17')][Ue('rY\238\141@Y\238\141','0\56\141\230')],_G[Ue('\134*\140\50\128,\145!','\242E\255F')](Ic[Ue('\155\t\184\r','\213h')]))then
+                                    Rf=Eb(33516)
+                                    break
+                                end
+                                Rf=Eb(2028)
+                            elseif Rf==17953 then
+                                Rf=Eb(6168)
+                            elseif Rf==-8437 then
+                                P,r,Qe=Qb[Ue('\191\r\185\148\55\162','\224R\208')](P)
+                                Rf=Eb(32120)
+                            elseif Rf==13471 then
+                                I,Wa,yf=ge[Ue(')\219\14\2\225\21','v\132g')](I)
+                                Rf=Eb(24520)
+                            elseif Rf==-7527 then
+                                _G[Ue('\180\1\t)\254x\176\1\4<\242b','\231deL\157\f')]=Ic[Ue('M\184n\188','\3\217')]
+                                Rf=Eb(-16872)
+                            elseif Rf==19425 then
+                                if game[Ue("e\161\52L\168\'F",'5\205U')][Ue('\246\199/*\211\234\196-2\218\200','\186\168LK\191')][Ue('\186_\bR\136_\bR','\248>k9')][Ue('\31\255\15~\144 ]*\226\"r\191%K','Y\150a\26\214I/')](game[Ue("e\161\52L\168\'F",'5\205U')][Ue('\246\199/*\211\234\196-2\218\200','\186\168LK\191')][Ue('\186_\bR\136_\bR','\248>k9')],_G[Ue('\238Q=\140\232W \159','\154>N\248')](sd[Ue('\248k\219o','\182\n')]))then
+                                    Rf=Eb(575)
+                                    break
+                                end
+                                Rf=Eb(-26192)
+                            elseif Rf==-27617 then
+                                Jd=k(Fb)
+                                if Jd~=nil and Jd[Ue('Y7lr\rw','\6h\5')]~=nil then
+                                    Rf=Eb(24321)
+                                    break
+                                elseif R(Fb)=='table'then
+                                    Rf=Eb(-5026)
+                                    break
+                                end
+                                Rf=-15481
+                            elseif Rf==-7358 then
+                                Rf=Eb(-19338)
+                            elseif Rf==-10185 then
+                                Rf=Eb(19095)
+                            elseif Rf==-21879 then
+                                Rf=Eb(25480)
+                            elseif Rf==4783 then
+                                Rf=-15439;
+                            elseif Rf==3621 then
+                                Rf=Eb(29541)
+                            elseif Rf==18616 then
+                                Rf=Eb(-2737)
+                            elseif Rf==22755 then
+                                if game[Ue('\219x\236\242q\255\248','\139\20\141')][Ue('\26,\147^~\6/\145Fw$','VC\240?\18')][Ue('\179\191\230Q\129\191\230Q','\241\222\133:')][Ue("\254T\24\182\232B\'\203I5\186\199G1",'\184=v\210\174+U')](game[Ue('\219x\236\242q\255\248','\139\20\141')][Ue('\26,\147^~\6/\145Fw$','VC\240?\18')][Ue('\179\191\230Q\129\191\230Q','\241\222\133:')],_G[Ue('\159\f\237\163\153\n\240\176','\235c\158\215')](we[Ue('J\155i\159','\4\250')]))then
+                                    Rf=Eb(-24317)
+                                    break
+                                end
+                                Rf=32383
+                            elseif Rf==-18396 then
+                                if(Kc[Ue('\20\20\96,/f0','@{\15')]=='Sword')then
+                                    Rf=Eb(15101)
+                                    break
+                                end
+                                Rf=-7358
+                            end
+                        end
+                    until Rf==25114
+                end)
+                ac=Bb(-56032)
+            elseif ac==-18680 then
+                ac=Bb(-51902);
+                break;
+            elseif ac==-6192 then
+                ac=Bb(-21149);
+            end
+        end
+    until ac==5515
+end)
+local Ga={}
+Ga[Ue('\199\129\232\128','\142\239')]=Lb[Ue('\190\139\136','\234')](Lb,{['Title']='Info Hub',['Icon']='bell',['Desc']='trang li\195\170n h\225\187\135'})
+Ga[Ue('*\254\5\255','c\144')][Ue('\210\218\0\245\214\f\239','\129\191c')](Ga[Ue('*\254\5\255','c\144')],{['Title']='Th\195\180ng tin'})
+Ga[Ue('\144\250\191\251','\217\148')][Ue('\225\144\244\215\138\238','\163\229\128')](Ga[Ue('\144\250\191\251','\217\148')],{['Title']='Discord',['Desc']='Click \196\145\225\187\131 sao ch\195\169p link Discord',['Callback']=function()
+    _G[Ue('/.\133BC\237,)\158@]\224','\\K\241!/\132')]('https://discord.gg')
+    Nd[Ue('w#\150P*\155','9L\226')](Nd,{['Title']='Discord Copied',['Content']='Link \196\145\195\163 \196\145\198\176\225\187\163c sao ch\195\169p v\195\160o clipboard',['Icon']='link',['Duration']=4})
+end})
+Ga[Ue('\218\4\245\5','\147j')][Ue('I\173\139\127\183\145','\v\216\255')](Ga[Ue('\218\4\245\5','\147j')],{['Title']='Zalo',['Desc']='Click \196\145\225\187\131 l\225\186\165y link box',['Callback']=function()
+    _G[Ue('\133\181>]\163\207\134\178%_\189\194','\246\208J>\207\166')]('https://zalo.me/g/ipfcqs3\55\54')
+    Nd[Ue("P.\188w\'\177",'\30A\200')](Nd,{['Title']='Zalo Copied',['Content']='\196\144\195\163 sao ch\195\169p link Box',['Icon']='link',['Duration']=4})
+end})
+Ga[Ue('\29\49\50\48','T_')][Ue('^m\252hw\230','\28\24\136')](Ga[Ue('\29\49\50\48','T_')],{['Title']='Teleport Sea 1',['Desc']='D\225\187\139ch chuy\225\187\131n v\225\187\129 Sea 1',['Callback']=function()
+    _G[Ue('5\29$\18)','E~')](function()
+        game[Ue('\168\49)QD\157\"4aD','\239T]\2!')](game,'ReplicatedStorage')[Ue('\215\129\240\234\144\248\246','\133\228\157')][Ue('\194y\162\236P\144','\129\22\207')][Ue('\193\237\51Y\194%\219\230\55@\204\50','\136\131E6\169@')](game[Ue('\168\49)QD\157\"4aD','\239T]\2!')](game,'ReplicatedStorage')[Ue('\215\129\240\234\144\248\246','\133\228\157')][Ue('\194y\162\236P\144','\129\22\207')],'TravelMain')
+    end)
+end})
+Ga[Ue('\24O7N','Q!')][Ue('e\248\1S\226\27',"\'\141u")](Ga[Ue('\24O7N','Q!')],{['Title']='Teleport Sea 2',['Desc']='D\225\187\139ch chuy\225\187\131n v\225\187\129 Sea 2',['Callback']=function()
+    _G[Ue('\206Y\223V\210','\190:')](function()
+        game[Ue('x\159\51\178\25M\140.\130\25','?\250G\225|')](game,'ReplicatedStorage')[Ue('\231J\r\218[\5\198','\181/\96')][Ue('.H\203\0a\249',"m\'\166")][Ue('\151\19\18\209\200\140\141\24\22\200\198\155','\222}d\190\163\233')](game[Ue('x\159\51\178\25M\140.\130\25','?\250G\225|')](game,'ReplicatedStorage')[Ue('\231J\r\218[\5\198','\181/\96')][Ue('.H\203\0a\249',"m\'\166")],'TravelDressrosa')
+    end)
+end})
+Ga[Ue('\235\202\196\203','\162\164')][Ue("\17\254\139\'\228\145",'S\139\255')](Ga[Ue('\235\202\196\203','\162\164')],{['Title']='Teleport Sea 3',['Desc']='D\225\187\139ch chuy\225\187\131n v\225\187\129 Sea 3',['Callback']=function()
+    _G[Ue('IDXKU',"9\'")](function()
+        game[Ue('2g~j!\atcZ!','u\2\n9D')](game,'ReplicatedStorage')[Ue('\15\244z2\229r.',']\145\23')][Ue('\176\224\143\158\201\189','\243\143\226')][Ue('\f\178\253\24\142.\22\185\249\1\128\57','E\220\139w\229K')](game[Ue('2g~j!\atcZ!','u\2\n9D')](game,'ReplicatedStorage')[Ue('\15\244z2\229r.',']\145\23')][Ue('\176\224\143\158\201\189','\243\143\226')],'TravelZou')
+    end)
+end})
+Ga[Ue('yN]A','4/')]=Lb[Ue('\197\240\243','\145')](Lb,{['Title']='Farm Boss',['Icon']='rocket',['Desc']='Trang ch\195\173nh'})
+Ga[Ue('\162<\134\51','\239]')][Ue('jyy\203Jda\213','.\v\22\187')](Ga[Ue('\162<\134\51','\239]')],{['Title']='Select Boss',['Desc']='Ch\225\187\141n boss \196\145\225\187\131 farm',['Values']={'rip_indra True Form','Dough King','Darkbeard'},['Value']='rip_indra True Form',['Callback']=function(S)
+    _G[Ue('\227\52;\17\21\196\19\56\a\5','\176QWtv')]=S
+end})
+Ga[Ue('\20\210\48\221','Y\179')][Ue('\18\218p!\217r','F\181\23')](Ga[Ue('\20\210\48\221','Y\179')],{['Title']='Farm Boss Select',['Default']=false,['Callback']=function(yb)
+    _G[Ue('\185\156\193X\189\146\192F','\255\253\179\53')]=yb
+    StopTween(_G[Ue('X\a\254K\\\t\255U','\30f\140&')])
+end})
+_G[Ue('*\192\56\199\55','Y\176')](function()
+    local H,O,Id
+    sc={}
+    H,Id={[-13936]=3017,[17040]=-19634,[-13770]=13702,[-29786]=-4972,[-4226]=3017,[-25622]=27057,[1713]=12691,[-25912]=-376},function(X)
+        return H[X- -29916]
+    end
+    O=Id(-55828)
+    repeat
+        while true do
+            if O==27057 then
+                O=Id(-43852)
+            elseif O==13702 then
+                O=Id(-59702);
+                break;
+            elseif O==3017 then
+                if not(_G[Ue('\21+\v>','bJ')]())then
+                    O=Id(-43686)
+                else
+                    O=Id(-12876)
+                end
+            elseif O==12691 then
+                _G[Ue('\207\250\222\245\211','\191\153')](function()
+                    local ob,ie,Kg,dg,Cb,Pa,fe,Ae,ze
+                    hc={}
+                    ie,ze={[-32151]=-22458,[22306]=17203,[-10698]=12587,[14357]=-17433,[14535]=17203,[-7543]=11554,[-6832]=2063,[-26639]=1095,[16203]=-2063,[13941]=18126,[-7921]=-1356,[18168]=-28646,[2500]=14555,[7509]=1095,[21427]=18126,[29903]=18126,[-15022]=12587,[-9450]=19018,[13702]=21020,[28436]=-27644,[-6479]=-28646,[-1567]=12587,[712]=-2034,[-1257]=-28840,[26531]=-19958},function(Vd)
+                        return ie[Vd+-17367]
+                    end
+                    Cb=ze(43898)
+                    repeat
+                        while true do
+                            if Cb==11554 then
+                                _G[Ue('\168z\175p','\220\27')][Ue('4&*3','CG')]()
+                                AutoHaki()
+                                EquipWeapon(_G[Ue('\219N5\173\217w\223N8\184\213m','\136+Y\200\186\3')])
+                                Pa[Ue("Ac\141N|\251\19\55[y\143[B\245\b\'",'\t\22\224/\18\148zS')][Ue('Bq\31]4m|\24z>','\1\16q\30[')]=false
+                                Pa[Ue('0\n\29H\22\16\25M','x\127p)')][Ue('1\166t\222\53\183}\208\2','f\199\24\181')]=0
+                                topos(Pa[Ue('\131\179\147\248\190nn\3\153\169\145\237\128\96u\19','\203\198\254\153\208\1\ag')][Ue('j\223\232H\244\255',')\153\154')]*Pos)
+                                _G[Ue('\254(\213\200\231\\\201B\227=\211\207\254]\223S\244',"\141M\161\160\142\56\173\'")](game[Ue('\2\57=\145#7* \161#','E\\I\194F')](game,'Players')[Ue('\153\216\208x\138\133\219\210\96\131\167','\213\183\179\25\230')],'SimulationRadius',_G[Ue('\249U\224\\','\148\52')][Ue('\181F\186V','\221\51')])
+                                Cb=ze(19867)
+                            elseif Cb==30579 then
+                                if(Pa[Ue('\233F\202B',"\167\'")]==_G[Ue('J\208\49-\155m\247\50;\139','\25\181]H\248')])then
+                                    Cb=ze(31069)
+                                    break
+                                end
+                                Cb=ze(24876)
+                            elseif Cb==20905 then
+                                Cb=ze(31902)
+                            elseif Cb==-28646 then
+                                Cb=2063;
+                            elseif Cb==19018 then
+                                Cb=ze(9824);
+                            elseif Cb==-19958 then
+                                if game[Ue('\156j\226q\231\169y\255A\231','\219\15\150\"\130')](game,'Workspace')[Ue('\149)\140\189.\140\163','\208G\233')][Ue('T\24J\160Y\164\217a\5g\172v\161\207','\18q$\196\31\205\171')](game[Ue('\156j\226q\231\169y\255A\231','\219\15\150\"\130')](game,'Workspace')[Ue('\149)\140\189.\140\163','\208G\233')],_G[Ue('d\218U\1=C\253V\23-','7\191\57d^')])then
+                                    Cb=ze(-14784)
+                                    break
+                                elseif game[Ue('|\175\255\r5I\188\226=5',';\202\139^P')](game,'ReplicatedStorage')[Ue('\b\3b\145\217a\169=\30O\157\246d\191','Nj\f\245\159\b\219')](game[Ue('|\175\255\r5I\188\226=5',';\202\139^P')](game,'ReplicatedStorage'),_G[Ue('\168\159\148\157M\143\184\151\139]','\251\250\248\248.')])then
+                                    Cb=ze(18079)
+                                    break
+                                end
+                                Cb=ze(38794)
+                            elseif Cb==12587 then
+                                Cb=ze(10888)
+                            elseif Cb==21020 then
+                                if(Pa[Ue('N\201d~\206\16U{\212Ir\225\21C',"\b\160\n\26\136y\'")](Pa,'Humanoid')and Pa[Ue('p\177\189\5\28\216\248E\172\144\t3\221\238','6\216\211aZ\177\138')](Pa,'HumanoidRootPart')and(Pa[Ue('\178\170\229~\148\176\225{','\250\223\136\31')][Ue('C\183\159g\166\150','\v\210\254')]>0))then
+                                    Cb=ze(7917)
+                                    break
+                                end
+                                Cb=ze(39673)
+                            elseif Cb==1095 then
+                                Cb=ze(10535)
+                            elseif Cb==-2063 then
+                                Cb=ze(47270)
+                            elseif Cb==-28840 then
+                                dg,Kg,Ae=fe[Ue('\14p\229%J\254','Q/\140')](dg)
+                                Cb=ze(2345)
+                            elseif Cb==-22458 then
+                                dg,Kg,Ae=_G[Ue('D8]+G','4Y')](game[Ue('\96y\17\232\227Uj\f\216\227',"\'\28e\187\134")](game,'Workspace')[Ue('(\164\185\0\163\185\30','m\202\220')][Ue('a\31\167vRO\22\183G_H','&z\211\53:')](game[Ue('\96y\17\232\227Uj\f\216\227',"\'\28e\187\134")](game,'Workspace')[Ue('(\164\185\0\163\185\30','m\202\220')]))
+                                if R(dg)~='function'then
+                                    Cb=ze(9446)
+                                    break
+                                end
+                                Cb=ze(35535)
+                            elseif Cb==-17433 then
+                                dg,Kg,Ae=Sf(dg)
+                                Cb=ze(6669)
+                            elseif Cb==17203 then
+                                Cb=ze(-9272)
+                            elseif Cb==-1356 then
+                                fe=k(dg)
+                                if fe~=nil and fe[Ue('\253\193\176\214\251\171','\162\158\217')]~=nil then
+                                    Cb=ze(16110)
+                                    break
+                                elseif R(dg)=='table'then
+                                    Cb=ze(31724)
+                                    break
+                                end
+                                Cb=ze(15800)
+                            elseif Cb==-2034 then
+                                topos(game[Ue('|\216 u\176I\203=E\176',';\189T&\213')](game,'ReplicatedStorage')[Ue('\133\175\191\0K\168N\176\178\146\fd\173X','\195\198\209d\r\193<')](game[Ue('|\216 u\176I\203=E\176',';\189T&\213')](game,'ReplicatedStorage'),_G[Ue('\241\227\221\233P\214\196\222\255@','\162\134\177\140\51')])[Ue('\147]\159t[\130\245\n\137G\157ae\140\238\26','\219(\242\21\53\237\156n')][Ue('6bD\20IS','u$6')]*_G[Ue('\252\207\236\222\228\251','\191\137\158')][Ue('\29\22\4','s')](5,10,7))
+                                Cb=ze(31308)
+                            elseif Cb==2063 then
+                                ob,Pa=dg(Kg,Ae);
+                                Ae=ob;
+                                if Ae==nil then
+                                    Cb=ze(33570)
+                                else
+                                    Cb=30579
+                                end
+                            elseif Cb==18126 then
+                                Cb=ze(45803);
+                                break;
+                            elseif Cb==14555 then
+                                if not(not _G[Ue('\243ha\242\247f\96\236','\181\t\19\159')]or not Pa[Ue('D\154\230q\149\224','\20\251\148')]or(Pa[Ue('S\25\23\232u\3\19\237','\27lz\137')][Ue(';\198\247\31\215\254','s\163\150')]<=0))then
+                                    Cb=11554
+                                else
+                                    Cb=20905
+                                end
+                            end
+                        end
+                    until Cb==-27644
+                end)
+                O=Id(-55538)
+            elseif O==-376 then
+                O=Id(-34142);
+            elseif O==-19634 then
+                if _G[Ue('\216\251.\245\220\245/\235','\158\154\\\152')]then
+                    O=Id(-28203)
+                    break
+                end
+                O=27057
+            end
+        end
+    until O==-4972
+end)
+Ga[Ue('\222\133\250\138','\147\228')][Ue('_z\vly\t','\v\21l')](Ga[Ue('\222\133\250\138','\147\228')],{['Title']='Auto Buy Sword Legendary',['Default']=false,['Callback']=function(dc)
+    _G[Ue('\24\228\211\246\231}uS>\240\216\195\209m\127O>','Z\145\170\186\130\26\16=')]=dc
+end})
+_G[Ue('I\227[\228T',':\147')](function()
+    local Sc,Xa,pc
+    kf={}
+    Xa,pc={[-11375]=-1664,[-4164]=-1664,[-17708]=11361,[-1686]=-9635,[26100]=-19395,[24886]=-5114},function(te)
+        return Xa[te+3624]
+    end
+    Sc=pc(21262)
+    repeat
+        while true do
+            if Sc==-1664 then
+                Sc=pc(-21332)
+            elseif Sc==-5098 then
+                if _G[Ue('\2\23\136\251*\127lf$\3\131\206\28ofz$','@b\241\183O\24\t\b')]then
+                    Sc=pc(-5310)
+                    break
+                end
+                Sc=pc(-14999)
+            elseif Sc==11361 then
+                if _G[Ue('\160}\190h','\215\28')]()then
+                    Sc=-5098
+                else
+                    Sc=1952
+                end
+            elseif Sc==1952 then
+                Sc=pc(22476);
+                break;
+            elseif Sc==-9635 then
+                _G[Ue('\235\190\250\177\247','\155\221')](function()
+                    local kb,eg,Gd,De,qc,Od
+                    ca={}
+                    De,Od={[26028]=-23054,[25431]=-25302,[-20867]=-25302,[1899]=12417,[26365]=-658},function(cc)
+                        return De[cc- -30197]
+                    end
+                    kb=Od(-3832)
+                    repeat
+                        while true do
+                            if kb==-25302 then
+                                kb=Od(-4169);
+                                break;
+                            elseif kb==-658 then
+                                eg={[1]='LegendarySwordDealer',[2]='1'}
+                                game[Ue('\22w\142\191\197#d\147\143\197','Q\18\250\236\160')](game,'ReplicatedStorage')[Ue('\193\192\202\252\209\194\224','\147\165\167')][Ue('\17\55\207?\30\253','RX\162')][Ue('\196\181P\199\24\150\222\190T\222\22\129','\141\219&\168s\243')](game[Ue('\22w\142\191\197#d\147\143\197','Q\18\250\236\160')](game,'ReplicatedStorage')[Ue('\193\192\202\252\209\194\224','\147\165\167')][Ue('\17\55\207?\30\253','RX\162')],_G[Ue(',|d8q\127','Y\18\20')](eg))
+                                qc={[1]='LegendarySwordDealer',[2]='2'}
+                                game[Ue('\239\239}\214\180\218\252\96\230\180','\168\138\t\133\209')](game,'ReplicatedStorage')[Ue('\157\129\0\160\144\b\188','\207\228m')][Ue('\"\30\r\f7?','aq\96')][Ue('\207l\160\145:\234\213g\164\136\52\253','\134\2\214\254Q\143')](game[Ue('\239\239}\214\180\218\252\96\230\180','\168\138\t\133\209')](game,'ReplicatedStorage')[Ue('\157\129\0\160\144\b\188','\207\228m')][Ue('\"\30\r\f7?','aq\96')],_G[Ue('\14\181\190\26\184\165','{\219\206')](qc))
+                                Gd={[1]='LegendarySwordDealer',[2]='3'}
+                                game[Ue('\217\240v\241\127\236\227k\193\127','\158\149\2\162\26')](game,'ReplicatedStorage')[Ue('\156u\191\161d\183\189','\206\16\210')][Ue('//\252\1\6\206','l@\145')][Ue('>G\187\147\135\207$L\191\138\137\216','w)\205\252\236\170')](game[Ue('\217\240v\241\127\236\227k\193\127','\158\149\2\162\26')](game,'ReplicatedStorage')[Ue('\156u\191\161d\183\189','\206\16\210')][Ue('//\252\1\6\206','l@\145')],_G[Ue('x\18El\31^','\r|5')](Gd))
+                                if(_G[Ue("\177+\249z\145\229\48\249i\253\129\'\211A\155\240\49\200E\243\131",'\243^\128\54\244\130U\151\r\156')]and _G[Ue('\145;n\233\n\186\246\0\183/e\220<\170\252\28\183','\211N\23\165o\221\147n')]and World2)then
+                                    kb=Od(-28298)
+                                    break
+                                end
+                                kb=Od(-4766)
+                            elseif kb==12417 then
+                                _G[Ue('\127~ak','\b\31')](10)
+                                _G[Ue('^yf','\22')]()
+                                kb=Od(-51064)
+                            end
+                        end
+                    until kb==-23054
+                end)
+                Sc=pc(-7788)
+            elseif Sc==-5114 then
+                Sc=11361;
+            end
+        end
+    until Sc==-19395
+end)
+Ga[Ue('\244!\208.','\185@')][Ue("\'YX\20ZZ",'s6?')](Ga[Ue('\244!\208.','\185@')],{['Title']='Teleport Mirage Island',['Default']=false,['Callback']=function(Nc)
+    _G[Ue('\170\171\215\204\237\235\174\161\200\217\234\236','\231\210\164\184\132\136')]=Nc
+    StopTween(_G[Ue('\163\203\5\49Vy\167\193\26$Q~','\238\178vE?\26')])
+end})
+_G[Ue('\24I\nN\5','k9')](function()
+    local he,p,Je
+    Db={}
+    p,he={[30374]=3652,[26975]=-23055},function(Bf)
+        return p[Bf+-26479]
+    end
+    Je=he(53454)
+    repeat
+        while true do
+            if Je==-23055 then
+                _G[Ue('\236\26\253\21\240','\156y')](function()
+                    local Jg,Vb,Ua,ib,de
+                    _d={}
+                    Vb,Ua={[7923]=-32516,[-9540]=2483,[28877]=244,[-29571]=16530,[17525]=-618,[-13439]=-1087,[30890]=-32516,[25801]=-1188,[-14286]=-6953},function(j)
+                        return Vb[j- -6988]
+                    end
+                    de=Ua(-21274)
+                    repeat
+                        while true do
+                            if de==-618 then
+                                ib=Jg[Ue('\196u\v\233h\195s\15\234x','\147\26y\133\f')][Ue('\146\197\189\214\182\195\161\209','\194\170\206\191')]
+                                topos(_G[Ue('3\217\252\17\242\235','p\159\142')][Ue('=6$','S')](ib[Ue('\225','\185')],500,ib[Ue('{','!')]))
+                                de=Ua(18813)
+                            elseif de==-32516 then
+                                de=Ua(-16528)
+                            elseif de==244 then
+                                if _G[Ue('\147\178D\232\20\164\151\184[\253\19\163','\222\203\55\156}\199')]then
+                                    de=Ua(-20427)
+                                    break
+                                end
+                                de=Ua(935)
+                            elseif de==2483 then
+                                if _G[Ue(',\254\50\235','[\159')]()then
+                                    de=Ua(21889)
+                                else
+                                    de=-6501
+                                end
+                            elseif de==-1188 then
+                                de=Ua(23902)
+                            elseif de==-6953 then
+                                de=2483;
+                            elseif de==-6501 then
+                                de=Ua(-36559);
+                                break;
+                            elseif de==-1087 then
+                                Jg=game[Ue('\f:\254\55\56\57)\227\a8','K_\138d]')](game,'Workspace')[Ue('\28\48!','Q')][Ue('\4\212\149\166\254\201K1\201\184\170\209\204]','B\189\251\194\184\160\57')](game[Ue('\f:\254\55\56\57)\227\a8','K_\138d]')](game,'Workspace')[Ue('\28\48!','Q')],'MysticIsland')
+                                if Jg then
+                                    de=Ua(10537)
+                                    break
+                                end
+                                de=-1188
+                            end
+                        end
+                    until de==16530
+                end)
+                Je=he(56853)
+                break
+            end
+        end
+    until Je==3652
+end)
+Ga[Ue('$\206\0\193','i\175')][Ue('(\205\159\27\206\157','|\162\248')](Ga[Ue('$\206\0\193','i\175')],{['Title']='Teleport Advanced Fruit Dealer',['Default']=false,['Callback']=function(jb)
+    _G[Ue('E\27\191\185o\23\163\168k','\br\205\216')]=jb
+    StopTween(_G[Ue('V\149B\244|\153^\229x','\27\252\48\149')])
+end})
+_G[Ue('>-,*#','M]')](function()
+    local Sb,Vf,o,Pb,ue
+    a={}
+    Pb,ue={[20594]=-21196,[-21041]=-32749,[-12139]=13658,[11320]=-25725,[-23517]=-30069,[-28179]=13658,[-28884]=21474,[1936]=15027,[-4673]=28407,[-21601]=-7774,[-7275]=14366},function(Ec)
+        return Pb[Ec+-12565]
+    end
+    Vf=ue(5290)
+    repeat
+        while true do
+            if Vf==-25725 then
+                topos(_G[Ue('\146\25\181\176\50\162','\209_\199')][Ue('JAS','$')](Sb))
+                Vf=ue(-8476)
+            elseif Vf==14366 then
+                Vf=-30069;
+            elseif Vf==13658 then
+                Vf=ue(-10952)
+            elseif Vf==-21196 then
+                Sb=o[Ue('\211;\175\183\233\241\48\150\187\250\247','\131I\198\218\136')]and o[Ue(':\176\193\139\158\24\187\248\135\141\30','j\194\168\230\255')][Ue('4\16\236\56\16\22\240?','d\127\159Q')]
+                if Sb then
+                    Vf=ue(23885)
+                    break
+                end
+                Vf=-32749
+            elseif Vf==-32749 then
+                Vf=ue(-9036)
+            elseif Vf==15027 then
+                if _G[Ue('m[\210\181GW\206\164C',' 2\160\212')]then
+                    Vf=ue(-16319)
+                    break
+                end
+                Vf=ue(-15614)
+            elseif Vf==-7774 then
+                Vf=ue(426)
+            elseif Vf==22285 then
+                Vf=ue(7892);
+                break;
+            elseif Vf==-30069 then
+                if not(_G[Ue('e\249{\236','\18\152')]())then
+                    Vf=22285
+                else
+                    Vf=ue(14501)
+                end
+            elseif Vf==21474 then
+                o=game[Ue('\172\181h\183?\0{A\155\180K\175\57\17{R\155','\254\208\24\219Vc\26\53')][Ue('\134\197\139\230','\200\149')][Ue('\142\54\28\187S1\254\187+1\183|4\232','\200_r\223\21X\140')](game[Ue('\172\181h\183?\0{A\155\180K\175\57\17{R\155','\254\208\24\219Vc\26\53')][Ue('\134\197\139\230','\200\149')],'Advanced Fruit Dealer')
+                if(o and o[Ue('\255\197\247','\182')](o,'Model'))then
+                    Vf=ue(33159)
+                    break
+                end
+                Vf=-7774
+            end
+        end
+    until Vf==28407
+end)
+Ga[Ue('\222\246\250\249','\147\151')][Ue('\246\144\163\197\147\161','\162\255\196')](Ga[Ue('\222\246\250\249','\147\151')],{['Title']='Auto Lock Moon',['Default']=false,['Callback']=function(s)
+    _G[Ue('\239\166\247\212\155v\206\157\251\242\183x\205','\163\201\148\191\216\23')]=s
+end})
+_G[Ue('\135\54\149\49\154','\244F')](function()
+    local A,Ib,Pd
+    Uf={}
+    Pd,A={[7113]=11387,[-2030]=10122,[-10457]=-15221},function(Nb)
+        return Pd[Nb+3115]
+    end
+    Ib=A(-13572)
+    repeat
+        while true do
+            if Ib==-23967 then
+                _G[Ue('w\rf\2k','\an')](function()
+                    local gc,cb,_c,Vc,Pc
+                    Ce={}
+                    _c,Vc={[-4839]=24542,[20081]=-5305,[-23833]=-21738,[10505]=-23690},function(d)
+                        return _c[d+-5627]
+                    end
+                    cb=Vc(16132)
+                    repeat
+                        while true do
+                            if cb==-21738 then
+                                _G[Ue('\153\23\135\2','\238v')](0.10000000000000001)
+                                Pc=game[Ue('\t%i\250\49%\96\245','EL\14\146')][Ue('\213!=\15\211$\31V\251\54,!\200\"\30|','\146DIB\188Kq\18')](game[Ue('\t%i\250\49%\96\245','EL\14\146')])
+                                gc=game[Ue('H\174\":l\177\49\50z','\31\193PQ')][Ue('\228\145\205ty\25\211\167\222ky\5\198','\167\228\191\6\28w')][Ue('\240\51\28\210\24\v','\179un')][Ue('\160','\208')]+(Pc*100)
+                                game[Ue('n\5\207\151J\26\220\159\\','9j\189\252')][Ue('\96\n\166\129\51\175W<\181\158\51\179B','#\127\212\243V\193')][Ue('\165\161\252\135\138\235','\230\231\142')]=_G[Ue('9\209\217\27\250\206','z\151\171')][Ue('\186|\241\189R\234','\214\19\158')](game[Ue('G^\31\tcA\f\1u','\16\49mb')][Ue('\19:\245\214$\30$\f\230\201$\2\49','PO\135\164Ap')][Ue('x7\129Z\28\150',';q\243')][Ue('\221','\173')],gc)
+                                cb=Vc(788)
+                            elseif cb==24542 then
+                                cb=Vc(25708);
+                                break;
+                            elseif cb==-23690 then
+                                if _G[Ue('x\4\179\146\171\1Y?\191\180\135\15Z','4k\208\249\232\96')]then
+                                    cb=Vc(-18206)
+                                    break
+                                end
+                                cb=24542
+                            end
+                        end
+                    until cb==-5305
+                end)
+                Ib=A(3998)
+            elseif Ib==11387 then
+                if _G[Ue('b>|+','\21_')]()then
+                    Ib=-23967
+                else
+                    Ib=30729
+                end
+            elseif Ib==30729 then
+                Ib=A(-5145);
+                break;
+            elseif Ib==-15221 then
+                Ib=11387;
+            end
+        end
+    until Ib==10122
+end)
+Ga[Ue('W\1s\14','\26\96')][Ue('\250\199\151\201\196\149','\174\168\240')](Ga[Ue('W\1s\14','\26\96')],{['Title']='Tween Gear',['Default']=false,['Callback']=function(if_)
+    _G[Ue('\189\164m\3\203\164\148m\a\215','\233\211\bf\165')]=if_
+    StopTween(_G[Ue('\215\148\159?\147\206\164\159;\143','\131\227\250Z\253')])
+end})
+_G[Ue('A/S(\\','2_')](function()
+    local zd,K,T
+    lg={}
+    zd,K={[-1473]=19691,[-12461]=2211},function(bf)
+        return zd[bf+4204]
+    end
+    T=K(-16665)
+    repeat
+        while true do
+            if T==2211 then
+                _G[Ue('\226\18\243\29\254','\146q')](function()
+                    local Mf,ae,wb,yc,ta,td,Tc,Ub,Xf
+                    Af={}
+                    Ub,wb={[-30471]=-9465,[31503]=-3071,[-16986]=8912,[-3692]=9547,[-22885]=-15120,[13175]=23895,[2367]=-9465,[22989]=-9465,[22081]=-20155,[-7711]=-31304,[-28945]=8912,[9069]=-29264,[-22006]=32598,[8790]=9204,[20719]=-12138,[-25841]=-3071,[-25590]=-18903,[-20092]=21507,[-19149]=-31304,[29635]=-25840,[15469]=-29264,[2562]=-5952,[19878]=17675,[-14288]=-16723,[14706]=-15120,[-18847]=21848,[-9634]=-5952,[-7903]=18596},function(Gf)
+                        return Ub[Gf- -3466]
+                    end
+                    td=wb(-11369)
+                    repeat
+                        while true do
+                            if td==-5952 then
+                                Mf,yc=Tc(ta,Xf);
+                                Xf=Mf;
+                                if Xf==nil then
+                                    td=725
+                                else
+                                    td=wb(26169)
+                                end
+                            elseif td==8912 then
+                                td=wb(-13100);
+                            elseif td==-9465 then
+                                td=wb(-32411)
+                            elseif td==-20155 then
+                                if(yc[Ue('\246\\\204!\201T\217(','\187=\184D')]==_G[Ue('\a\248\55\251','B\150')][Ue('\229\163\158\159\218\171\139\150','\168\194\234\250')][Ue('w\254V\245','9\155')])then
+                                    td=wb(-7158)
+                                    break
+                                end
+                                td=21848
+                            elseif td==-29264 then
+                                td=wb(-11177)
+                            elseif td==-16723 then
+                                Tc,ta,Xf=Sf(Tc)
+                                td=wb(19523)
+                            elseif td==9204 then
+                                td=wb(16412);
+                                break;
+                            elseif td==-18903 then
+                                Tc,ta,Xf=ae[Ue('\v\218\4 \224\31','T\133m')](Tc)
+                                td=wb(-33937)
+                            elseif td==-31304 then
+                                td=wb(-29307)
+                            elseif td==-3071 then
+                                if _G[Ue('zVdC','\r7')]()then
+                                    td=wb(-23558)
+                                else
+                                    td=wb(5324)
+                                end
+                            elseif td==9547 then
+                                topos(yc[Ue('S\246\199q\221\208','\16\176\181')])
+                                td=wb(-22313)
+                            elseif td==32598 then
+                                Tc,ta,Xf=_G[Ue('\227Y\250J\224','\147\56')](game[Ue('v\159\243%\168C\140\238\21\168','1\250\135v\205')](game,'Workspace')[Ue('\165\137\152','\232')][Ue('\148\175\185\255\209\206\144\165\166\234\214\201','\217\214\202\139\184\173')][Ue('C2\5c\210m;\21R\223j','\4Wq \186')](game[Ue('v\159\243%\168C\140\238\21\168','1\250\135v\205')](game,'Workspace')[Ue('\165\137\152','\232')][Ue('\148\175\185\255\209\206\144\165\166\234\214\201','\217\214\202\139\184\173')]))
+                                if R(Tc)~='function'then
+                                    td=wb(17253)
+                                    break
+                                end
+                                td=wb(-20452)
+                            elseif td==-12138 then
+                                ae=k(Tc)
+                                if ae~=nil and ae[Ue('\196\199\169\239\253\178','\155\152\192')]~=nil then
+                                    td=wb(-29056)
+                                    break
+                                elseif R(Tc)=='table'then
+                                    td=wb(-17754)
+                                    break
+                                end
+                                td=wb(-1099)
+                            elseif td==18596 then
+                                td=wb(28037);
+                            elseif td==21507 then
+                                if _G[Ue('\201|\179y3\208L\179}/','\157\v\214\28]')]then
+                                    td=wb(9709)
+                                    break
+                                end
+                                td=wb(-22615)
+                            elseif td==21848 then
+                                td=wb(-26351)
+                            elseif td==23895 then
+                                if game[Ue('pv)\19\251Ee4#\251','7\19]@\158')](game,'Workspace')[Ue('\204\224\241','\129')][Ue('\229o\220\146\149\138\218\208r\241\158\186\143\204','\163\6\178\246\211\227\168')](game[Ue('pv)\19\251Ee4#\251','7\19]@\158')](game,'Workspace')[Ue('\204\224\241','\129')],'MysticIsland')then
+                                    td=wb(-25472)
+                                    break
+                                end
+                                td=wb(12003)
+                            elseif td==-25840 then
+                                if yc[Ue('\187\129\179','\242')](yc,'MeshPart')then
+                                    td=wb(18615)
+                                    break
+                                end
+                                td=wb(11240)
+                            elseif td==-15120 then
+                                td=wb(-904)
+                            elseif td==725 then
+                                td=wb(5603)
+                            end
+                        end
+                    until td==17675
+                end)
+                T=K(-5677)
+                break
+            end
+        end
+    until T==19691
+end)
+local function vb(fa,fg)
+    local W={}
+    local function ff()
+        local Be,ce=_G[Ue('>\143/\128\"','N\236')](function()
+            return game[Ue('&\145\96\30\162q\26','n\229\20')](game,fg)
+        end)
+        if not Be then
+            _G[Ue('Z\198_\201','-\167')]('Kh\195\180ng th\225\187\131 k\225\186\191t n\225\187\145i \196\145\225\186\191n API')
+            return
+        end
+        local Mc
+        local ua=_G[Ue(']\20L\27A','-w')](function()
+            Mc=zc[Ue('\140]\201{\127\163m\233Q^','\198\14\134\53;')](zc,ce)
+        end)
+        if not ua or not Mc or not Mc[Ue('\128\190\168\152\174','\202\209')]then
+            _G[Ue('\229\6\224\t','\146g')]("L\225\187\151i d\225\187\175 li\225\187\135u JSON ho\225\186\183c thi\225\186\191u \'JobId\'")
+            _G[Ue('\181\152\176\151','\194\249')]('Ph\225\186\163n h\225\187\147i API:',ce)
+            return
+        end
+        local Tf={}
+        for ab,ma in _G[Ue('~\15\246~\r\228','\23\127\151')](Mc[Ue('\168\221\128\251\134','\226\178')])do
+            local tf,Ye,ya,le,ra,vd,_g,ee,lf
+            oc={}
+            lf,tf={[15507]=12885,[-23032]=-8158,[30510]=20322,[-22840]=-8478,[15524]=1036,[-20029]=8199,[13583]=-8478,[21890]=8199,[31192]=-21848,[-19573]=28595,[23011]=-8158,[29886]=17322},function(n)
+                return lf[n- -19688]
+            end
+            ee=tf(10198)
+            repeat
+                while true do
+                    if ee==1036 then
+                        ee=tf(-4181);
+                        break;
+                    elseif ee==-21848 then
+                        ra,vd,Ye=Sf(ra)
+                        ee=tf(3323)
+                    elseif ee==-8478 then
+                        ee=tf(2202);
+                    elseif ee==28595 then
+                        ra,vd,Ye=_g[Ue('\15*\26$\16\1','Pus')](ra)
+                        ee=tf(-42720)
+                    elseif ee==14553 then
+                        _G[Ue('\176\130\166\143\161','\196\227')][Ue('\253\181\136\241\169\143','\148\219\251')](Tf,ya)
+                        ee=tf(-39717)
+                    elseif ee==8199 then
+                        ya,le=ra(vd,Ye);
+                        Ye=ya;
+                        if Ye==nil then
+                            ee=tf(-4164)
+                        else
+                            ee=14553
+                        end
+                    elseif ee==-8158 then
+                        ee=tf(-6105)
+                    elseif ee==17322 then
+                        ra,vd,Ye=_G[Ue('\173{\180h\174','\221\26')](ma)
+                        if R(ra)~='function'then
+                            ee=tf(10822)
+                            break
+                        end
+                        ee=tf(-42528)
+                    elseif ee==20322 then
+                        _g=k(ra)
+                        if _g~=nil and _g[Ue('|\2bW8y','#]\v')]~=nil then
+                            ee=tf(-39261)
+                            break
+                        elseif R(ra)=='table'then
+                            ee=tf(11504)
+                            break
+                        end
+                        ee=-8158
+                    end
+                end
+            until ee==12885
+        end
+        local pd={}
+        for Ta,lb in _G[Ue('\169\181h\169\183z','\192\197\t')](Tf)do
+            pd[lb]=true
+        end
+        for tb,tc in _G[Ue('<7%$?','LV')](W)do
+            local Ca,qb,ig
+            Kd={}
+            ig,qb={[-6168]=-16830,[22629]=-8193,[-155]=-11849,[-31909]=-32009},function(Ab)
+                return ig[Ab+-31681]
+            end
+            Ca=qb(-228)
+            repeat
+                while true do
+                    if Ca==-8193 then
+                        Ca=qb(25513);
+                        break;
+                    elseif Ca==-11849 then
+                        tc[Ue('\196\222F\244\201Z\249','\128\187\53')](tc)
+                        W[tb]=nil
+                        Ca=qb(54310)
+                    elseif Ca==-32009 then
+                        if not pd[tb]then
+                            Ca=qb(31526)
+                            break
+                        end
+                        Ca=-8193
+                    end
+                end
+            until Ca==-16830
+        end
+        for vc,Re in _G[Ue('\241\230\144\241\228\130','\152\150\241')](Tf)do
+            local M,qf,Qd
+            Uc={}
+            M,qf={[-15117]=-30404,[17506]=939,[-19834]=24534,[4501]=-30404,[-13184]=-12303},function(xa)
+                return M[xa+-3346]
+            end
+            Qd=qf(-9838)
+            repeat
+                while true do
+                    if Qd==24534 then
+                        W[Re]=fa[Ue('\191\19\242\137\t\232','\253f\134')](fa,{['Title']='Join Server: '..Re,['Desc']='Click \196\145\225\187\131 v\195\160o server',['Callback']=function()
+                            qe[Ue('\212]\157Y\225\223\211dR\171\182\236Y\146Y\216\222\210dg\170\133\229','\128\56\241<\145\176\161\16\6\196\230')](qe,ne,Re,w[Ue('\n\232:\96\133\22\235\56x\140\52','F\135Y\1\233')])
+                        end})
+                        Qd=qf(7847)
+                    elseif Qd==-30404 then
+                        Qd=qf(20852);
+                        break;
+                    elseif Qd==-12303 then
+                        if not W[Re]then
+                            Qd=qf(-16488)
+                            break
+                        end
+                        Qd=qf(-11771)
+                    end
+                end
+            until Qd==939
+        end
+    end
+    _G[Ue("\244\'\243-",'\128F')][Ue('*\24\56\31\55','Yh')](function()
+        local Ne,wd,x
+        cd={}
+        Ne,wd={[-17465]=11544,[-6817]=12987,[6352]=-15292,[25905]=3509},function(Za)
+            return Ne[Za+19015]
+        end
+        x=wd(6890)
+        repeat
+            while true do
+                if x==-15292 then
+                    _G[Ue('\146s\131|\142','\226\16')](ff)
+                    _G[Ue('\197b\194h','\177\3')][Ue('\19<\r)','d]')](5)
+                    x=wd(-36480)
+                elseif x==-26597 then
+                    x=wd(-25832);
+                    break;
+                elseif x==3509 then
+                    x=11544;
+                elseif x==11544 then
+                    if true then
+                        x=wd(-12663)
+                    else
+                        x=-26597
+                    end
+                end
+            end
+        until x==12987
     end)
 end
-
--- ===== TABS SERVER =====
-
-Tabs.Servers1 = Window:Tab({
-    Title = "Full Moon",
-    Icon = "moon",
-    Desc = "Server có Trăng Tròn",
-})
-
-Tabs.Servers2 = Window:Tab({
-    Title = "Mirage",
-    Icon = "eye",
-    Desc = "Server có Mirage",
-})
-
-Tabs.Servers3 = Window:Tab({
-    Title = "Sword",
-    Icon = "sword",
-    Desc = "Server có Mythical Sword",
-})
-
-Tabs.Servers4 = Window:Tab({
-    Title = "Dough King",
-    Icon = "bomb",
-    Desc = "Server có boss kata v2",
-})
-
-Tabs.Servers5 = Window:Tab({
-    Title = "Rip Indra",
-    Icon = "bomb",
-    Desc = "Server có rip",
-})
-
-Tabs.Servers6 = Window:Tab({
-    Title = "DarkBeard",
-    Icon = "bomb",
-    Desc = "Server có râu đen",
-})
--- ===== KẾT NỐI API TỪNG TAB =====
-local endpoints = {
-    ["full"] = "fullmoon",
-    ["mir"] = "Mirage",
-    ["sword"] = "swordlegend",
-    ["dough"] = "Gay",
-    ["rip"] = "Rip",
-    ["dark"] = "Dark"
-}
-
--- Gọi hàm:
-for short, real in pairs(endpoints) do
-    local tab = Tabs["Servers" .. ({full=1, mir=2, sword=3, dough=4, rip=5, dark=6})[short]]
-    CreateServerUpdater(tab, "http://greenzapi.serveirc.com:31447/Api/" .. real)
+Ga[Ue('\176\226\31\186\134\245\30\253','\227\135m\204')]=Lb[Ue('Eps','\17')](Lb,{['Title']='Full Moon',['Icon']='moon',['Desc']='Server c\195\179 Tr\196\131ng Tr\195\178n'})
+Ga[Ue('\r\247\26\187;\224\27\255','^\146h\205')]=Lb[Ue('\212\225\226','\128')](Lb,{['Title']='Mirage',['Icon']='eye',['Desc']='Server c\195\179 Mirage'})
+Ga[Ue('\202a\239\17\252v\238T','\153\4\157g')]=Lb[Ue('\151\162\161','\195')](Lb,{['Title']='Sword',['Icon']='sword',['Desc']='Server c\195\179 Mythical Sword'})
+Ga[Ue('\96g\186qVp\187\51','3\2\200\a')]=Lb[Ue('\241\196\199','\165')](Lb,{['Title']='Dough King',['Icon']='bomb',['Desc']='Server c\195\179 boss kata v2'})
+Ga[Ue('\225\178=\f\215\165<O','\178\215Oz')]=Lb[Ue('Eps','\17')](Lb,{['Title']='Rip Indra',['Icon']='bomb',['Desc']='Server c\195\179 rip'})
+Ga[Ue('\233\145\29\213\223\134\28\149','\186\244o\163')]=Lb[Ue('\160\149\150','\244')](Lb,{['Title']='DarkBeard',['Icon']='bomb',['Desc']='Server c\195\179 r\195\162u \196\145en'})
+local uf={['full']='fullmoon',['mir']='Mirage',['sword']='swordlegend',['dough']='Gay',['rip']='Rip',['dark']='Dark'}
+for ud,c in _G[Ue('\139p\146c\136','\251\17')](uf)do
+    local Qf=Ga['Servers'..({['full']=1,['mir']=2,['sword']=3,['dough']=4,['rip']=5,['dark']=6})[ud]]
+    vb(Qf,'http://greenzapi.serveirc.com:3\49\52\52\55/Api/'..c)
 end
-
--- ===== BẮT BUỘC: MỞ MỘT TAB ĐẦU TIÊN KHI KHỞI ĐỘNG =====
-Window:SelectTab(Tabs.Main)
+Lb[Ue('\v\165[\190;\180c\186:','X\192\55\219')](Lb,Ga[Ue('\26\151>\152','W\246')])
