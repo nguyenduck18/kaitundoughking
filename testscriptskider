@@ -4115,6 +4115,130 @@ spawn(function()
         end)
     end
 end)
+-- UI Configuration
+local Toggle = Get:AddToggle("Toggle", {Title = "Auto Farm Tyrant of the Skies", Default = false})
+Toggle:OnChanged(function(Value)
+    getgenv().AutoFarmTyrantoftheSkies = Value
+    StopTween(getgenv().AutoFarmTyrantoftheSkies)
+end)
+
+-- Game locations and variables
+local TyrantoftheSkies = CFrame.new(-16194.0048828125, 155.21844482421875, 1420.719970703125)
+local Plsmon = game:GetService("Workspace").Enemies
+
+-- Main farming function
+task.spawn(function()
+    while task.wait() do
+        if getgenv().AutoFarmTyrantoftheSkies then
+            pcall(function()
+                -- Check if Tyrant of the Skies exists
+                if game:GetService("Workspace").Enemies:FindFirstChild("Tyrant of the Skies") then
+                    for i, v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
+                        if v.Name == "Tyrant of the Skies" then
+                            if v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
+                                repeat
+                                    task.wait()
+                                    AutoHaki()
+                                    EquipWeapon(_G.SelectWeapon)
+                                    v.HumanoidRootPart.CanCollide = false
+                                    v.Humanoid.WalkSpeed = 0
+                                    v.HumanoidRootPart.Size = Vector3.new(50, 50, 50)
+                                    topos(v.HumanoidRootPart.CFrame * CFrame.new(0, 40, 0))
+                                    NeedAttacking = true
+                                until not getgenv().AutoFarmTyrantoftheSkies or not v.Parent or v.Humanoid.Health <= 0
+                                wait(0.5) -- Reduced wait time
+                            end
+                        end
+                    end
+                else
+                    -- Check if any of the required mobs exist
+                    local mobNames = {"Isle Outlaw", "Island Boy", "Isle Champion", "Serpent Hunter", "Skull Slayer"}
+                    local mobPositions = {
+                        ["Isle Outlaw"] = CFrame.new(-16442.814453125, 116.13899993896484, -264.4637756347656),
+                        ["Island Boy"] = CFrame.new(-16901.26171875, 84.06756591796875, -192.88906860351562),
+                        ["Isle Champion"] = CFrame.new(-16641.6796875, 235.7825469970703, 1031.282958984375),
+                        ["Serpent Hunter"] = CFrame.new(-16521.0625, 106.09285, 1488.78467, 0.469467044, 0, 0.882950008, 0, 1, 0, -0.882950008, 0, 0.469467044),
+                        ["Skull Slayer"] = CFrame.new(-16855.043, 122.457253, 1478.15308, -0.999392271, 0, -0.0348687991, 0, 1, 0, 0.0348687991, 0, -0.999392271)
+                    }
+                    
+                    -- Find the closest available mob
+                    local foundMob = false
+                    local targetMob = nil
+                    local targetPos = nil
+                    local playerPos = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
+                    local closestDist = math.huge
+                    
+                    for _, mobName in pairs(mobNames) do
+                        local mobs = game:GetService("Workspace").Enemies:GetChildren()
+                        for _, mob in pairs(mobs) do
+                            if mob.Name == mobName and mob:FindFirstChild("Humanoid") and mob:FindFirstChild("HumanoidRootPart") and mob.Humanoid.Health > 0 then
+                                local dist = (mob.HumanoidRootPart.Position - playerPos).Magnitude
+                                if dist < closestDist then
+                                    closestDist = dist
+                                    targetMob = mob
+                                    targetPos = mobPositions[mobName]
+                                    foundMob = true
+                                end
+                            end
+                        end
+                    end
+                    
+                    if foundMob and targetMob then
+                        repeat
+                            task.wait()
+                            AutoHaki()
+                            EquipWeapon(_G.SelectWeapon)
+                            targetMob.HumanoidRootPart.CanCollide = false
+                            targetMob.Humanoid.WalkSpeed = 0
+                            StartBring = true
+                            targetMob.HumanoidRootPart.Size = Vector3.new(50, 50, 50)
+                            PosMon = targetMob.HumanoidRootPart.CFrame
+                            MonFarm = targetMob.Name
+                            targetMob.Head.CanCollide = false
+                            topos(targetMob.HumanoidRootPart.CFrame * CFrame.new(0, 30, 0))
+                            NeedAttacking = true
+                            
+                            -- Use the Bring function with the correct position based on mob type
+                            Bring(targetMob.Name, targetPos)
+                        until not getgenv().AutoFarmTyrantoftheSkies or not targetMob.Parent or targetMob.Humanoid.Health <= 0 or
+                            game:GetService("Workspace").Map.CakeLoaf.BigMirror.Other.Transparency == 0 or
+                            game:GetService("ReplicatedStorage"):FindFirstChild("Tyrant of the Skies [Lv. 2600] [Raid Boss]") or
+                            game:GetService("Workspace").Enemies:FindFirstChild("Tyrant of the Skies [Lv. 2600] [Raid Boss]")
+                        
+                        DamageAura = false
+                        -- Short wait before finding next target
+                        wait(0.1)
+                    else
+                        -- Teleport to random locations to find mobs if none are found
+                        local randomLocations = {
+                            CFrame.new(-16442.814453125, 116.13899993896484, -264.4637756347656),
+                            CFrame.new(-16901.26171875, 84.06756591796875, -192.88906860351562),
+                            CFrame.new(-16641.6796875, 235.7825469970703, 1031.282958984375),
+                            CFrame.new(-16521.0625, 106.09285, 1488.78467),
+                            CFrame.new(-16855.043, 122.457253, 1478.15308)
+                        }
+                        
+                        local RandomTele = math.random(1, #randomLocations)
+                        topos(randomLocations[RandomTele])
+                        wait(1) -- Wait a bit before trying again
+                    end
+                    
+                    -- Check if Tyrant has spawned during mob farming
+                    if game:GetService("ReplicatedStorage"):FindFirstChild("Tyrant of the Skies [Lv. 2600] [Raid Boss]") or 
+                       not foundMob then
+                        local playerPos = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
+                        if BypassTP and (playerPos - TyrantoftheSkies.Position).Magnitude > 1500 then
+                            BTP(TyrantoftheSkies)
+                        else
+                            topos(TyrantoftheSkies)
+                        end
+                        UnEquipWeapon(_G.SelectWeapon)
+                    end
+                end
+            end)
+        end
+    end
+end)
 Toggle = Stack:AddToggle("Toggle", {Title = "Auto Rip Indra", Default = false })
 Toggle:OnChanged(function(Value)
     getgenv().AutoRipIndra = Value
