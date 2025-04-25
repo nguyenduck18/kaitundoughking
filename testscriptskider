@@ -4116,7 +4116,7 @@ spawn(function()
     end
 end)
 -- UI Configuration
-local Toggle = Get:AddToggle("Toggle", {Title = "Auto Farm Tyrant of the Skies", Default = false})
+Toggle = Stack:AddToggle("Toggle", {Title = "Auto Farm Tyrant of the Skies", Default = false})
 Toggle:OnChanged(function(Value)
     getgenv().AutoFarmTyrantoftheSkies = Value
     StopTween(getgenv().AutoFarmTyrantoftheSkies)
