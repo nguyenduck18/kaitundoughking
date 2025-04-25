@@ -8633,10 +8633,35 @@ local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 
--- Dùng đúng request cho môi trường executor
-local request = http_request or request or syn and syn.request or fluxus and fluxus.request or function(...) warn("❌ No request method found") return nil end
+local request = http_request or request or HttpPost or syn and syn.request or fluxus and fluxus.request
+if not request then return end
 
--- Danh sách webhook từng boss
+local cooldownTime = 900 -- 15 phút
+local cooldownFile = "boss_cooldown.json"
+
+-- Load cooldown từ file
+local function LoadCooldown()
+    if isfile and isfile(cooldownFile) then
+        local data = readfile(cooldownFile)
+        local success, decoded = pcall(function()
+            return HttpService:JSONDecode(data)
+        end)
+        if success and type(decoded) == "table" then
+            return decoded
+        end
+    end
+    return {}
+end
+
+-- Lưu cooldown vào file
+local function SaveCooldown(data)
+    if writefile then
+        writefile(cooldownFile, HttpService:JSONEncode(data))
+    end
+end
+
+_G.SentBosses = LoadCooldown()
+
 local webhookURLs = {
     ["rip_indra True Form"] = "https://discord.com/api/webhooks/1365180289764298814/PjfA3_qHZjXYtvaVf4D8c4ad5mWeJfn59mNzQuJFeFvYhjwQ5Y8ILtydVORI9kW9xp1X",
     ["Darkbeard"] = "https://discord.com/api/webhooks/1365231489553403904/UpNLKYMpEBe3gIWOrcoK0bhYJIOFv8_Qc14wyCYLgbc8n0QNj1szNRShPvMoIDnAMzEB",
@@ -8646,7 +8671,6 @@ local webhookURLs = {
     ["Cursed Captain"] = "https://discord.com/api/webhooks/1365231611414577152/C5RzYm5ZYLyrOSlmSktakLu87Se1DKMOkyz2O2vHS7SGO75S_5w_fd1yVl8iRifY4o9F"
 }
 
--- Tên hiển thị đẹp hơn cho boss
 local bosses = {
     ["rip_indra True Form"] = "Indra",
     ["Darkbeard"] = "Darkbeard",
@@ -8656,74 +8680,102 @@ local bosses = {
     ["Cursed Captain"] = "Cursed Captain"
 }
 
--- Boss đã gửi rồi thì không gửi nữa
-local sentBosses = {}
+local function PostWebhook(url, data)
+    local success, response = pcall(function()
+        return request({
+            Url = url,
+            Method = "POST",
+            Headers = {["Content-Type"] = "application/json"},
+            Body = HttpService:JSONEncode(data)
+        })
+    end)
+    return success and response and (response.StatusCode == 200 or response.StatusCode == 204)
+end
 
--- Hàm gửi webhook
-local function sendWebhook(bossName, bossDisplayName)
-    local jobID = game.JobId or "UNKNOWN"
+local function HasSentBossAlert(bossName, jobId)
+    local key = bossName .. "_" .. jobId
+    local data = _G.SentBosses[key]
+    if data and data.timestamp then
+        return (os.time() - data.timestamp) < cooldownTime
+    end
+    return false
+end
+
+local function MarkBossAsSent(bossName, jobId)
+    local key = bossName .. "_" .. jobId
+    _G.SentBosses[key] = { timestamp = os.time() }
+    SaveCooldown(_G.SentBosses)
+end
+
+local function SendBossAlert(bossName)
+    local bossDisplayName = bosses[bossName] or bossName
+    local jobId = game.JobId or "UNKNOWN"
     local playerCount = tostring(#Players:GetPlayers()) .. "/12"
-    local scriptJoin = 'game:GetService("ReplicatedStorage").__ServerBrowser:InvokeServer("teleport", "' .. jobID .. '")'
+    local scriptJoin = 'game:GetService("ReplicatedStorage").__ServerBrowser:InvokeServer("teleport", "' .. jobId .. '")'
+
+    local bossHealth = "Unknown"
+    if Workspace.Enemies:FindFirstChild(bossName) and Workspace.Enemies[bossName]:FindFirstChild("Humanoid") then
+        local humanoid = Workspace.Enemies[bossName].Humanoid
+        bossHealth = math.floor((humanoid.Health / humanoid.MaxHealth) * 100) .. "% HP"
+    end
+
+    if HasSentBossAlert(bossName, jobId) then return false end
 
     local data = {
-        ["username"] = bossDisplayName .. " Alert",
+        ["username"] = "Boss Alert | " .. bossDisplayName,
         ["avatar_url"] = "https://i.imgur.com/IFXzi83.jpeg",
         ["embeds"] = {{
             ["title"] = "**👺 Boss Summoned 👻**",
-            ["color"] = 0xFF5555,
+            ["color"] = 0xFF0000,
+            ["description"] = "Boss **" .. bossDisplayName .. "** spawm",
             ["fields"] = {
-                {["name"] = "👤 Boss Name:", ["value"] = bossDisplayName, ["inline"] = false},
-                {["name"] = "🧨 Player Count:", ["value"] = playerCount, ["inline"] = false},
-                {["name"] = "🔗 Job ID:", ["value"] = "`" .. jobID .. "`", ["inline"] = false},
-                {["name"] = "📜 Script Join:", ["value"] = "```lua\n" .. scriptJoin .. "\n```", ["inline"] = false}
+                {["name"] = "👤 Boss Name", ["value"] = "```fix\n" .. bossDisplayName .. "\n```", ["inline"] = true},
+                {["name"] = "💪 Boss Health", ["value"] = "```yaml\n" .. bossHealth .. "\n```", ["inline"] = true},
+                {["name"] = "👥 Player Count", ["value"] = "```ini\n[" .. playerCount .. "]\n```", ["inline"] = true},
+                {["name"] = "🆔 Server JobID", ["value"] = "```\n" .. jobId .. "\n```", ["inline"] = false},
+                {["name"] = "📜 Script Join", ["value"] = "```lua\n" .. scriptJoin .. "\n```", ["inline"] = false}
             },
-            ["footer"] = {["text"] = "MADE BY: STUCKZ999 • " .. os.date("Gửi lúc %H:%M")}
+            ["footer"] = {
+                ["text"] = "🔮 MADE BY: STUCKZ999 • " .. os.date("%H:%M:%S %d/%m/%Y"),
+            },
+            ["timestamp"] = DateTime.now():ToIsoDate()
         }}
     }
 
     local url = webhookURLs[bossName]
-    if not url then warn("⚠️ Không tìm thấy webhook cho boss:", bossName) return end
+    if not url then return false end
 
-    local success, res = pcall(function()
-        return request({
-            Url = url,
-            Method = "POST",
-            Headers = {
-                ["Content-Type"] = "application/json"
-            },
-            Body = HttpService:JSONEncode(data)
-        })
-    end)
+    if PostWebhook(url, data) then
+        MarkBossAsSent(bossName, jobId)
+    end
 
-    if success then
-        print("✅")
-    else
-        warn("❌")
+    return true
+end
+
+local function CheckForBosses()
+    for bossName, _ in pairs(bosses) do
+        if Workspace.Enemies:FindFirstChild(bossName) then
+            SendBossAlert(bossName)
+        end
+        if game.ReplicatedStorage:FindFirstChild(bossName) then
+            SendBossAlert(bossName)
+        end
     end
 end
 
--- Quét boss đang tồn tại từ khi script bắt đầu (fix lỗi boss đã spawn sẵn)
-task.defer(function()
-    task.wait(2) -- chờ load workspace ổn định
-    for bossName, display in pairs(bosses) do
-        if Workspace:FindFirstChild(bossName) and not sentBosses[bossName] then
-            sentBosses[bossName] = true
-            sendWebhook(bossName, display)
-        end
-    end
-end)
-
--- Theo dõi boss spawn mới
-Workspace.ChildAdded:Connect(function(child)
-    if bosses[child.Name] and not sentBosses[child.Name] then
-        sentBosses[child.Name] = true
-        sendWebhook(child.Name, bosses[child.Name])
-    end
-end)
-
--- Reset khi boss bị tiêu diệt
-Workspace.ChildRemoved:Connect(function(child)
+Workspace.Enemies.ChildAdded:Connect(function(child)
+    task.wait(1)
     if bosses[child.Name] then
-        sentBosses[child.Name] = nil
+        SendBossAlert(child.Name)
+    end
+end)
+
+task.wait(5)
+CheckForBosses()
+
+spawn(function()
+    while true do
+        task.wait(60)
+        CheckForBosses()
     end
 end)
