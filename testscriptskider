@@ -5620,6 +5620,23 @@ end)
     end
 end)
 
+local TweenService = game:GetService("TweenService")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+local player = game.Players.LocalPlayer
+local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+
+local isAutoSummonActive = false
+local tweenObject = nil
+
+-- Function to stop the current tween
+local function StopTween()
+    if tweenObject then
+        tweenObject:Cancel()
+        tweenObject = nil
+    end
+end
+
+-- Auto-farm toggle
 AutoFarm:Toggle("Tự động phá bình", false, function(Value)
     isAutoSummonActive = Value
     if isAutoSummonActive then
@@ -5629,15 +5646,34 @@ AutoFarm:Toggle("Tự động phá bình", false, function(Value)
     end
 end)
 
-local WeaponList = {"Melee", "Sword", "Fruit"} 
+local WeaponList = {"Melee", "Sword", "Fruit"}
 local currentWeaponIndex = 1
-_G.SkillZ, _G.SkillX, _G.SkillC = true, true, true 
+_G.SkillZ, _G.SkillX, _G.SkillC = true, true, true
 _G.UseSkillKub = true
 
+-- Update character HRP reference when needed
+game:GetService("RunService").Heartbeat:Connect(function()
+    if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+        hrp = player.Character.HumanoidRootPart
+    end
+end)
+
+-- Find weapons in player's backpack
 spawn(function()
-    while wait() do
+    while wait(1) do
         pcall(function()
             for i, v in pairs(player.Backpack:GetChildren()) do
+                if v:IsA("Tool") then
+                    for _, tip in ipairs(WeaponList) do
+                        if v.ToolTip == tip then
+                            _G["Weapon_" .. tip] = v.Name
+                        end
+                    end
+                end
+            end
+            
+            -- Also check equipped tools
+            for i, v in pairs(player.Character:GetChildren()) do
                 if v:IsA("Tool") then
                     for _, tip in ipairs(WeaponList) do
                         if v.ToolTip == tip then
@@ -5652,27 +5688,52 @@ end)
 
 local function equipWeaponType(weaponType)
     local weaponName = _G["Weapon_" .. weaponType]
-    if weaponName and player.Backpack:FindFirstChild(weaponName) then
-        player.Character.Humanoid:EquipTool(player.Backpack:FindFirstChild(weaponName))
+    if weaponName then
+        if player.Character:FindFirstChild(weaponName) then
+            -- Already equipped
+            return true
+        elseif player.Backpack:FindFirstChild(weaponName) then
+            player.Character.Humanoid:EquipTool(player.Backpack:FindFirstChild(weaponName))
+            wait(0.1) -- Brief wait to ensure it equips
+            return true
+        end
     end
+    return false
 end
 
 local function spamSkills()
     if _G.UseSkillKub then
-        if _G.SkillZ then VirtualInputManager:SendKeyEvent(true, "Z", false, game) wait(0.2) VirtualInputManager:SendKeyEvent(false, "Z", false, game) end
+        if _G.SkillZ then 
+            VirtualInputManager:SendKeyEvent(true, "Z", false, game) 
+            wait(0.2) 
+            VirtualInputManager:SendKeyEvent(false, "Z", false, game) 
+        end
         wait(0.2)
-        if _G.SkillX then VirtualInputManager:SendKeyEvent(true, "X", false, game) wait(0.2) VirtualInputManager:SendKeyEvent(false, "X", false, game) end
+        
+        if _G.SkillX then 
+            VirtualInputManager:SendKeyEvent(true, "X", false, game) 
+            wait(0.2) 
+            VirtualInputManager:SendKeyEvent(false, "X", false, game) 
+        end
         wait(0.2)
-        if _G.SkillC then VirtualInputManager:SendKeyEvent(true, "C", false, game) wait(0.2) VirtualInputManager:SendKeyEvent(false, "C", false, game) end
+        
+        if _G.SkillC then 
+            VirtualInputManager:SendKeyEvent(true, "C", false, game) 
+            wait(0.2) 
+            VirtualInputManager:SendKeyEvent(false, "C", false, game) 
+        end
     end
 end
 
 local function flyToBossArea()
     local summonPos = CFrame.new(-16194.0048828125, 155.21844482421875, 1420.719970703125)
     if hrp then
-        local tween = TweenService:Create(hrp, TweenInfo.new(2, Enum.EasingStyle.Linear), {CFrame = summonPos})
-        tween:Play()
-        tween.Completed:Wait()
+        tweenObject = TweenService:Create(hrp, TweenInfo.new(2, Enum.EasingStyle.Linear), {CFrame = summonPos})
+        tweenObject:Play()
+        tweenObject.Completed:Wait()
+    else
+        warn("")
+        wait(1)
     end
 end
 
@@ -5686,6 +5747,7 @@ local function getAllPots()
             end
         end
     end
+    print("")
     return pots
 end
 
@@ -5694,19 +5756,32 @@ local function smashOneRound()
     for _, pot in ipairs(pots) do
         if not isAutoSummonActive then return end
         
-        local targetPos = pot.Position + Vector3.new(0, 3, 0)
-        local tween = TweenService:Create(hrp, TweenInfo.new(1), {CFrame = CFrame.new(targetPos)})
-        tween:Play()
-        tween.Completed:Wait()
-        
-        local weaponType = WeaponList[currentWeaponIndex]
-        equipWeaponType(weaponType)
-        wait(0.3)
-        spamSkills()
-        wait(0.5)
-        
-        currentWeaponIndex += 1
-        if currentWeaponIndex > #WeaponList then currentWeaponIndex = 1 end
+        if pot and pot:IsA("BasePart") and pot.Parent and hrp then
+            -- Make sure we're not too far away (to avoid impossible tweens)
+            local distance = (pot.Position - hrp.Position).Magnitude
+            if distance > 300 then
+                print("")
+                continue
+            end
+            
+            local targetPos = pot.Position + Vector3.new(0, 3, 0)
+            tweenObject = TweenService:Create(hrp, TweenInfo.new(1), {CFrame = CFrame.new(targetPos)})
+            tweenObject:Play()
+            tweenObject.Completed:Wait()
+            
+            local weaponType = WeaponList[currentWeaponIndex]
+            local equipped = equipWeaponType(weaponType)
+            if equipped then
+                wait(0.3)
+                spamSkills()
+                wait(0.5)
+            else
+                print("")
+            end
+            
+            currentWeaponIndex = currentWeaponIndex + 1
+            if currentWeaponIndex > #WeaponList then currentWeaponIndex = 1 end
+        end
     end
 end
 
@@ -5714,11 +5789,13 @@ function summonTyrantOfTheSkies()
     while isAutoSummonActive do
         flyToBossArea()
         wait(1)
+        
         for i = 1, 3 do
             if not isAutoSummonActive then return end
             smashOneRound()
             wait(2)
         end
+        
         wait(5)
     end
 end
