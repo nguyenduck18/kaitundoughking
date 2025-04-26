@@ -9294,7 +9294,7 @@ end)
                     if Humanoid.Health < 5500 then
                         while getgenv().SafeMode and Humanoid.Health < 5500 do
                             task.wait(0.1)
-                            Root.CFrame = Root.CFrame + Vector3.new(0, 200, 0)
+                            Root.CFrame = Root.CFrame + Vector3.new(255, 255, 255)
                         end
                     end
                 end
