@@ -10040,6 +10040,110 @@ Trailers:Toggle("Skill C",false, function(Value)
         _G.XaiSkillC = Value
         end) 
 
+        Trailers:Seperator("Race Draco V4")
+
+Trailers:Toggle("Teleport To The Draco Clan Trial Door", false, function(Value)
+    getgenv().TrialTeleportDraco = Value
+end)
+
+local function safeTeleport(targetCFrame)
+    if topos and typeof(targetCFrame) == "CFrame" then
+        topos(targetCFrame)
+    end
+end
+
+spawn(function()
+    local trialPart = workspace:WaitForChild("Map"):FindFirstChild("PrehistoricIsland")
+    if trialPart then
+        trialPart = trialPart:FindFirstChild("TrialTeleport")
+    end
+    while task.wait(0.5) do
+        if getgenv().TrialTeleportDraco and trialPart and trialPart:IsA("Part") then
+            safeTeleport(CFrame.new(trialPart.Position))
+        end
+    end
+end)
+Trailers:Toggle("Auto Fly", false, function(Value)
+    getgenv().AutoFly = Value
+end)
+
+-- Phần code Auto Fly giữ nguyên
+
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp = character:WaitForChild("HumanoidRootPart")
+
+local flying = false
+local speed = 100
+local flyHeight = 5
+
+local bv = Instance.new("BodyVelocity")
+bv.MaxForce = Vector3.new(1, 1, 1) * 1e6
+bv.P = 1250
+bv.Velocity = Vector3.zero
+
+local bg = Instance.new("BodyGyro")
+bg.MaxTorque = Vector3.new(1, 1, 1) * 1e6
+bg.P = 3000
+bg.CFrame = hrp.CFrame
+
+local function getMoveDirection()
+    local cam = workspace.CurrentCamera
+    local moveVec = Vector3.zero
+
+    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
+        moveVec += cam.CFrame.LookVector
+    end
+    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
+        moveVec -= cam.CFrame.LookVector
+    end
+    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
+        moveVec -= cam.CFrame.RightVector
+    end
+    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
+        moveVec += cam.CFrame.RightVector
+    end
+
+    moveVec = Vector3.new(moveVec.X, 0, moveVec.Z)
+    return moveVec.Magnitude > 0 and moveVec.Unit or Vector3.zero
+end
+
+local function startFly()
+    if not getgenv().AutoFly then return end
+    flying = true
+    bv.Parent = hrp
+    bg.Parent = hrp
+end
+
+local function stopFly()
+    flying = false
+    bv.Parent = nil
+    bg.Parent = nil
+end
+
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    if input.KeyCode == Enum.KeyCode.Space and getgenv().AutoFly then
+        if flying then
+            stopFly()
+        else
+            startFly()
+        end
+    end
+end)
+
+RunService.RenderStepped:Connect(function()
+    if flying and getgenv().AutoFly then
+        local move = getMoveDirection()
+        bv.Velocity = move * speed + Vector3.new(0, flyHeight * 10, 0)
+        bg.CFrame = workspace.CurrentCamera.CFrame
+    end
+end)
+
     Espbruh:Toggle("Esp Island", false, function(value)
         IslandESP = value
         while IslandESP do wait()
@@ -11865,152 +11969,3 @@ end)
              end
          end
      end)
-
-local HttpService = game:GetService("HttpService")
-local Players = game:GetService("Players")
-local Workspace = game:GetService("Workspace")
-
-local request = http_request or request or HttpPost or syn and syn.request or fluxus and fluxus.request
-if not request then return end
-
-local cooldownTime = 600
-local cooldownFile = "boss_cooldown.json"
-
-local function LoadCooldown()
-    if isfile and isfile(cooldownFile) then
-        local data = readfile(cooldownFile)
-        local success, decoded = pcall(function()
-            return HttpService:JSONDecode(data)
-        end)
-        if success and type(decoded) == "table" then
-            return decoded
-        end
-    end
-    return {}
-end
-
-local function SaveCooldown(data)
-    if writefile then
-        writefile(cooldownFile, HttpService:JSONEncode(data))
-    end
-end
-
-_G.SentBosses = LoadCooldown()
-
-local webhookURLs = {
-    ["rip_indra True Form"] = "https://discord.com/api/webhooks/1365180289764298814/PjfA3_qHZjXYtvaVf4D8c4ad5mWeJfn59mNzQuJFeFvYhjwQ5Y8ILtydVORI9kW9xp1X",
-    ["Darkbeard"] = "https://discord.com/api/webhooks/1365231489553403904/UpNLKYMpEBe3gIWOrcoK0bhYJIOFv8_Qc14wyCYLgbc8n0QNj1szNRShPvMoIDnAMzEB",
-    ["Dough King"] = "https://discord.com/api/webhooks/1365231422801051691/ArIoOAJD6brwOYaxhCrRG4YBAi0AgexCs9y-vH6vxaVJWktTj1LAqH5ApufVSkIkJsuS",
-    ["Tyrant of the Skies"] = "https://discord.com/api/webhooks/1365216341602336841/sgM73quYi92nw9iRyRNCLY9f-7HxdGZl8mL21WZqNJOL6Byfj83t1aoI33Z1aZVElfqz",
-    ["Soul Reaper"] = "https://discord.com/api/webhooks/1365231550530195456/_BeBBmDdiYmEKK8D23MONH_6TZYHLaHD5efG9Pwbws-kCT0TMBEmjqM0_g82B6JQjedJ",
-    ["Cursed Captain"] = "https://discord.com/api/webhooks/1365231611414577152/C5RzYm5ZYLyrOSlmSktakLu87Se1DKMOkyz2O2vHS7SGO75S_5w_fd1yVl8iRifY4o9F"
-}
-
-local bosses = {
-    ["rip_indra True Form"] = "Indra",
-    ["Darkbeard"] = "Darkbeard",
-    ["Dough King"] = "Dough King",
-    ["Tyrant of the Skies"] = "Tyrant",
-    ["Soul Reaper"] = "Soul Reaper",
-    ["Cursed Captain"] = "Cursed Captain"
-}
-
-local function PostWebhook(url, data)
-    local success, response = pcall(function()
-        return request({
-            Url = url,
-            Method = "POST",
-            Headers = {["Content-Type"] = "application/json"},
-            Body = HttpService:JSONEncode(data)
-        })
-    end)
-    return success and response and (response.StatusCode == 200 or response.StatusCode == 204)
-end
-
-local function HasSentBossAlert(bossName, jobId)
-    local key = bossName .. "_" .. jobId
-    local data = _G.SentBosses[key]
-    if data and data.timestamp then
-        return (os.time() - data.timestamp) < cooldownTime
-    end
-    return false
-end
-
-local function MarkBossAsSent(bossName, jobId)
-    local key = bossName .. "_" .. jobId
-    _G.SentBosses[key] = { timestamp = os.time() }
-    SaveCooldown(_G.SentBosses)
-end
-
-local function SendBossAlert(bossName)
-    local bossDisplayName = bosses[bossName] or bossName
-    local jobId = game.JobId or "UNKNOWN"
-    local playerCount = tostring(#Players:GetPlayers()) .. "/12"
-    local scriptJoin = 'game:GetService("ReplicatedStorage").__ServerBrowser:InvokeServer("teleport", "' .. jobId .. '")'
-
-    local bossHealth = "Unknown"
-    if Workspace.Enemies:FindFirstChild(bossName) and Workspace.Enemies[bossName]:FindFirstChild("Humanoid") then
-        local humanoid = Workspace.Enemies[bossName].Humanoid
-        bossHealth = math.floor((humanoid.Health / humanoid.MaxHealth) * 100) .. "% HP"
-    end
-
-    if HasSentBossAlert(bossName, jobId) then return false end
-
-    local data = {
-        ["username"] = "Boss | " .. bossDisplayName,
-        ["avatar_url"] = "https://i.imgur.com/IFXzi83.jpeg",
-        ["embeds"] = {{
-            ["title"] = "**👺 Boss Summoned 👻**",
-            ["color"] = 0xFF0000,
-            ["description"] = "Boss **" .. bossDisplayName .. "** spawm",
-            ["fields"] = {
-                {["name"] = "👤 Boss Name", ["value"] = "```fix\n" .. bossDisplayName .. "\n```", ["inline"] = true},
-                {["name"] = "💪 Boss Health", ["value"] = "```yaml\n" .. bossHealth .. "\n```", ["inline"] = true},
-                {["name"] = "👥 Player Count", ["value"] = "```ini\n[" .. playerCount .. "]\n```", ["inline"] = true},
-                {["name"] = "🆔 Server JobID", ["value"] = "```\n" .. jobId .. "\n```", ["inline"] = false},
-                {["name"] = "📜 Script Join", ["value"] = "```lua\n" .. scriptJoin .. "\n```", ["inline"] = false}
-            },
-            ["footer"] = {
-                ["text"] = "💠 MADE BY: STUCKZ999 • " .. os.date("%H:%M:%S %d/%m/%Y"),
-            },
-            ["timestamp"] = DateTime.now():ToIsoDate()
-        }}
-    }
-
-    local url = webhookURLs[bossName]
-    if not url then return false end
-
-    if PostWebhook(url, data) then
-        MarkBossAsSent(bossName, jobId)
-    end
-
-    return true
-end
-
-local function CheckForBosses()
-    for bossName, _ in pairs(bosses) do
-        if Workspace.Enemies:FindFirstChild(bossName) then
-            SendBossAlert(bossName)
-        end
-        if game.ReplicatedStorage:FindFirstChild(bossName) then
-            SendBossAlert(bossName)
-        end
-    end
-end
-
-Workspace.Enemies.ChildAdded:Connect(function(child)
-    task.wait(1)
-    if bosses[child.Name] then
-        SendBossAlert(child.Name)
-    end
-end)
-
-task.wait(5)
-CheckForBosses()
-
-spawn(function()
-    while true do
-        task.wait(60)
-        CheckForBosses()
-    end
-end)
