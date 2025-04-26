@@ -3068,9 +3068,9 @@ end
 
 local library = {}
 
-_G.Color = Color3.fromRGB(255, 255, 255) 
-_G.imageLogo = "rbxassetid://97647078702495"
-_G.Logo = "rbxassetid://97647078702495"
+_G.Color = Color3.fromRGB(230, 230, 230) 
+_G.imageLogo = "rbxassetid://108644766679780"
+_G.Logo = "rbxassetid://108644766679780"
 _G.NameHub = "Made by Stuckz999" -- ชื่อ Hub
 _G.Title = "Zush Hub • Blox Fruit" -- คำอธิบาย
 -----------------------------------------------------------------
@@ -3107,7 +3107,7 @@ ImageButton.BorderSizePixel = 0
 ImageButton.Position = UDim2.new(0.120833337 - 0.10, 0, 0.0952890813 + 0.01, 0)
 ImageButton.Size = UDim2.new(0, 50, 0, 50)
 ImageButton.Draggable = true
-ImageButton.Image = "rbxassetid://97647078702495"
+ImageButton.Image = "rbxassetid://108644766679780"
 
 UICorner.CornerRadius = UDim.new(1, 0)
 UICorner.Parent = ImageButton
@@ -3367,14 +3367,14 @@ Discord.MouseLeave:Connect(function()
     TweenObject(Disc_Title, {TextTransparency = 0}, .15)
 end)
 
--- Click event: copy Discord link
 Discord.MouseButton1Click:Connect(function()
     (setclipboard or toclipboard)("https://discord.gg/ADZ7H2rwk7")
-    wait(.1)
+    wait(0.1)
     game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = "Discord",
-        Text = "Discord copied on your clipboard",
-        Button1 = "Okay",
+        Title = "Zush Hub",
+        Text = "Done copy link discord",
+        Icon = "rbxassetid://108644766679780",
+        Button1 = "Yes",
         Duration = 20
     })
 end)
@@ -5482,39 +5482,28 @@ end)
     
        AutoFarm:Seperator("Tyrant of the Skies")
 
-       local function checkEyesStatus()
+       local function checkStatueEyes()
         local eyesLit = 0
-        local totalEyes = 0
+        local totalEyes = 4
         
-        local function searchForEyes(parent)
-            for _, object in pairs(parent:GetChildren()) do
-                -- Kiểm tra nếu object là BirdEye1 hoặc BirdEye2
-                if object.Name == "BirdEye1" or object.Name == "BirdEye2" then
-                    totalEyes = totalEyes + 1
-                    if object:IsA("Part") and object.Color == Color3.fromRGB(255, 0, 0) then
-                        eyesLit = eyesLit + 1
-                    end
-                end
-                
-                
-                if #object:GetChildren() > 0 then
-                    searchForEyes(object)
+        for _, obj in pairs(workspace:GetDescendants()) do
+            if obj:IsA("BasePart") and obj.Name:lower():find("eye") then
+                if obj.Color.R > 0.7 and obj.Color.G < 0.3 and obj.Color.B < 0.3 then
+                    eyesLit = eyesLit + 1
                 end
             end
         end
         
-        searchForEyes(workspace)
-        
         return eyesLit, totalEyes
     end
     
-
     EyesStatus = AutoFarm:Label("Check Bird Eyes")
     
     task.spawn(function()
         local previousStatus = ""
+        
         while task.wait(1) do
-            local eyesLit, totalEyes = checkEyesStatus()
+            local eyesLit, totalEyes = checkStatueEyes()
             local currentStatus = "Đã sáng " .. eyesLit .. "/" .. totalEyes .. " mắt"
             
             if currentStatus ~= previousStatus then
@@ -5637,7 +5626,7 @@ local function StopTween()
 end
 
 -- Auto-farm toggle
-AutoFarm:Toggle("Tự động phá bình", false, function(Value)
+AutoFarm:Toggle("Auto Summon Tyrant", false, function(Value)
     isAutoSummonActive = Value
     if isAutoSummonActive then
         spawn(summonTyrantOfTheSkies)
@@ -5651,14 +5640,12 @@ local currentWeaponIndex = 1
 _G.SkillZ, _G.SkillX, _G.SkillC = true, true, true
 _G.UseSkillKub = true
 
--- Update character HRP reference when needed
 game:GetService("RunService").Heartbeat:Connect(function()
     if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
         hrp = player.Character.HumanoidRootPart
     end
 end)
 
--- Find weapons in player's backpack
 spawn(function()
     while wait(1) do
         pcall(function()
@@ -5672,7 +5659,7 @@ spawn(function()
                 end
             end
             
-            -- Also check equipped tools
+            
             for i, v in pairs(player.Character:GetChildren()) do
                 if v:IsA("Tool") then
                     for _, tip in ipairs(WeaponList) do
@@ -5694,7 +5681,7 @@ local function equipWeaponType(weaponType)
             return true
         elseif player.Backpack:FindFirstChild(weaponName) then
             player.Character.Humanoid:EquipTool(player.Backpack:FindFirstChild(weaponName))
-            wait(0.1) -- Brief wait to ensure it equips
+            wait(0.1)
             return true
         end
     end
@@ -5757,7 +5744,7 @@ local function smashOneRound()
         if not isAutoSummonActive then return end
         
         if pot and pot:IsA("BasePart") and pot.Parent and hrp then
-            -- Make sure we're not too far away (to avoid impossible tweens)
+            
             local distance = (pot.Position - hrp.Position).Magnitude
             if distance > 300 then
                 print("")
@@ -8860,200 +8847,175 @@ end
 		end
 	end)
  
-  Volcano:Toggle("Auto Find Prehistoric", false, function(value)
-    _G.AutoFindPrehistoric = value
-    _G.Nocliprock = value
-  end)
-  
-  local seatHistory = {}
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local VirtualInputManager = game:GetService("VirtualInputManager")
-local Workspace = game:GetService("Workspace")
-local SetSpeedBoat = 350  
-
-RunService.RenderStepped:Connect(function()
-    for boatName, seat in pairs(seatHistory) do
-        if seat and seat.Parent and seat.Name == "VehicleSeat" and not seat.Occupant then
-            seatHistory[boatName] = seat
-        end
-    end
-end)
-
-local function tpToMyBoat()
-    for boatName, seat in pairs(seatHistory) do
-        if seat and seat.Parent and seat.Name == "VehicleSeat" and not seat.Occupant then
-            topos(seat.CFrame)
-        end
-    end
-end
-
-local isTeleporting = false
-local notified = false
-RunService.RenderStepped:Connect(function()
-    if not _G.AutoFindPrehistoric then
-        notified = false
-        return
-    end
-    local player = Players.LocalPlayer
-    local character = player.Character
-    if not character or not character:FindFirstChild("Humanoid") then return end
+    Volcanic:Toggle("Teleport Tiki Island", false, function(value)
+        if value then
+            local TweenService = game:GetService("TweenService")
+            local player = game.Players.LocalPlayer
+            local character = player.Character or player.CharacterAdded:Wait()
+            local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
     
-    local function tpToMyBoat()
-        if isTeleporting then return end
-        isTeleporting = true
-        for boatName, seat in pairs(seatHistory) do
-            if seat and seat.Parent and seat.Name == "VehicleSeat" and not seat.Occupant then
-                topos(seat.CFrame)
-                break
-            end
-        end
-        isTeleporting = false
-    end
+            local targetPosition = Vector3.new(-16224, 9.096041679382324, 439)
     
-    local humanoid = character.Humanoid
-    local boatFound = false
-    local currentBoat = nil
+            local distance = (humanoidRootPart.Position - targetPosition).Magnitude
+            local speed = 275
+            local travelTime = distance / speed
     
-    for _, b in pairs(Workspace.Boats:GetChildren()) do
-        local seat = b:FindFirstChild("VehicleSeat")
-        if seat and seat.Occupant == humanoid then
-            boatFound = true
-            currentBoat = seat
-            seatHistory[b.Name] = seat
-        elseif seat and seat.Occupant == nil then
-            tpToMyBoat()
-        end
-    end
-
-    if not boatFound then return end
+            local tweenInfo = TweenInfo.new(
+                travelTime,
+                Enum.EasingStyle.Linear,
+                Enum.EasingDirection.Out
+            )
     
-    currentBoat.MaxSpeed = SetSpeedBoat
-    currentBoat.CFrame = CFrame.new(Vector3.new(currentBoat.Position.X, currentBoat.Position.Y, currentBoat.Position.Z)) * currentBoat.CFrame.Rotation
-    VirtualInputManager:SendKeyEvent(true, "W", false, game)
-
-    for _, v in pairs(Workspace.Boats:GetDescendants()) do
-        if v:IsA("BasePart") then v.CanCollide = false end
-    end
-    for _, v in pairs(character:GetDescendants()) do
-        if v:IsA("BasePart") then v.CanCollide = false end
-    end
-
-    local islandsToDelete = { 
-        "ShipwreckIsland", 
-        "SandIsland", 
-        "TreeIsland",
-        "TinyIsland", 
-        "MysticIsland", 
-        "KitsuneIsland", 
-        "FrozenDimension" 
-    }
-    for _, islandName in ipairs(islandsToDelete) do
-        local island = Workspace.Map:FindFirstChild(islandName)
-        if island and island:IsA("Model") then
-            island:Destroy()
+            local tween = TweenService:Create(
+                humanoidRootPart,
+                tweenInfo,
+                { CFrame = CFrame.new(targetPosition) }
+            )
+    
+            tween:Play()
         end
-    end
-
-    local prehistoricIsland = Workspace.Map:FindFirstChild("PrehistoricIsland")
-    if prehistoricIsland then
-        VirtualInputManager:SendKeyEvent(false, "W", false, game)
-        
-        _G.AutoFindPrehistoric = false
-
-        if not notified then
-            notified = true
-        end
-        return
-    end
-end)
-
-      Volcano:Toggle("Auto Find Zone Prehistoric", false, function(value)
-          _G.Nocliprock = value
-         _G.findVolcanicMagnet = value
-           if _G.findVolcanicMagnet then
-           StartBoatMovement()
-         else
-          StopBoatMovement()
-       end
-  end)
-
-local TweenService = game:GetService("TweenService")
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local boatMovementConnection
-
-function GetPlayerBoat()
-    local character = Players.LocalPlayer.Character
-    if character and character:FindFirstChild("HumanoidRootPart") then
-        local seat = character.Humanoid.SeatPart
-        if seat and seat:IsA("VehicleSeat") then
-            return seat.Parent
-        end
-    end
-    return nil
-end
-
-function MoveBoat(direction, distance, speed)
-    local boat = GetPlayerBoat()
-    if boat and boat.PrimaryPart then
-        local boatPrimaryPart = boat.PrimaryPart
-        local targetPosition = boatPrimaryPart.Position + (direction * distance)
-        targetPosition = Vector3.new(targetPosition.X, targetPosition.Y + 200, targetPosition.Z)
-        local distanceToTarget = (boatPrimaryPart.Position - targetPosition).Magnitude
-        local tweenInfo = TweenInfo.new(distanceToTarget / speed, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-        local targetCFrame = CFrame.new(targetPosition)
-
-        local tween = TweenService:Create(boatPrimaryPart, tweenInfo, {CFrame = targetCFrame})
-        tween:Play()
-    end
-end
-
-function StartBoatMovement()
-    if not _G.findVolcanicMagnet then return end
-    boatMovementConnection = RunService.Heartbeat:Connect(function()
-        local direction = Vector3.new(0, 0, 1000)
-        local distance = 500
-        local speed = 186
-        MoveBoat(direction, distance, speed)
     end)
-end
+    
 
-function StopBoatMovement()
-    if boatMovementConnection then
-        boatMovementConnection:Disconnect()
-        boatMovementConnection = nil
-    end
-end
-spawn(function()
-    while wait() do
-        if _G.Nocliprock then
-            if game.Players.LocalPlayer.Character.Humanoid.Sit == true then
-                for _, v in pairs(game.Workspace.Boats:GetDescendants()) do
-                    if v:IsA("BasePart") and v.CanCollide == true then
-                        v.CanCollide = false
+Volcano:Toggle("Auto Find Prehistoric", false, function(Value)
+    if Value then
+        task.spawn(function()
+            if _G._PREHISTORIC_RUNNING then return end
+            _G._PREHISTORIC_RUNNING = true
+
+            local Players = game:GetService("Players")
+            local ReplicatedStorage = game:GetService("ReplicatedStorage")
+            local Workspace = game:GetService("Workspace")
+            local TweenService = game:GetService("TweenService")
+
+            local LocalPlayer = Players.LocalPlayer
+            local PrehistoricDetected = false
+            local currentTween = nil
+
+            local function spawnBoat()
+                ReplicatedStorage.Remotes.CommF_:InvokeServer("BuyBoat", "PirateGrandBrigade")
+            end
+
+            local function teleportToBoatDealer()
+                local hrp = LocalPlayer.Character:WaitForChild("HumanoidRootPart")
+                hrp.CFrame = CFrame.new(Vector3.new(-2373, 5, -10194))
+            end
+
+            local function getBoatVehicleSeat()
+                local boatsFolder = workspace:FindFirstChild("Boats")
+                if not boatsFolder then return nil, nil end
+                for _, boat in ipairs(boatsFolder:GetChildren()) do
+                    local seat = boat:FindFirstChild("VehicleSeat")
+                    if seat and seat.Occupant and seat.Occupant.Parent == LocalPlayer.Character then
+                        return boat, seat
                     end
                 end
-                for _, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
-                    if v:IsA("BasePart") and v.CanCollide == true then
-                        v.CanCollide = false
-                    end
-                end
-            elseif game.Players.LocalPlayer.Character.Humanoid.Sit == false then
-                for _, v in pairs(game.Workspace.Boats:GetDescendants()) do
-                    if v:IsA("BasePart") and v.CanCollide == false then
-                        v.CanCollide = true
-                    end
-                end
-                for _, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
-                    if v:IsA("BasePart") and v.CanCollide == false then
-                        v.CanCollide = true
+                return nil, nil
+            end
+
+            local function setNoClip(model, enable)
+                for _, desc in ipairs(model:GetDescendants()) do
+                    if desc:IsA("BasePart") then
+                        desc.CanCollide = not enable
                     end
                 end
             end
-        end
+
+            local function stopTween()
+                if currentTween then currentTween:Cancel() end
+                currentTween = nil
+            end
+
+            Workspace:WaitForChild("Map").ChildAdded:Connect(function(child)
+                if child.Name == "PrehistoricIsland" then
+                    PrehistoricDetected = true
+                    stopTween()
+                    _G._PREHISTORIC_RUNNING = false
+                end
+            end)
+
+            local function findAndSitBoat(boatName)
+                local hrp = LocalPlayer.Character:WaitForChild("HumanoidRootPart")
+                local BoatsFolder = workspace:WaitForChild("Boats")
+
+                local maxTry = 50
+                for i = 1, maxTry do
+                    for _, boat in pairs(BoatsFolder:GetChildren()) do
+                        if boat:IsA("Model") and boat.Name == boatName then
+                            local seat = boat:FindFirstChild("VehicleSeat", true)
+                            if seat and not seat.Occupant then
+                                hrp.CFrame = seat.CFrame * CFrame.new(0, 0, 3)
+                                task.wait(0.5)
+                                hrp.CFrame = seat.CFrame
+                                task.wait(0.5)
+                                local hum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+                                if hum then hum:Move(Vector3.new(0, 0, 1), true) end
+                                task.wait(1)
+                                if seat.Occupant and seat.Occupant.Parent == LocalPlayer.Character then
+                                    return seat
+                                end
+                            end
+                        end
+                    end
+                    task.wait(0.3)
+                end
+                return nil
+            end
+
+            local function tweenBoatToTarget(targetPos)
+                local boat, seat = getBoatVehicleSeat()
+                if not boat then return end
+                local primary = boat.PrimaryPart
+                if not primary then return end
+
+                setNoClip(boat, true)
+                setNoClip(LocalPlayer.Character, true)
+
+                local currentPos = primary.Position
+                local finalY = 100
+                primary.CFrame = CFrame.new(currentPos.X, finalY, currentPos.Z)
+
+                local distance = (Vector3.new(targetPos.X, finalY, targetPos.Z) - primary.Position).Magnitude
+                local tweenTime = distance / 300
+
+                local info = TweenInfo.new(tweenTime, Enum.EasingStyle.Linear)
+                local goal = { CFrame = CFrame.new(targetPos.X, finalY, targetPos.Z) }
+
+                currentTween = TweenService:Create(primary, info, goal)
+                currentTween:Play()
+
+                task.spawn(function()
+                    while currentTween and currentTween.PlaybackState == Enum.PlaybackState.Playing do
+                        if PrehistoricDetected then
+                            currentTween:Cancel()
+                            break
+                        end
+                        task.wait(0.1)
+                    end
+                    setNoClip(boat, false)
+                    setNoClip(LocalPlayer.Character, false)
+                end)
+            end
+
+            teleportToBoatDealer()
+            task.wait(2)
+            spawnBoat()
+            task.wait(2.5)
+
+            local seat = findAndSitBoat("PirateGrandBrigade")
+            if not seat then
+                _G._PREHISTORIC_RUNNING = false
+                return
+            end
+
+            local prehistoricPos = Vector3.new(-99999999, 100, 0)
+            tweenBoatToTarget(prehistoricPos)
+        end)
+    else
+        _G._PREHISTORIC_RUNNING = false
     end
 end)
+
 
 
   Volcano:Toggle("Auto Tween To Prehistoric", false, function(value)
@@ -10076,7 +10038,112 @@ Trailers:Toggle("Skill X",false, function(Value)
         end)
 Trailers:Toggle("Skill C",false, function(Value)
         _G.XaiSkillC = Value
-        end)        
+        end) 
+        
+        Trailers:Seperator("Race Draco V4")
+
+        Trailers:Toggle("Teleport To The Draco Clan Trial Door", false, function(Value)
+            getgenv().TrialTeleportDraco = Value
+        end)
+        
+        local function safeTeleport(targetCFrame)
+            if topos and typeof(targetCFrame) == "CFrame" then
+                topos(targetCFrame)
+            end
+        end
+        
+        spawn(function()
+            local trialPart = workspace:WaitForChild("Map"):FindFirstChild("PrehistoricIsland")
+            if trialPart then
+                trialPart = trialPart:FindFirstChild("TrialTeleport")
+            end
+            while task.wait(0.5) do
+                if getgenv().TrialTeleportDraco and trialPart and trialPart:IsA("Part") then
+                    safeTeleport(CFrame.new(trialPart.Position))
+                end
+            end
+        end)
+        Trailers:Toggle("Auto Fly", false, function(Value)
+            getgenv().AutoFly = Value
+        end)
+        
+        -- Phần code Auto Fly giữ nguyên
+        
+        local UserInputService = game:GetService("UserInputService")
+        local RunService = game:GetService("RunService")
+        local Players = game:GetService("Players")
+        
+        local player = Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local hrp = character:WaitForChild("HumanoidRootPart")
+        
+        local flying = false
+        local speed = 100
+        local flyHeight = 5
+        
+        local bv = Instance.new("BodyVelocity")
+        bv.MaxForce = Vector3.new(1, 1, 1) * 1e6
+        bv.P = 1250
+        bv.Velocity = Vector3.zero
+        
+        local bg = Instance.new("BodyGyro")
+        bg.MaxTorque = Vector3.new(1, 1, 1) * 1e6
+        bg.P = 3000
+        bg.CFrame = hrp.CFrame
+        
+        local function getMoveDirection()
+            local cam = workspace.CurrentCamera
+            local moveVec = Vector3.zero
+        
+            if UserInputService:IsKeyDown(Enum.KeyCode.W) then
+                moveVec += cam.CFrame.LookVector
+            end
+            if UserInputService:IsKeyDown(Enum.KeyCode.S) then
+                moveVec -= cam.CFrame.LookVector
+            end
+            if UserInputService:IsKeyDown(Enum.KeyCode.A) then
+                moveVec -= cam.CFrame.RightVector
+            end
+            if UserInputService:IsKeyDown(Enum.KeyCode.D) then
+                moveVec += cam.CFrame.RightVector
+            end
+        
+            moveVec = Vector3.new(moveVec.X, 0, moveVec.Z)
+            return moveVec.Magnitude > 0 and moveVec.Unit or Vector3.zero
+        end
+        
+        local function startFly()
+            if not getgenv().AutoFly then return end
+            flying = true
+            bv.Parent = hrp
+            bg.Parent = hrp
+        end
+        
+        local function stopFly()
+            flying = false
+            bv.Parent = nil
+            bg.Parent = nil
+        end
+        
+        UserInputService.InputBegan:Connect(function(input, gameProcessed)
+            if gameProcessed then return end
+            if input.KeyCode == Enum.KeyCode.Space and getgenv().AutoFly then
+                if flying then
+                    stopFly()
+                else
+                    startFly()
+                end
+            end
+        end)
+        
+        RunService.RenderStepped:Connect(function()
+            if flying and getgenv().AutoFly then
+                local move = getMoveDirection()
+                bv.Velocity = move * speed + Vector3.new(0, flyHeight * 10, 0)
+                bg.CFrame = workspace.CurrentCamera.CFrame
+            end
+        end)
+
 
     Espbruh:Toggle("Esp Island", false, function(value)
         IslandESP = value
@@ -11903,3 +11970,152 @@ end)
              end
          end
      end)
+
+     local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+
+local request = http_request or request or HttpPost or syn and syn.request or fluxus and fluxus.request
+if not request then return end
+
+local cooldownTime = 600
+local cooldownFile = "boss_cooldown.json"
+
+local function LoadCooldown()
+    if isfile and isfile(cooldownFile) then
+        local data = readfile(cooldownFile)
+        local success, decoded = pcall(function()
+            return HttpService:JSONDecode(data)
+        end)
+        if success and type(decoded) == "table" then
+            return decoded
+        end
+    end
+    return {}
+end
+
+local function SaveCooldown(data)
+    if writefile then
+        writefile(cooldownFile, HttpService:JSONEncode(data))
+    end
+end
+
+_G.SentBosses = LoadCooldown()
+
+local webhookURLs = {
+    ["rip_indra True Form"] = "https://discord.com/api/webhooks/1365180289764298814/PjfA3_qHZjXYtvaVf4D8c4ad5mWeJfn59mNzQuJFeFvYhjwQ5Y8ILtydVORI9kW9xp1X",
+    ["Darkbeard"] = "https://discord.com/api/webhooks/1365231489553403904/UpNLKYMpEBe3gIWOrcoK0bhYJIOFv8_Qc14wyCYLgbc8n0QNj1szNRShPvMoIDnAMzEB",
+    ["Dough King"] = "https://discord.com/api/webhooks/1365231422801051691/ArIoOAJD6brwOYaxhCrRG4YBAi0AgexCs9y-vH6vxaVJWktTj1LAqH5ApufVSkIkJsuS",
+    ["Tyrant of the Skies"] = "https://discord.com/api/webhooks/1365216341602336841/sgM73quYi92nw9iRyRNCLY9f-7HxdGZl8mL21WZqNJOL6Byfj83t1aoI33Z1aZVElfqz",
+    ["Soul Reaper"] = "https://discord.com/api/webhooks/1365231550530195456/_BeBBmDdiYmEKK8D23MONH_6TZYHLaHD5efG9Pwbws-kCT0TMBEmjqM0_g82B6JQjedJ",
+    ["Cursed Captain"] = "https://discord.com/api/webhooks/1365231611414577152/C5RzYm5ZYLyrOSlmSktakLu87Se1DKMOkyz2O2vHS7SGO75S_5w_fd1yVl8iRifY4o9F"
+}
+
+local bosses = {
+    ["rip_indra True Form"] = "Indra",
+    ["Darkbeard"] = "Darkbeard",
+    ["Dough King"] = "Dough King",
+    ["Tyrant of the Skies"] = "Tyrant",
+    ["Soul Reaper"] = "Soul Reaper",
+    ["Cursed Captain"] = "Cursed Captain"
+}
+
+local function PostWebhook(url, data)
+    local success, response = pcall(function()
+        return request({
+            Url = url,
+            Method = "POST",
+            Headers = {["Content-Type"] = "application/json"},
+            Body = HttpService:JSONEncode(data)
+        })
+    end)
+    return success and response and (response.StatusCode == 200 or response.StatusCode == 204)
+end
+
+local function HasSentBossAlert(bossName, jobId)
+    local key = bossName .. "_" .. jobId
+    local data = _G.SentBosses[key]
+    if data and data.timestamp then
+        return (os.time() - data.timestamp) < cooldownTime
+    end
+    return false
+end
+
+local function MarkBossAsSent(bossName, jobId)
+    local key = bossName .. "_" .. jobId
+    _G.SentBosses[key] = { timestamp = os.time() }
+    SaveCooldown(_G.SentBosses)
+end
+
+local function SendBossAlert(bossName)
+    local bossDisplayName = bosses[bossName] or bossName
+    local jobId = game.JobId or "UNKNOWN"
+    local playerCount = tostring(#Players:GetPlayers()) .. "/12"
+    local scriptJoin = 'game:GetService("ReplicatedStorage").__ServerBrowser:InvokeServer("teleport", "' .. jobId .. '")'
+
+    local bossHealth = "Unknown"
+    if Workspace.Enemies:FindFirstChild(bossName) and Workspace.Enemies[bossName]:FindFirstChild("Humanoid") then
+        local humanoid = Workspace.Enemies[bossName].Humanoid
+        bossHealth = math.floor((humanoid.Health / humanoid.MaxHealth) * 100) .. "% HP"
+    end
+
+    if HasSentBossAlert(bossName, jobId) then return false end
+
+    local data = {
+        ["username"] = "Boss | " .. bossDisplayName,
+        ["avatar_url"] = "https://i.imgur.com/IFXzi83.jpeg",
+        ["embeds"] = {{
+            ["title"] = "**👺 Boss Summoned 👻**",
+            ["color"] = 0xFF0000,
+            ["description"] = "Boss **" .. bossDisplayName .. "** spawm",
+            ["fields"] = {
+                {["name"] = "👤 Boss Name", ["value"] = "```fix\n" .. bossDisplayName .. "\n```", ["inline"] = true},
+                {["name"] = "💪 Boss Health", ["value"] = "```yaml\n" .. bossHealth .. "\n```", ["inline"] = true},
+                {["name"] = "👥 Player Count", ["value"] = "```ini\n[" .. playerCount .. "]\n```", ["inline"] = true},
+                {["name"] = "🆔 Server JobID", ["value"] = "```\n" .. jobId .. "\n```", ["inline"] = false},
+                {["name"] = "📜 Script Join", ["value"] = "```lua\n" .. scriptJoin .. "\n```", ["inline"] = false}
+            },
+            ["footer"] = {
+                ["text"] = "💠 MADE BY: STUCKZ999 • " .. os.date("%H:%M:%S %d/%m/%Y"),
+            },
+            ["timestamp"] = DateTime.now():ToIsoDate()
+        }}
+    }
+
+    local url = webhookURLs[bossName]
+    if not url then return false end
+
+    if PostWebhook(url, data) then
+        MarkBossAsSent(bossName, jobId)
+    end
+
+    return true
+end
+
+local function CheckForBosses()
+    for bossName, _ in pairs(bosses) do
+        if Workspace.Enemies:FindFirstChild(bossName) then
+            SendBossAlert(bossName)
+        end
+        if game.ReplicatedStorage:FindFirstChild(bossName) then
+            SendBossAlert(bossName)
+        end
+    end
+end
+
+Workspace.Enemies.ChildAdded:Connect(function(child)
+    task.wait(1)
+    if bosses[child.Name] then
+        SendBossAlert(child.Name)
+    end
+end)
+
+task.wait(5)
+CheckForBosses()
+
+spawn(function()
+    while true do
+        task.wait(60)
+        CheckForBosses()
+    end
+end)
