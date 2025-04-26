@@ -10070,8 +10070,6 @@ Trailers:Toggle("Auto Fly", false, function(Value)
     getgenv().AutoFly = Value
 end)
 
--- Phần code Auto Fly giữ nguyên
-
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
@@ -10081,7 +10079,7 @@ local character = player.Character or player.CharacterAdded:Wait()
 local hrp = character:WaitForChild("HumanoidRootPart")
 
 local flying = false
-local speed = 100
+local speed = 100 -- Tốc độ bay nhanh hơn
 local flyHeight = 5
 
 local bv = Instance.new("BodyVelocity")
@@ -10094,57 +10092,63 @@ bg.MaxTorque = Vector3.new(1, 1, 1) * 1e6
 bg.P = 3000
 bg.CFrame = hrp.CFrame
 
+-- Hàm xử lý hướng di chuyển
 local function getMoveDirection()
-    local cam = workspace.CurrentCamera
-    local moveVec = Vector3.zero
+	local cam = workspace.CurrentCamera
+	local moveVec = Vector3.zero
 
-    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-        moveVec += cam.CFrame.LookVector
-    end
-    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-        moveVec -= cam.CFrame.LookVector
-    end
-    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-        moveVec -= cam.CFrame.RightVector
-    end
-    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-        moveVec += cam.CFrame.RightVector
-    end
+	if UserInputService:IsKeyDown(Enum.KeyCode.W) then
+		moveVec += cam.CFrame.LookVector
+	end
+	if UserInputService:IsKeyDown(Enum.KeyCode.S) then
+		moveVec -= cam.CFrame.LookVector
+	end
+	if UserInputService:IsKeyDown(Enum.KeyCode.A) then
+		moveVec -= cam.CFrame.RightVector
+	end
+	if UserInputService:IsKeyDown(Enum.KeyCode.D) then
+		moveVec += cam.CFrame.RightVector
+	end
 
-    moveVec = Vector3.new(moveVec.X, 0, moveVec.Z)
-    return moveVec.Magnitude > 0 and moveVec.Unit or Vector3.zero
+	moveVec = Vector3.new(moveVec.X, 0, moveVec.Z)
+	return moveVec.Magnitude > 0 and moveVec.Unit or Vector3.zero
 end
 
+-- Bật chế độ bay
 local function startFly()
-    if not getgenv().AutoFly then return end
-    flying = true
-    bv.Parent = hrp
-    bg.Parent = hrp
+	if not getgenv().AutoFly then return end
+	flying = true
+	bv.Parent = hrp
+	bg.Parent = hrp
 end
 
+-- Tắt chế độ bay
 local function stopFly()
-    flying = false
-    bv.Parent = nil
-    bg.Parent = nil
+	flying = false
+	bv.Parent = nil
+	bg.Parent = nil
 end
 
+-- Toggle khi nhấn Space
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if gameProcessed then return end
-    if input.KeyCode == Enum.KeyCode.Space and getgenv().AutoFly then
-        if flying then
-            stopFly()
-        else
-            startFly()
-        end
-    end
+	if gameProcessed then return end
+
+	if input.KeyCode == Enum.KeyCode.Space and getgenv().AutoFly then
+		if flying then
+			stopFly()
+		else
+			startFly()
+		end
+	end
 end)
 
+-- Cập nhật hướng bay
 RunService.RenderStepped:Connect(function()
-    if flying and getgenv().AutoFly then
-        local move = getMoveDirection()
-        bv.Velocity = move * speed + Vector3.new(0, flyHeight * 10, 0)
-        bg.CFrame = workspace.CurrentCamera.CFrame
-    end
+	if flying and getgenv().AutoFly then
+		local move = getMoveDirection()
+		bv.Velocity = move * speed + Vector3.new(0, flyHeight * 10, 0)
+		bg.CFrame = workspace.CurrentCamera.CFrame
+	end
 end)
 
     Espbruh:Toggle("Esp Island", false, function(value)
@@ -11724,6 +11728,10 @@ AutoMisc:Button("Remove Lava",function()
             module:Teleport(game.PlaceId, "Singapore")
         end
     end)
+
+    AutoMisc:Button("Server Low Player",function()
+        loadstring(game:HttpGet("https://pastebin.com/raw/DQ8SrHWS"))()
+    end)
     
         Status:Seperator("Stats")
 
@@ -11931,6 +11939,54 @@ end)
             end
             end
          end)
+     end)
+
+     StatusTime:Button("Hop Server Dough King",function()
+       wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/m9my321212/sexxyapi/refs/heads/main/hopdk"))()
+    end)
+
+    StatusTime:Button("Hop Server Rip",function()
+        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/m9my321212/sexxyapi/refs/heads/main/hopindra"))()
+     end)
+
+     StatusTime:Button("Hop Server Dark",function()
+        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/m9my321212/sexxyapi/refs/heads/main/hopdark"))()
+     end)
+
+     StatusTime:Button("Hop Server Soul Reaper",function()
+        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/m9my321212/sexxyapi/refs/heads/main/hopsoul"))()
+     end)
+
+     StatusTime:Button("Hop Server Captain",function()
+        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/m9my321212/sexxyapi/refs/heads/main/hopcaptain"))()
+     end)
+
+     StatusTime:Button("Hop Server Full Moon",function()
+        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/m9my321212/sexxyapi/refs/heads/main/hopfm.lua"))()
+     end)
+
+     StatusTime:Button("Hop Server Mirage",function()
+        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/m9my321212/sexxyapi/refs/heads/main/hopmirage"))()
+     end)
+
+     StatusTime:Button("Hop Server Sword",function()
+        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/m9my321212/sexxyapi/refs/heads/main/hopsword"))()
+     end)
+
+     StatusTime:Button("Hop Server Haki",function()
+        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/m9my321212/sexxyapi/refs/heads/main/hophaki"))()
+     end)
+
+     StatusTime:Button("Hop Server Boss Tyrant",function()
+        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/m9my321212/sexxyapi/refs/heads/main/hoptyrant"))()
+     end)
+
+     StatusTime:Button("Hop Server Prehistoric",function()
+        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/m9my321212/sexxyapi/refs/heads/main/hopvelo"))()
+     end)
+
+     StatusTime:Button("Hop Server Bigmom",function()
+        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/darkz0823/Bigmom-Finder-Lua/refs/heads/main/hopfindbigmom.lua"))()
      end)
      
      getgenv().FixAttack = true
