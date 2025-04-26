@@ -3546,6 +3546,59 @@ Toggle:OnChanged(function(Value)
     StopTween(_G.AutoNear)
 end)
 
+function AutoHaki()
+    if not game.Players.LocalPlayer.Character:FindFirstChild("HasBuso") then
+        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("Buso")
+    end
+end
+
+-- Function for teleporting to positions
+function topos(targetCFrame)
+    local TweenService = game:GetService("TweenService")
+    local character = game.Players.LocalPlayer.Character
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+    
+    local info = TweenInfo.new(
+        (targetCFrame.Position - humanoidRootPart.Position).Magnitude/300, -- time based on distance
+        Enum.EasingStyle.Linear
+    )
+    
+    local tween = TweenService:Create(humanoidRootPart, info, {CFrame = targetCFrame})
+    tween:Play()
+    
+    return tween
+end
+
+-- Function to stop tween
+function StopTween(toggle)
+    if not toggle then
+        local character = game.Players.LocalPlayer.Character
+        if character and character:FindFirstChild("HumanoidRootPart") then
+            character.HumanoidRootPart.Anchored = false
+        end
+    end
+end
+
+-- Function to equip weapon
+function EquipWeapon(toolName)
+    local player = game.Players.LocalPlayer
+    local backpack = player.Backpack
+    local character = player.Character
+    
+    if character:FindFirstChild(toolName) then
+        local tool = character:FindFirstChild(toolName)
+        if tool and tool:IsA("Tool") then
+            tool.Parent = character
+        end
+    elseif backpack:FindFirstChild(toolName) then
+        local tool = backpack:FindFirstChild(toolName)
+        if tool and tool:IsA("Tool") then
+            tool.Parent = character
+        end
+    end
+end
+
+-- Main farming loop
 spawn(function()
     while wait() do
         if _G.AutoNear then
