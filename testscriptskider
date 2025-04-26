@@ -3068,7 +3068,7 @@ end
 
 local library = {}
 
-_G.Color = Color3.fromRGB(154, 240, 17) 
+_G.Color = Color3.fromRGB(255, 255, 255) 
 _G.imageLogo = "rbxassetid://97647078702495"
 _G.Logo = "rbxassetid://97647078702495"
 _G.NameHub = "Made by Stuckz999" -- ชื่อ Hub
@@ -5480,7 +5480,49 @@ end)
         end)
     end)      
     
-       AutoFarm:Seperator("Tyrant of the Skies Farm")
+       AutoFarm:Seperator("Tyrant of the Skies")
+
+       local function checkEyesStatus()
+        local eyesLit = 0
+        local totalEyes = 0
+        
+        local function searchForEyes(parent)
+            for _, object in pairs(parent:GetChildren()) do
+                -- Kiểm tra nếu object là BirdEye1 hoặc BirdEye2
+                if object.Name == "BirdEye1" or object.Name == "BirdEye2" then
+                    totalEyes = totalEyes + 1
+                    if object:IsA("Part") and object.Color == Color3.fromRGB(255, 0, 0) then
+                        eyesLit = eyesLit + 1
+                    end
+                end
+                
+                
+                if #object:GetChildren() > 0 then
+                    searchForEyes(object)
+                end
+            end
+        end
+        
+        searchForEyes(workspace)
+        
+        return eyesLit, totalEyes
+    end
+    
+
+    EyesStatus = AutoFarm:Label("Check Bird Eyes")
+    
+    task.spawn(function()
+        local previousStatus = ""
+        while task.wait(1) do
+            local eyesLit, totalEyes = checkEyesStatus()
+            local currentStatus = "Đã sáng " .. eyesLit .. "/" .. totalEyes .. " mắt"
+            
+            if currentStatus ~= previousStatus then
+                EyesStatus:Set(currentStatus)
+                previousStatus = currentStatus
+            end
+        end
+    end)
               
        AutoFarm:Toggle("Auto Farm Tyrant of the Skies", false,function(value)         
      	_G.FarmDaiBan = value 
@@ -5577,6 +5619,109 @@ end)
         end
     end
 end)
+
+AutoFarm:Toggle("Tự động phá bình", false, function(Value)
+    isAutoSummonActive = Value
+    if isAutoSummonActive then
+        spawn(summonTyrantOfTheSkies)
+    else
+        StopTween()
+    end
+end)
+
+local WeaponList = {"Melee", "Sword", "Fruit"} 
+local currentWeaponIndex = 1
+_G.SkillZ, _G.SkillX, _G.SkillC = true, true, true 
+_G.UseSkillKub = true
+
+spawn(function()
+    while wait() do
+        pcall(function()
+            for i, v in pairs(player.Backpack:GetChildren()) do
+                if v:IsA("Tool") then
+                    for _, tip in ipairs(WeaponList) do
+                        if v.ToolTip == tip then
+                            _G["Weapon_" .. tip] = v.Name
+                        end
+                    end
+                end
+            end
+        end)
+    end
+end)
+
+local function equipWeaponType(weaponType)
+    local weaponName = _G["Weapon_" .. weaponType]
+    if weaponName and player.Backpack:FindFirstChild(weaponName) then
+        player.Character.Humanoid:EquipTool(player.Backpack:FindFirstChild(weaponName))
+    end
+end
+
+local function spamSkills()
+    if _G.UseSkillKub then
+        if _G.SkillZ then VirtualInputManager:SendKeyEvent(true, "Z", false, game) wait(0.2) VirtualInputManager:SendKeyEvent(false, "Z", false, game) end
+        wait(0.2)
+        if _G.SkillX then VirtualInputManager:SendKeyEvent(true, "X", false, game) wait(0.2) VirtualInputManager:SendKeyEvent(false, "X", false, game) end
+        wait(0.2)
+        if _G.SkillC then VirtualInputManager:SendKeyEvent(true, "C", false, game) wait(0.2) VirtualInputManager:SendKeyEvent(false, "C", false, game) end
+    end
+end
+
+local function flyToBossArea()
+    local summonPos = CFrame.new(-16194.0048828125, 155.21844482421875, 1420.719970703125)
+    if hrp then
+        local tween = TweenService:Create(hrp, TweenInfo.new(2, Enum.EasingStyle.Linear), {CFrame = summonPos})
+        tween:Play()
+        tween.Completed:Wait()
+    end
+end
+
+local function getAllPots()
+    local pots = {}
+    for _, obj in pairs(workspace:GetDescendants()) do
+        if obj:IsA("BasePart") then
+            local name = obj.Name:lower()
+            if (name:find("pot") or name:find("jar") or name:find("urn")) then
+                table.insert(pots, obj)
+            end
+        end
+    end
+    return pots
+end
+
+local function smashOneRound()
+    local pots = getAllPots()
+    for _, pot in ipairs(pots) do
+        if not isAutoSummonActive then return end
+        
+        local targetPos = pot.Position + Vector3.new(0, 3, 0)
+        local tween = TweenService:Create(hrp, TweenInfo.new(1), {CFrame = CFrame.new(targetPos)})
+        tween:Play()
+        tween.Completed:Wait()
+        
+        local weaponType = WeaponList[currentWeaponIndex]
+        equipWeaponType(weaponType)
+        wait(0.3)
+        spamSkills()
+        wait(0.5)
+        
+        currentWeaponIndex += 1
+        if currentWeaponIndex > #WeaponList then currentWeaponIndex = 1 end
+    end
+end
+
+function summonTyrantOfTheSkies()
+    while isAutoSummonActive do
+        flyToBossArea()
+        wait(1)
+        for i = 1, 3 do
+            if not isAutoSummonActive then return end
+            smashOneRound()
+            wait(2)
+        end
+        wait(5)
+    end
+end
     
         AutoFarm:Seperator("Katakuri Farm")
 
