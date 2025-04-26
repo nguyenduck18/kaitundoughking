@@ -6,7 +6,7 @@ MatsuneA1["1"]["ZIndexBehavior"] = Enum.ZIndexBehavior.Sibling;
 MatsuneA1["2"] = Instance.new("Frame", MatsuneA1["1"]);
 MatsuneA1["2"]["BorderSizePixel"] = 0;
 MatsuneA1["2"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0);
-MatsuneA1["2"]["BackgroundTransparency"] = 0.2;
+MatsuneA1["2"]["BackgroundTransparency"] = 0;
 MatsuneA1["2"]["Size"] = UDim2.new(0, 50, 0, 50);
 MatsuneA1["2"]["Draggable"] = true
 MatsuneA1["2"]["Position"] = UDim2.new(0.20, 0, -0.1, 0);
@@ -27,12 +27,12 @@ MatsuneA1["4"]["Size"] = UDim2.new(0, 50, 0, 56);
 MatsuneA1["4"]["BackgroundTransparency"] = 0.1;
 MatsuneA1["4"]["BorderColor3"] = Color3.fromRGB(255, 255, 255);
 MatsuneA1["4"]["Text"] = [[STOP TWEEN]];
-MatsuneA1["4"]["Position"] = UDim2.new(0, 0, -0.07273, 0);
+MatsuneA1["4"]["Position"] = UDim2.new(0, 10, 0, 10);
 MatsuneA1["5"] = Instance.new("UIStroke", MatsuneA1["4"]);
 MatsuneA1["5"]["Color"] = Color3.fromRGB(255, 255, 255);
 
 MatsuneA1["6"] = Instance.new("UIStroke", MatsuneA1["2"]);
-MatsuneA1["6"]["Color"] = Color3.fromRGB(169, 238, 8);
+MatsuneA1["6"]["Color"] = Color3.fromRGB(255, 255, 255);
 
 local function StopTween()
     if _G.StopTween then
@@ -3069,8 +3069,8 @@ end
 local library = {}
 
 _G.Color = Color3.fromRGB(154, 240, 17) 
-_G.imageLogo = "rbxassetid://12940626152"
-_G.Logo = "rbxassetid://12940626152"
+_G.imageLogo = "rbxassetid://97647078702495"
+_G.Logo = "rbxassetid://97647078702495"
 _G.NameHub = "Made by Stuckz999" -- ชื่อ Hub
 _G.Title = "Zush Hub • Blox Fruit" -- คำอธิบาย
 -----------------------------------------------------------------
@@ -3105,9 +3105,9 @@ ImageButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 ImageButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
 ImageButton.BorderSizePixel = 0
 ImageButton.Position = UDim2.new(0.120833337 - 0.10, 0, 0.0952890813 + 0.01, 0)
-ImageButton.Size = UDim2.new(0, 40, 0, 40)
+ImageButton.Size = UDim2.new(0, 50, 0, 50)
 ImageButton.Draggable = true
-ImageButton.Image = "rbxassetid://100666805146072"
+ImageButton.Image = "rbxassetid://97647078702495"
 
 UICorner.CornerRadius = UDim.new(1, 0)
 UICorner.Parent = ImageButton
@@ -3369,7 +3369,7 @@ end)
 
 -- Click event: copy Discord link
 Discord.MouseButton1Click:Connect(function()
-    (setclipboard or toclipboard)("https://discord.gg/SpJQ3XVEJ8")
+    (setclipboard or toclipboard)("https://discord.gg/ADZ7H2rwk7")
     wait(.1)
     game:GetService("StarterGui"):SetCore("SendNotification", {
         Title = "Discord",
@@ -3706,7 +3706,7 @@ UICorner.Parent = ImageButton
 			            -- Set the color to a single color (e.g., green)
 			            game:GetService('TweenService'):Create(
     			            Line, TweenInfo.new(1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut),
- 			               {BackgroundColor3 = Color3.fromRGB(0, 255, 0)} -- green color
+ 			               {BackgroundColor3 = Color3.fromRGB(255, 255, 255)} -- green color
 			            ):Play() 
 			            wait(0.5)            
 			        end)
