@@ -8848,6 +8848,38 @@ end
 	end)
 
 
+    Volcanic:Toggle("Teleport Tiki Island", false, function(value)
+        if value then
+            local TweenService = game:GetService("TweenService")
+            local player = game.Players.LocalPlayer
+            local character = player.Character
+            if not character or not character:FindFirstChild("HumanoidRootPart") then
+                return
+            end
+            local humanoidRootPart = character.HumanoidRootPart
+    
+            local targetPosition = Vector3.new(-16224, 9.096, 439)
+            local distance = (humanoidRootPart.Position - targetPosition).Magnitude
+            local speed = 275
+            local travelTime = distance / speed
+    
+            local tweenInfo = TweenInfo.new(
+                travelTime,
+                Enum.EasingStyle.Linear,
+                Enum.EasingDirection.Out
+            )
+    
+            local tween = TweenService:Create(
+                humanoidRootPart,
+                tweenInfo,
+                { Position = targetPosition } -- Tween Position thay vì CFrame
+            )
+    
+            tween:Play()
+        end
+    end)
+    
+
   Volcano:Toggle("Auto Tween To Prehistoric", false, function(value)
    _G.TweenVolcano = value
    end)
